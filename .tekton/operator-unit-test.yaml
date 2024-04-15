@@ -1,0 +1,51 @@
+apiVersion: tekton.dev/v1
+kind: Task
+metadata:
+  name: unit-test
+spec:
+  description: Runs unit test for OpenShift Builds Operator.
+  params:
+    - default: -race -cover -v
+      description: Flags to use for the test command
+      name: GO_TEST_FLAGS
+    - default: linux
+      description: Operating system to use for testing
+      name: GOOS
+    - default: amd64
+      description: System architecture to use for testing
+      name: GOARCH
+    - default: auto
+      description: Go module support
+      name: GO111MODULE
+    - default: ""
+      description: Go caching directory path
+      name: GOCACHE
+    - default: ""
+      description: Go mod caching directory path
+      name: GOMODCACHE
+  steps:
+    - name: run-test
+      image: docker.io/library/golang:1.22
+      env:
+        - name: GOOS
+          value: $(params.GOOS)
+        - name: GOARCH
+          value: $(params.GOARCH)
+        - name: GO_TEST_FLAGS
+          value: $(params.GO_TEST_FLAGS)
+        - name: GO111MODULE
+          value: $(params.GO111MODULE)
+        - name: GOCACHE
+          value: $(params.GOCACHE)
+        - name: GOMODCACHE
+          value: $(params.GOMODCACHE)
+      resources: {}
+      script: |
+        #!/usr/bin/env bash
+        set -eux
+        git config --global --add safe.directory $(workspaces.source.path)
+        make test
+      workingDir: $(workspaces.source.path)
+  workspaces:
+    - name: source
+      description: Mount the source code directory

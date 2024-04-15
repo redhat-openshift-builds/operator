@@ -6,6 +6,7 @@ metadata:
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
+    pipelinesascode.tekton.dev/task: "[.tekton/operator-unit-test.yaml]"
     pipelinesascode.tekton.dev/on-cel-expression: event == "push" && target_branch
       == "main"
   creationTimestamp: null
@@ -102,14 +103,14 @@ spec:
       name: prefetch-input
       type: string
     - default: "false"
-      description: Java build
-      name: java
+      description: Skip unit testing
+      name: skip-unit-test
       type: string
     - default: ""
       description: Image tag expiration time, time values could be something like
         1h, 2d, 3w for hours, days, and weeks, respectively.
       name: image-expires-after
-    - default: "false"
+    - default: "true"
       description: Build a source image.
       name: build-source-image
       type: string
@@ -126,9 +127,6 @@ spec:
     - description: ""
       name: CHAINS-GIT_COMMIT
       value: $(tasks.clone-repository.results.commit)
-    - description: ""
-      name: JAVA_COMMUNITY_DEPENDENCIES
-      value: $(tasks.build-container.results.JAVA_COMMUNITY_DEPENDENCIES)
     tasks:
     - name: init
       params:
@@ -197,6 +195,20 @@ spec:
       workspaces:
       - name: source
         workspace: workspace
+    - name: unit-test
+      runAfter:
+        - prefetch-dependencies
+      taskRef:
+        name: unit-test
+      when:
+        - input: $(params.skip-unit-test)
+          operator: in
+          values:
+            - "false"
+      workspaces:
+        - name: source
+          subPath: source
+          workspace: workspace
     - name: build-container
       params:
       - name: IMAGE
@@ -214,7 +226,7 @@ spec:
       - name: COMMIT_SHA
         value: $(tasks.clone-repository.results.commit)
       runAfter:
-      - prefetch-dependencies
+      - unit-test
       taskRef:
         params:
         - name: name
