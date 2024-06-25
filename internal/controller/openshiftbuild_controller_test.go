@@ -52,15 +52,11 @@ var _ = Describe("OpenShiftBuild Controller", func() {
 					Spec: operatorv1alpha1.OpenShiftBuildSpec{
 						Shipwright: operatorv1alpha1.ShipwrightSpec{
 							Build: operatorv1alpha1.ShipwrightBuildSpec{
-								ComponentState: operatorv1alpha1.ComponentState{
-									State: "Enabled",
-								},
+								State: "Enabled",
 							},
 						},
 						SharedResource: operatorv1alpha1.SharedResourceSpec{
-							ComponentState: operatorv1alpha1.ComponentState{
-								State: "Disabled",
-							},
+							State: "Disabled",
 						},
 					},
 				}

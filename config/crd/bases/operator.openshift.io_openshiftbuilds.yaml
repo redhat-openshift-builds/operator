@@ -45,7 +45,8 @@ spec:
                 properties:
                   state:
                     default: Disabled
-                    description: State defines the desired state of a component
+                    description: State defines the desired state of SharedResource
+                      component
                     enum:
                     - Enabled
                     - Disabled
@@ -62,7 +63,8 @@ spec:
                     properties:
                       state:
                         default: Disabled
-                        description: State defines the desired state of a component
+                        description: State defines the desired state of the Shipwright
+                          ShipwrightBuild component
                         enum:
                         - Enabled
                         - Disabled
@@ -70,7 +72,12 @@ spec:
                     required:
                     - state
                     type: object
+                required:
+                - build
                 type: object
+            required:
+            - sharedResource
+            - shipwright
             type: object
           status:
             description: OpenShiftBuildStatus defines the observed state of OpenShiftBuild
@@ -147,6 +154,8 @@ spec:
                   type: object
                 type: array
             type: object
+        required:
+        - spec
         type: object
     served: true
     storage: true
