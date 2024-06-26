@@ -7,11 +7,13 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 
 	"github.com/go-logr/logr"
 	"github.com/manifestival/manifestival"
 	tektonoperatorv1alpha1client "github.com/tektoncd/operator/pkg/client/clientset/versioned/typed/operator/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
 	crdclientv1 "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
@@ -25,6 +27,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	"github.com/shipwright-io/operator/api/v1alpha1"
+	"github.com/shipwright-io/operator/pkg/buildstrategy"
 	"github.com/shipwright-io/operator/pkg/certmanager"
 	"github.com/shipwright-io/operator/pkg/common"
 	"github.com/shipwright-io/operator/pkg/tekton"
@@ -53,10 +56,11 @@ type ShipwrightBuildReconciler struct {
 	CRDClient            crdclientv1.ApiextensionsV1Interface
 	TektonOperatorClient tektonoperatorv1alpha1client.OperatorV1alpha1Interface
 
-	Logger         logr.Logger           // decorated logger
-	Scheme         *runtime.Scheme       // runtime scheme
-	Manifest       manifestival.Manifest // release manifests render
-	TektonManifest manifestival.Manifest // Tekton release manifest render
+	Logger                logr.Logger           // decorated logger
+	Scheme                *runtime.Scheme       // runtime scheme
+	Manifest              manifestival.Manifest // release manifests render
+	TektonManifest        manifestival.Manifest // Tekton release manifest render
+	BuildStrategyManifest manifestival.Manifest // Build strategies manifest to render
 }
 
 // setFinalizer append finalizer on the resource, and uses local client to update it immediately.
@@ -80,6 +84,24 @@ func (r *ShipwrightBuildReconciler) unsetFinalizer(ctx context.Context, b *v1alp
 
 	b.SetFinalizers(finalizers)
 	return r.Update(ctx, b, &client.UpdateOptions{})
+}
+
+// deleteObjectsIfPresent deletes all the given objects if they are present in the cluster.
+func deleteObjectsIfPresent(ctx context.Context, k8sClient client.Client, objs []client.Object) error {
+	for _, obj := range objs {
+		err := k8sClient.Get(ctx, types.NamespacedName{Name: obj.GetName(), Namespace: obj.GetNamespace()}, obj)
+		if err != nil {
+			if errors.IsNotFound(err) {
+				return nil
+			}
+			return fmt.Errorf("getting object %s: %v", obj.GetName(), err)
+		}
+		err = k8sClient.Delete(ctx, obj)
+		if err != nil {
+			return fmt.Errorf("deleting object %s: %v", obj.GetName(), err)
+		}
+	}
+	return nil
 }
 
 // Reconcile performs the resource reconciliation steps to deploy or remove Shipwright Build
@@ -168,6 +190,7 @@ func (r *ShipwrightBuildReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	images := common.ToLowerCaseKeys(common.ImagesFromEnv(common.ShipwrightImagePrefix))
 
 	transformerfncs := []manifestival.Transformer{}
+	transformerfncs = append(transformerfncs, common.TruncateCRDFieldTransformer("description", 50))
 	if common.IsOpenShiftPlatform() {
 		transformerfncs = append(transformerfncs, manifestival.InjectNamespace(targetNamespace))
 		transformerfncs = append(transformerfncs, common.DeploymentImages(images))
@@ -195,9 +218,14 @@ func (r *ShipwrightBuildReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 			logger.Info("Finalizers removed, deletion of manifests completed!")
 			return NoRequeue()
 		}
+		logger.Info("Deleting cluster build strategies")
+		if err := r.BuildStrategyManifest.Delete(); err != nil {
+			logger.Error(err, "deleting cluster build strategies")
+			return RequeueWithError(err)
+		}
 
 		logger.Info("Deleting manifests...")
-		if err := manifest.Delete(); err != nil {
+		if err := manifest.Filter(manifestival.NoCRDs).Delete(); err != nil {
 			logger.Error(err, "deleting manifest's resources")
 			return RequeueWithError(err)
 		}
@@ -224,11 +252,46 @@ func (r *ShipwrightBuildReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		err = r.Client.Status().Update(ctx, b)
 		return RequeueWithError(err)
 	}
+
+	// Builds 0.12.0 created a ClusterRole and ClusterRolebinding for the Build API conversion webhook.
+	// These were removed in v0.13.0 - when upgrading, these should be removed if present.
+	err = deleteObjectsIfPresent(ctx, r.Client, []client.Object{
+		&rbacv1.ClusterRoleBinding{ObjectMeta: metav1.ObjectMeta{Name: "shipwright-build-webhook"}},
+		&rbacv1.ClusterRole{ObjectMeta: metav1.ObjectMeta{Name: "shipwright-build-webhook"}},
+	})
+	if err != nil {
+		logger.Error(err, "deleting shipwright-build-webhook ClusterRole and ClusterRoleBinding")
+		return RequeueWithError(err)
+	}
+
 	if err := r.setFinalizer(ctx, b); err != nil {
 		logger.Info(fmt.Sprintf("%#v", b))
 		logger.Error(err, "setting the finalizer")
 		return RequeueWithError(err)
 	}
+
+	requeue, err = buildstrategy.ReconcileBuildStrategies(ctx,
+		r.CRDClient,
+		logger,
+		r.BuildStrategyManifest)
+	if err != nil {
+		logger.Error(err, "reconcile cluster build strategies")
+		return RequeueWithError(err)
+	}
+	if requeue {
+		logger.Info("requeue waiting for cluster build strategy preconditions")
+		apimeta.SetStatusCondition(&b.Status.Conditions, metav1.Condition{
+			Type:    ConditionReady,
+			Status:  metav1.ConditionUnknown,
+			Reason:  "ClusterBuildStrategiesWaiting",
+			Message: "Waiting for cluster build strategies to be deployed",
+		})
+		if updateErr := r.Client.Status().Update(ctx, b); updateErr != nil {
+			return RequeueWithError(err)
+		}
+		return Requeue()
+	}
+
 	apimeta.SetStatusCondition(&b.Status.Conditions, metav1.Condition{
 		Type:    ConditionReady,
 		Status:  metav1.ConditionTrue,
@@ -237,7 +300,7 @@ func (r *ShipwrightBuildReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 	})
 	if err := r.Client.Status().Update(ctx, b); err != nil {
 		logger.Error(err, "updating ShipwrightBuild status")
-		RequeueWithError(err) //nolint:errcheck
+		return RequeueWithError(err)
 	}
 	logger.Info("All done!")
 	return NoRequeue()
@@ -246,8 +309,15 @@ func (r *ShipwrightBuildReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 // setupManifestival instantiate manifestival with local controller attributes, as well as tekton prereqs.
 func (r *ShipwrightBuildReconciler) setupManifestival() error {
 	var err error
-	r.Manifest, err = common.SetupManifestival(r.Client, "release.yaml", r.Logger)
-	return err
+	r.Manifest, err = common.SetupManifestival(r.Client, "release.yaml", false, r.Logger)
+	if err != nil {
+		return err
+	}
+	r.BuildStrategyManifest, err = common.SetupManifestival(r.Client, filepath.Join("samples", "buildstrategy"), true, r.Logger)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // SetupWithManager sets up the controller with the Manager, by instantiating Manifestival and
