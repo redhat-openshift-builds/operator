@@ -214,6 +214,11 @@ ENVTEST ?= $(LOCALBIN)/setup-envtest
 KUSTOMIZE_VERSION ?= v5.3
 CONTROLLER_TOOLS_VERSION ?= v0.14.0
 
+## Upstream Sources
+SHIPWRIGHT_OPERATOR_RELEASE ?= release-v0.13
+SHIPWRIGHT_BUILD_CRD ?= https://raw.githubusercontent.com/shipwright-io/operator/$(SHIPWRIGHT_OPERATOR_RELEASE)/config/crd/bases/operator.shipwright.io_shipwrightbuilds.yaml
+
+
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary. If wrong version is installed, it will be removed before downloading.
 $(KUSTOMIZE): $(LOCALBIN)
@@ -306,3 +311,8 @@ catalog-build: opm ## Build a catalog image.
 .PHONY: catalog-push
 catalog-push: ## Push a catalog image.
 	$(MAKE) docker-push IMG=$(CATALOG_IMG)
+
+# Generate certificate to run webhook locally
+.PHONY: generate-certs
+generate-certs: ## Generates the certs required to run webhooks locally
+	./hack/setup-webhook-cert.sh
