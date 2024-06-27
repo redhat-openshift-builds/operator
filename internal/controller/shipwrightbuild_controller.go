@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"context"
 	manifestivalclient "github.com/manifestival/controller-runtime-client"
 	"github.com/manifestival/manifestival"
 	openshiftv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
@@ -11,7 +12,6 @@ import (
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"os"
-	"path/filepath"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/event"
@@ -45,7 +45,7 @@ func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	}
 
 	// Initialize Manifest
-	manifestPath := filepath.Join("config", "shipwright", "build")
+	manifestPath := common.ShipwrightBuildManifestPath
 	if path, ok := os.LookupEnv(common.ShipwrightManifestPathEnv); ok {
 		manifestPath = path
 	}
@@ -54,6 +54,11 @@ func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		manifestival.UseClient(manifestivalclient.NewClient(mgr.GetClient())),
 	}
 	if r.Manifest, err = manifestival.NewManifest(manifestPath, manifestivalOptions...); err != nil {
+		return err
+	}
+
+	_, err = r.CRDClient.CustomResourceDefinitions().Get(context.TODO(), common.OpenShiftBuildCRDName, metav1.GetOptions{})
+	if err != nil {
 		return err
 	}
 
@@ -68,7 +73,7 @@ func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			UpdateFunc: func(e event.UpdateEvent) bool {
 				return common.IsControlledBy(e.ObjectOld, owner) &&
 					common.IsControlledBy(e.ObjectNew, owner) &&
-					!controllerutil.ContainsFinalizer(e.ObjectNew, openshiftv1alpha1.OpenshiftBuildFinalizerName) &&
+					!controllerutil.ContainsFinalizer(e.ObjectNew, common.OpenShiftBuildFinalizerName) &&
 					!e.ObjectNew.GetDeletionTimestamp().IsZero()
 			},
 			DeleteFunc: func(e event.DeleteEvent) bool {

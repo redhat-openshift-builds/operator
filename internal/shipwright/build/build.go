@@ -2,7 +2,7 @@ package build
 
 import (
 	"context"
-	openshiftv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
+	"github.com/redhat-openshift-builds/operator/internal/common"
 	shipwrightv1alpha1 "github.com/shipwright-io/operator/api/v1alpha1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -55,10 +55,10 @@ func (sb *ShipwrightBuild) Create(ctx context.Context, owner client.Object) erro
 	object := &shipwrightv1alpha1.ShipwrightBuild{
 		ObjectMeta: metav1.ObjectMeta{
 			GenerateName: owner.GetName() + "-",
-			Finalizers:   []string{openshiftv1alpha1.OpenshiftBuildFinalizerName},
+			Finalizers:   []string{common.OpenShiftBuildFinalizerName},
 		},
 		Spec: shipwrightv1alpha1.ShipwrightBuildSpec{
-			TargetNamespace: openshiftv1alpha1.OpenshiftBuildNamespaceName,
+			TargetNamespace: common.OpenShiftBuildNamespaceName,
 		},
 	}
 	if err := ctrl.SetControllerReference(owner, object, sb.Client.Scheme()); err != nil {
@@ -84,9 +84,9 @@ func (sb *ShipwrightBuild) CreateOrUpdate(ctx context.Context, owner client.Obje
 
 	return ctrl.CreateOrUpdate(ctx, sb.Client, object, func() error {
 		object.Spec = shipwrightv1alpha1.ShipwrightBuildSpec{
-			TargetNamespace: openshiftv1alpha1.OpenshiftBuildNamespaceName,
+			TargetNamespace: common.OpenShiftBuildNamespaceName,
 		}
-		controllerutil.AddFinalizer(object, openshiftv1alpha1.OpenshiftBuildFinalizerName)
+		controllerutil.AddFinalizer(object, common.OpenShiftBuildFinalizerName)
 		if err := ctrl.SetControllerReference(owner, object, sb.Client.Scheme()); err != nil {
 			return err
 		}
@@ -101,7 +101,7 @@ func (sb *ShipwrightBuild) Delete(ctx context.Context, owner client.Object) erro
 		return err
 	}
 
-	controllerutil.RemoveFinalizer(object, openshiftv1alpha1.OpenshiftBuildFinalizerName)
+	controllerutil.RemoveFinalizer(object, common.OpenShiftBuildFinalizerName)
 	if err := sb.Client.Update(ctx, object); err != nil {
 		return err
 	}

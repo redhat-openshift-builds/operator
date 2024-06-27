@@ -17,21 +17,17 @@ limitations under the License.
 package main
 
 import (
-	"context"
 	"crypto/tls"
 	"flag"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"os"
-	"sigs.k8s.io/controller-runtime/pkg/client"
-	"strings"
-
-	openshiftv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
 	shipwrightv1alpha1 "github.com/shipwright-io/operator/api/v1alpha1"
+	"os"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
+	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
+	"github.com/redhat-openshift-builds/operator/internal/controller"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -39,10 +35,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
-
-	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
-	"github.com/redhat-openshift-builds/operator/internal/controller"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -102,10 +94,6 @@ func main() {
 		tlsOpts = append(tlsOpts, disableHTTP2)
 	}
 
-	webhookServer := webhook.NewServer(webhook.Options{
-		TLSOpts: tlsOpts,
-	})
-
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme: scheme,
 		Metrics: metricsserver.Options{
@@ -113,7 +101,6 @@ func main() {
 			SecureServing: secureMetrics,
 			TLSOpts:       tlsOpts,
 		},
-		WebhookServer:          webhookServer,
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
 		LeaderElectionID:       "02e52450.openshift.io",
@@ -164,42 +151,4 @@ func main() {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}
-}
-
-func Create(client client.Client) error {
-	openshiftBuild := &openshiftv1alpha1.OpenShiftBuild{
-		ObjectMeta: metav1.ObjectMeta{
-			Finalizers: []string{openshiftv1alpha1.OpenshiftBuildFinalizerName},
-		},
-		Spec: openshiftv1alpha1.OpenShiftBuildSpec{
-			Shipwright: openshiftv1alpha1.ShipwrightSpec{
-				Build: openshiftv1alpha1.ShipwrightBuildSpec{
-					State: openshiftv1alpha1.Disabled,
-				},
-			},
-			SharedResource: openshiftv1alpha1.SharedResourceSpec{
-				State: openshiftv1alpha1.Disabled,
-			},
-		},
-	}
-
-	openshiftBuildList := &openshiftv1alpha1.OpenShiftBuildList{}
-	if err := client.List(context.TODO(), openshiftBuildList); err != nil {
-		return err
-	}
-
-	if len(openshiftBuildList.Items) == 0 {
-		gvk, err := client.GroupVersionKindFor(openshiftBuild)
-		if err != nil {
-			return err
-		}
-		openshiftBuild.SetGenerateName(strings.ToLower(gvk.Kind) + "-")
-		if err := client.Create(context.TODO(), openshiftBuild); err != nil {
-			return err
-		}
-	} else {
-		openshiftBuild = &openshiftBuildList.Items[0]
-	}
-
-	return nil
 }

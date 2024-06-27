@@ -24,11 +24,6 @@ import (
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
 const (
-	OpenshiftBuildFinalizerName = "operator.openshift.io/openshiftbuilds"
-	OpenshiftBuildNamespaceName = "openshift-build"
-)
-
-const (
 	// ConditionReady object is providing service.
 	ConditionReady = "Ready"
 )
@@ -45,21 +40,21 @@ const (
 	Disabled State = "Disabled"
 )
 
-// ShipwrightBuildSpec defines the desired state of Shipwright Builds
-type ShipwrightBuildSpec struct {
+// ShipwrightBuild defines the desired state of Shipwright Builds
+type ShipwrightBuild struct {
 	// State defines the desired state of the Shipwright ShipwrightBuild component
 	// +kubebuilder:default="Disabled"
 	State `json:"state"`
 }
 
-// ShipwrightSpec defines the desired state of Shipwright components
-type ShipwrightSpec struct {
-	// Build defines the desired state of Shipwright Build component
-	Build ShipwrightBuildSpec `json:"build"`
+// Shipwright defines the desired state of Shipwright components
+type Shipwright struct {
+	// Build defines the desired state of a Shipwright Build component
+	Build ShipwrightBuild `json:"build"`
 }
 
-// SharedResourceSpec defines the desired state of Shared Resources CSI Driver
-type SharedResourceSpec struct {
+// SharedResource defines the desired state of Shared Resources CSI Driver
+type SharedResource struct {
 	// State defines the desired state of SharedResource component
 	// +kubebuilder:default="Disabled"
 	State `json:"state"`
@@ -68,10 +63,10 @@ type SharedResourceSpec struct {
 // OpenShiftBuildSpec defines the desired state of OpenShiftBuild
 type OpenShiftBuildSpec struct {
 	// Shipwright defines the desired state of Shipwright components
-	Shipwright ShipwrightSpec `json:"shipwright"`
+	Shipwright Shipwright `json:"shipwright"`
 
 	// SharedResource defines the desired state of SharedResource component
-	SharedResource SharedResourceSpec `json:"sharedResource"`
+	SharedResource SharedResource `json:"sharedResource"`
 }
 
 // OpenShiftBuildStatus defines the observed state of OpenShiftBuild

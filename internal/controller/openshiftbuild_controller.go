@@ -20,6 +20,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/redhat-openshift-builds/operator/internal/common"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -56,8 +58,8 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	openShiftBuild := &openshiftv1alpha1.OpenShiftBuild{}
 	if err := r.Client.Get(ctx, req.NamespacedName, openShiftBuild); err != nil {
 		if apierrors.IsNotFound(err) {
-			logger.Info("Resource not found")
-			return ctrl.Result{}, nil
+			//logger.Info("Resource not found")
+			return ctrl.Result{Requeue: true}, r.CreateOpenShiftBuild(ctx)
 		}
 		logger.Error(err, "Failed to get resource")
 		return ctrl.Result{}, err
@@ -77,7 +79,7 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 
 	// Add finalizer
-	if ok := controllerutil.AddFinalizer(openShiftBuild, openshiftv1alpha1.OpenshiftBuildFinalizerName); ok {
+	if ok := controllerutil.AddFinalizer(openShiftBuild, common.OpenShiftBuildFinalizerName); ok {
 		logger.Info("Adding finalizer")
 		return ctrl.Result{Requeue: true}, r.Client.Update(ctx, openShiftBuild)
 	}
@@ -103,7 +105,7 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 			return ctrl.Result{Requeue: true}, r.Client.Update(ctx, openShiftBuild)
 		}
 		logger.Info("Removing finalizer")
-		controllerutil.RemoveFinalizer(openShiftBuild, openshiftv1alpha1.OpenshiftBuildFinalizerName)
+		controllerutil.RemoveFinalizer(openShiftBuild, common.OpenShiftBuildFinalizerName)
 		return ctrl.Result{Requeue: true}, r.Client.Update(ctx, openShiftBuild)
 	}
 
@@ -117,6 +119,26 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	})
 
 	return ctrl.Result{}, r.Client.Status().Update(ctx, openShiftBuild)
+}
+
+func (r *OpenShiftBuildReconciler) CreateOpenShiftBuild(ctx context.Context) error {
+	openShiftBuild := &openshiftv1alpha1.OpenShiftBuild{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:       common.OpenShiftBuildResourceName,
+			Finalizers: []string{common.OpenShiftBuildFinalizerName},
+		},
+		Spec: openshiftv1alpha1.OpenShiftBuildSpec{
+			Shipwright: openshiftv1alpha1.Shipwright{
+				Build: openshiftv1alpha1.ShipwrightBuild{
+					State: openshiftv1alpha1.Disabled,
+				},
+			},
+			SharedResource: openshiftv1alpha1.SharedResource{
+				State: openshiftv1alpha1.Disabled,
+			},
+		},
+	}
+	return r.Client.Create(ctx, openShiftBuild)
 }
 
 // ReconcileShipwrightBuild creates or deletes ShipwrightBuild object
@@ -154,6 +176,36 @@ func (r *OpenShiftBuildReconciler) ReconcileShipwrightBuild(ctx context.Context,
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *OpenShiftBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	// Check if OpenShiftBuild CRD is present
+	CRDClient, err := apiextensionsv1.NewForConfig(mgr.GetConfig())
+	if err != nil {
+		return err
+	}
+	_, err = CRDClient.CustomResourceDefinitions().Get(context.TODO(), common.OpenShiftBuildCRDName, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+
+	// Replace the client with a non-cached client to create resource before starting manager
+	r.Client, err = client.New(mgr.GetConfig(), client.Options{Scheme: r.Scheme})
+	if err != nil {
+		return err
+	}
+
+	// Create OpenShitBuild CR if not present
+	list := openshiftv1alpha1.OpenShiftBuildList{}
+	if err := r.Client.List(context.TODO(), &list); err != nil {
+		return err
+	}
+	if len(list.Items) == 0 {
+		if err := r.CreateOpenShiftBuild(context.TODO()); err != nil {
+			return err
+		}
+	}
+
+	// Restore the client with cache client from manager
+	r.Client = mgr.GetClient()
+
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&openshiftv1alpha1.OpenShiftBuild{}).
 		Owns(&shipwrightv1alpha1.ShipwrightBuild{}).

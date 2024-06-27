@@ -58,7 +58,7 @@ spec:
                 description: Shipwright defines the desired state of Shipwright components
                 properties:
                   build:
-                    description: Build defines the desired state of Shipwright Build
+                    description: Build defines the desired state of a Shipwright Build
                       component
                     properties:
                       state:
