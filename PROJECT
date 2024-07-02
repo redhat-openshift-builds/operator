@@ -17,6 +17,14 @@ resources:
   domain: openshift.io
   group: operator
   kind: OpenShiftBuild
-  path: github.com/redhat-openshift-builds/operator/api/v1alpha1
+  path: github.com/redhat-openshift-builds/operator/pkg/apis/v1alpha1
+  version: v1alpha1
+- api:
+    crdVersion: v1
+  controller: true
+  domain: openshift.io
+  group: operator
+  kind: SharedResource
+  path: github.com/redhat-openshift-builds/operator/pkg/apis/v1alpha1
   version: v1alpha1
 version: "3"

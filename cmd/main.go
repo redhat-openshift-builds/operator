@@ -34,8 +34,8 @@ import (
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 	"sigs.k8s.io/controller-runtime/pkg/webhook"
 
-	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
 	"github.com/redhat-openshift-builds/operator/internal/controller"
+	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/pkg/apis/v1alpha1"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -122,6 +122,7 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Run OpenshiftBuild controller
 	if err = (&controller.OpenShiftBuildReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
@@ -129,6 +130,16 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "OpenShiftBuild")
 		os.Exit(1)
 	}
+
+	// Run SharedResource controller
+	if err = (&controller.SharedResourceReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "SharedResource")
+		os.Exit(1)
+	}
+
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {

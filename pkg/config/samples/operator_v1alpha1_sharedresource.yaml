@@ -1,0 +1,12 @@
+apiVersion: operator.openshift.io/v1alpha1
+kind: SharedResource
+metadata:
+  labels:
+    app.kubernetes.io/name: sharedresource
+    app.kubernetes.io/instance: sharedresource-sample
+    app.kubernetes.io/part-of: operator
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: operator
+  name: sharedresource-sample
+spec:
+  # TODO(user): Add fields here

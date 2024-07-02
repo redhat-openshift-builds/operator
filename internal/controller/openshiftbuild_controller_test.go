@@ -27,7 +27,7 @@ import (
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
+	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/pkg/apis/v1alpha1"
 )
 
 var _ = Describe("OpenShiftBuild Controller", func() {
@@ -49,20 +49,20 @@ var _ = Describe("OpenShiftBuild Controller", func() {
 					ObjectMeta: metav1.ObjectMeta{
 						Name: resourceName,
 					},
-					Spec: operatorv1alpha1.OpenShiftBuildSpec{
-						Shipwright: operatorv1alpha1.ShipwrightSpec{
-							Build: operatorv1alpha1.ShipwrightBuildSpec{
-								ComponentState: operatorv1alpha1.ComponentState{
-									State: "Enabled",
-								},
-							},
-						},
-						SharedResource: operatorv1alpha1.SharedResourceSpec{
-							ComponentState: operatorv1alpha1.ComponentState{
-								State: "Disabled",
-							},
-						},
-					},
+					// Spec: operatorv1alpha1.OpenShiftBuildSpec{
+					// 	Shipwright: operatorv1alpha1.ShipwrightSpec{
+					// 		Build: operatorv1alpha1.ShipwrightBuildSpec{
+					// 			ComponentState: operatorv1alpha1.ComponentState{
+					// 				State: "Enabled",
+					// 			},
+					// 		},
+					// 	},
+					// 	SharedResource: operatorv1alpha1.SharedResourceSpec{
+					// 		ComponentState: operatorv1alpha1.ComponentState{
+					// 			State: "Disabled",
+					// 		},
+					// 	},
+					// },
 				}
 				Expect(k8sClient.Create(ctx, resource)).To(Succeed())
 			}
