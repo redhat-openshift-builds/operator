@@ -25,6 +25,10 @@ spec:
     value: quay.io/redhat-user-workloads/rh-ee-asatyam-tenant/builds-for-openshift-operator/builds-for-openshift-operator:{{revision}}
   - name: dockerfile
     value: https://github.com/ayushsatyam146/builds-for-openshift-operator/blob/main/Dockerfile
+  - name: output-bundle-image
+    value: quay.io/redhat-user-workloads/rh-ee-asatyam-tenant/builds-for-openshift-operator-bundle/builds-for-openshift-operator-bundle:{{revision}}
+  - name: bundle-dockerfile
+    value: https://github.com/ayushsatyam146/builds-for-openshift-operator/blob/main/bundle.Dockerfile
   pipelineSpec:
     finally:
     - name: show-sbom
@@ -424,6 +428,42 @@ spec:
         - name: kind
           value: task
         resolver: bundles
+    - name: build-bundle-container
+      params:
+      - name: path-context
+        value: $(params.path-context)
+      - name: dockerfile
+        value: $(params.bundle-dockerfile)
+      - name: output-image
+        value: $(params.output-bundle-image)
+      - name: rebuild
+        value: $(params.rebuild)
+      - name: skip-checks
+        value: $(params.skip-checks)
+      - name: hermetic
+        value: $(params.hermetic)
+      - name: prefetch-input
+        value: $(params.prefetch-input)
+      - name: build-source-image
+        value: $(params.build-source-image)
+      - name: build-args
+        value: $(params.build-args)
+      - name: build-args-file
+        value: $(params.build-args-file)
+      runAfter:
+      - build-container
+      taskRef:
+        params:
+        - name: name
+          value: buildah
+        - name: bundle
+          value: quay.io/rh-ee-asatyam/tekton-catalog/task-buildah-op-bundle:0.1
+        - name: kind
+          value: task
+        resolver: bundles
+      workspaces:
+      - name: source
+        workspace: workspace
     workspaces:
     - name: workspace
     - name: git-auth
