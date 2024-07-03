@@ -44,8 +44,9 @@ spec:
                   component
                 properties:
                   state:
-                    default: Disabled
-                    description: State defines the desired state of a component
+                    default: Enabled
+                    description: State defines the desired state of SharedResource
+                      component
                     enum:
                     - Enabled
                     - Disabled
@@ -57,12 +58,13 @@ spec:
                 description: Shipwright defines the desired state of Shipwright components
                 properties:
                   build:
-                    description: Build defines the desired state of Shipwright Build
+                    description: Build defines the desired state of a Shipwright Build
                       component
                     properties:
                       state:
-                        default: Disabled
-                        description: State defines the desired state of a component
+                        default: Enabled
+                        description: State defines the desired state of the Shipwright
+                          ShipwrightBuild component
                         enum:
                         - Enabled
                         - Disabled
@@ -147,6 +149,8 @@ spec:
                   type: object
                 type: array
             type: object
+        required:
+        - spec
         type: object
     served: true
     storage: true

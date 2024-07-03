@@ -8,3 +8,5 @@ spec:
   shipwright:
     build:
       state: Enabled
+  sharedResource:
+    state: Enabled

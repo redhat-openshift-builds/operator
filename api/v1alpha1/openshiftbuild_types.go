@@ -23,54 +23,61 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
+const (
+	// ConditionReady object is providing service.
+	ConditionReady = "Ready"
+)
+
 // State defines the desired state of the component
 // +kubebuilder:validation:Enum="Enabled";"Disabled"
 type State string
 
 const (
-	// Enabled installs the component
+	// Enabled will install the component
 	Enabled State = "Enabled"
 
-	// Disabled removes the component
+	// Disabled will remove the component
 	Disabled State = "Disabled"
 )
 
-// ComponentState defines the desired state of the component
-type ComponentState struct {
-	// State defines the desired state of a component
-	// +kubebuilder:default="Disabled"
-	State State `json:"state"`
+// ShipwrightBuild defines the desired state of Shipwright Builds
+type ShipwrightBuild struct {
+	// State defines the desired state of the Shipwright ShipwrightBuild component
+	// +kubebuilder:default="Enabled"
+	State `json:"state"`
 }
 
-// ShipwrightBuildSpec defines the desired state of Shipwright Builds
-type ShipwrightBuildSpec struct {
-	// ComponentState defines the desired state of the Shipwright Build component
-	ComponentState `json:",inline"`
+// Shipwright defines the desired state of Shipwright components
+type Shipwright struct {
+	// Build defines the desired state of a Shipwright Build component
+	// +kubebuilder:validation:Optional
+	// +optional
+	Build *ShipwrightBuild `json:"build,omitempty"`
 }
 
-// ShipwrightSpec defines the desired state of Shipwright components
-type ShipwrightSpec struct {
-	// Build defines the desired state of Shipwright Build component
-	Build ShipwrightBuildSpec `json:"build,omitempty"`
-}
-
-// SharedResourceSpec defines the desired state of Shared Resources CSI Driver
-type SharedResourceSpec struct {
-	// ComponentState defines the desired state of SharedResource component
-	ComponentState `json:",inline"`
+// SharedResource defines the desired state of Shared Resources CSI Driver
+type SharedResource struct {
+	// State defines the desired state of SharedResource component
+	// +kubebuilder:default="Enabled"
+	State `json:"state"`
 }
 
 // OpenShiftBuildSpec defines the desired state of OpenShiftBuild
 type OpenShiftBuildSpec struct {
 	// Shipwright defines the desired state of Shipwright components
-	Shipwright ShipwrightSpec `json:"shipwright,omitempty"`
+	// +kubebuilder:validation:Optional
+	// +optional
+	Shipwright *Shipwright `json:"shipwright,omitempty"`
 
 	// SharedResource defines the desired state of SharedResource component
-	SharedResource SharedResourceSpec `json:"sharedResource,omitempty"`
+	// +kubebuilder:validation:Optional
+	// +optional
+	SharedResource *SharedResource `json:"sharedResource,omitempty"`
 }
 
 // OpenShiftBuildStatus defines the observed state of OpenShiftBuild
 type OpenShiftBuildStatus struct {
+
 	// Conditions holds the latest available observations of a resource's current state.
 	Conditions []metav1.Condition `json:"conditions,omitempty"`
 }
@@ -84,7 +91,7 @@ type OpenShiftBuild struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   OpenShiftBuildSpec   `json:"spec,omitempty"`
+	Spec   OpenShiftBuildSpec   `json:"spec"`
 	Status OpenShiftBuildStatus `json:"status,omitempty"`
 }
 
@@ -104,7 +111,7 @@ func init() {
 // IsReady returns true the Ready condition status is True
 func (status *OpenShiftBuildStatus) IsReady() bool {
 	for _, condition := range status.Conditions {
-		if condition.Type == "Ready" && condition.Status == metav1.ConditionTrue {
+		if condition.Type == ConditionReady && condition.Status == metav1.ConditionTrue {
 			return true
 		}
 	}
