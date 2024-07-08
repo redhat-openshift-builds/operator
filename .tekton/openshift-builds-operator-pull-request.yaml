@@ -7,8 +7,14 @@ metadata:
     build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/on-cel-expression: event == "pull_request" && target_branch
-      == "builds-1.1"
+    pipelinesascode.tekton.dev/task: "[.tekton/openshift-builds-operator-unit-test.yaml]"
+    pipelinesascode.tekton.dev/on-cel-expression: |
+      event == "pull_request" &&
+      target_branch == "main" &&
+      files.all.exists(x, x.matches('api/|internal/|test/')) ||      
+      files.all.exists(x, x.matches('main.go|go.mod|go.sum|Dockerfile')) ||     
+      files.all.exists(x, x.matches('.tekton/openshift-builds-operator-unit-test.yaml')) ||     
+      files.all.exists(x, x.matches('.tekton/openshift-builds-operator-pull-request.yaml'))
   creationTimestamp: null
   labels:
     appstudio.openshift.io/application: openshift-builds
@@ -122,6 +128,10 @@ spec:
       description: Path to a file with build arguments for buildah, see https://www.mankier.com/1/buildah-build#--build-arg-file
       name: build-args-file
       type: string
+    - default: "false"
+      description: Skip unit testing
+      name: skip-unit-test
+      type: string
     results:
     - description: ""
       name: IMAGE_URL
@@ -208,6 +218,20 @@ spec:
         workspace: workspace
       - name: git-basic-auth
         workspace: git-auth
+    - name: unit-test
+      runAfter:
+      - prefetch-dependencies
+      taskRef:
+        name: unit-test
+      when:
+      - input: $(params.skip-unit-test)
+        operator: in
+        values:
+          - "false"
+      workspaces:
+      - name: source
+        subPath: source
+        workspace: workspace
     - name: build-container
       params:
       - name: IMAGE
@@ -230,7 +254,7 @@ spec:
       - name: BUILD_ARGS_FILE
         value: $(params.build-args-file)
       runAfter:
-      - prefetch-dependencies
+      - unit-test
       taskRef:
         params:
         - name: name
