@@ -18,8 +18,6 @@ package controller
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
@@ -32,16 +30,16 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
+	openshiftv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
 	"github.com/redhat-openshift-builds/operator/internal/common"
-	"github.com/redhat-openshift-builds/operator/internal/sharedresource"
-	openshiftv1alpha1 "github.com/redhat-openshift-builds/operator/pkg/apis/v1alpha1"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 // OpenShiftBuildReconciler reconciles a OpenShiftBuild object
 type OpenShiftBuildReconciler struct {
-	Client client.Client
-	Scheme *apiruntime.Scheme
+	Client                   client.Client
+	Scheme                   *apiruntime.Scheme
+	SharedResourceReconciler *SharedResourceReconciler
 }
 
 //+kubebuilder:rbac:groups=operator.openshift.io,resources=openshiftbuilds,verbs=get;list;watch;create;update;patch;delete
@@ -85,16 +83,20 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 
 	// Reconcile Shared Resources
-	if err := r.ReconcileSharedResource(ctx, openShiftBuild); err != nil {
-		logger.Error(err, "Failed to reconcile SharedResource")
-		apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
-			Type:    openshiftv1alpha1.ConditionReady,
-			Status:  metav1.ConditionFalse,
-			Reason:  "Failed",
-			Message: fmt.Sprintf("Failed to reconcile OpenShiftBuild: %v", err),
-		})
-		return ctrl.Result{}, r.Client.Status().Update(ctx, openShiftBuild)
+	result, err := r.SharedResourceReconciler.Reconcile(ctx, req)
+	if err != nil {
+		return ctrl.Result{}, err
 	}
+	// if err := r.ReconcileSharedResource(ctx, openShiftBuild); err != nil {
+	// 	logger.Error(err, "Failed to reconcile SharedResource")
+	// 	apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
+	// 		Type:    openshiftv1alpha1.ConditionReady,
+	// 		Status:  metav1.ConditionFalse,
+	// 		Reason:  "Failed",
+	// 		Message: fmt.Sprintf("Failed to reconcile OpenShiftBuild: %v", err),
+	// 	})
+	// 	return ctrl.Result{}, r.Client.Status().Update(ctx, openShiftBuild)
+	// }
 
 	// Perform cleanup
 	if !openShiftBuild.GetDeletionTimestamp().IsZero() {
@@ -118,7 +120,7 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		Message: "Successfully reconciled OpenShiftBuild",
 	})
 
-	return ctrl.Result{}, r.Client.Status().Update(ctx, openShiftBuild)
+	return result, r.Client.Status().Update(ctx, openShiftBuild)
 }
 
 func (r *OpenShiftBuildReconciler) CreateOpenShiftBuild(ctx context.Context) error {
@@ -128,7 +130,7 @@ func (r *OpenShiftBuildReconciler) CreateOpenShiftBuild(ctx context.Context) err
 			Finalizers: []string{common.OpenShiftBuildFinalizerName},
 		},
 		Spec: openshiftv1alpha1.OpenShiftBuildSpec{
-			SharedResource: &openshiftv1alpha1.SharedResourceState{
+			SharedResource: &openshiftv1alpha1.SharedResource{
 				State: openshiftv1alpha1.Disabled,
 			},
 		},
@@ -137,32 +139,32 @@ func (r *OpenShiftBuildReconciler) CreateOpenShiftBuild(ctx context.Context) err
 }
 
 // ReconcileSharedResource creates or deletes SharedResource object
-func (r *OpenShiftBuildReconciler) ReconcileSharedResource(ctx context.Context, owner *openshiftv1alpha1.OpenShiftBuild) error {
-	logger := log.FromContext(ctx).WithValues("name", owner.Name)
+// func (r *OpenShiftBuildReconciler) ReconcileSharedResource(ctx context.Context, owner *openshiftv1alpha1.OpenShiftBuild) error {
+// 	logger := log.FromContext(ctx).WithValues("name", owner.Name)
 
-	sr := sharedresource.New(r.Client)
+// 	result, err :=
 
-	switch owner.Spec.SharedResource.State {
-	case openshiftv1alpha1.Enabled:
-		result, err := sr.CreateOrUpdate(ctx, owner)
-		if err != nil {
-			return err
-		}
-		switch result {
-		case controllerutil.OperationResultCreated:
-			logger.Info("Creating SharedResources")
-		case controllerutil.OperationResultUpdated:
-			logger.Info("Updating SharedResources")
-		}
-	case openshiftv1alpha1.Disabled:
-		// At present, we do not support deletion of existing SharedResource objects once enabled.
-		logger.Info("SharedResouces is Disabled, Nothing to do")
-	default:
-		return errors.New("unknown component state")
-	}
+// switch owner.Spec.SharedResource.State {
+// case openshiftv1alpha1.Enabled:
+// 	result, err := sr.
+// 	if err != nil {
+// 		return err
+// 	}
+// 	switch result {
+// 	case controllerutil.OperationResultCreated:
+// 		logger.Info("Creating SharedResource Objects")
+// 	case controllerutil.OperationResultUpdated:
+// 		logger.Info("Updating SharedResource Objects")
+// 	}
+// // case openshiftv1alpha1.Disabled:
+// // 	// At present, we do not support deletion of existing SharedResource objects once enabled.
+// // 	logger.Info("SharedResouces is Disabled, Nothing to do")
+// default:
+// 	return errors.New("unknown component state")
+// }
 
-	return nil
-}
+// 	return nil
+// }
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *OpenShiftBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -198,7 +200,7 @@ func (r *OpenShiftBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&openshiftv1alpha1.OpenShiftBuild{}).
-		Owns(&openshiftv1alpha1.SharedResource{}).
+		// Owns(&openshiftv1alpha1.SharedResource{}).
 		WithEventFilter(predicate.Funcs{
 			UpdateFunc: func(e event.UpdateEvent) bool {
 				return e.ObjectOld.GetGeneration() != e.ObjectNew.GetGeneration()

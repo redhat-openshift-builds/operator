@@ -19,24 +19,31 @@ package controller
 import (
 	"context"
 
-	"k8s.io/apimachinery/pkg/api/errors"
-	apimeta "k8s.io/apimachinery/pkg/api/meta"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 
+	"github.com/go-logr/logr"
+	"github.com/manifestival/manifestival"
+	openshiftv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
+	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
 	"github.com/redhat-openshift-builds/operator/internal/common"
-	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/pkg/apis/v1alpha1"
+	"github.com/redhat-openshift-builds/operator/internal/sharedresource"
 )
 
 // SharedResourceReconciler reconciles a SharedResource object
 type SharedResourceReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
+	Scheme   *runtime.Scheme
+	Manifest manifestival.Manifest
+	Logger   logr.Logger
 }
+
+// func New(client client.Client) *SharedResourceReconciler {
+// 	return &SharedResourceReconciler{
+// 		Client: client,
+// 	}
+// }
 
 //+kubebuilder:rbac:groups=operator.openshift.io,resources=sharedresources,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=operator.openshift.io,resources=sharedresources/status,verbs=get;update;patch
@@ -52,56 +59,60 @@ type SharedResourceReconciler struct {
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.16.3/pkg/reconcile
 func (r *SharedResourceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	// _ = log.FromContext(ctx)
-	logger := log.FromContext(ctx).WithValues("name", req.Name)
-	logger.Info("Starting reconciliation")
 
-	// retrieve the SharedResource instance requested for reconcile
-	sr := &operatorv1alpha1.SharedResource{}
-	if err := r.Client.Get(ctx, req.NamespacedName, sr); err != nil {
-		if errors.IsNotFound(err) {
-			logger.Info("Resource not found!")
-			return ctrl.Result{Requeue: true}, r.CreateSharedResource(ctx)
-		}
-		logger.Error(err, "Failed to get resource")
-		return ctrl.Result{}, err
+	logger := r.Logger.WithValues("name", req.Name)
+	logger.Info("Starting resource reconciliation...")
+
+	// Applying transformers
+	transformerfuncs := []manifestival.Transformer{}
+	transformerfuncs = append(transformerfuncs, sharedresource.InjectFinalizer())
+	transformerfuncs = append(transformerfuncs, manifestival.InjectNamespace(common.OpenShiftBuildNamespaceName))
+	transformerfuncs = append(transformerfuncs, manifestival.InjectOwner(&openshiftv1alpha1.OpenShiftBuild{}))
+
+	manifest, err := r.Manifest.Transform(transformerfuncs...)
+	if err != nil {
+		logger.Error(err, "transforming manifest")
+		return sharedresource.RequeueWithError(err)
 	}
 
-	// Initialize status
-	if sr.Status.Conditions == nil {
-		logger.Info("Initializing status")
-		sr.Status.Conditions = []metav1.Condition{}
-		apimeta.SetStatusCondition(&sr.Status.Conditions, metav1.Condition{
-			Type:    operatorv1alpha1.ConditionReady,
-			Status:  metav1.ConditionUnknown,
-			Reason:  "Initializing",
-			Message: "Initializing Shared Resource Object",
-		})
-		return ctrl.Result{Requeue: true}, r.Client.Status().Update(ctx, sr)
+	// TODO: Add deletion logic pertaining to the scenario when operator is being uninstalled.
+	// i.e. if any CSI SharedResource object exists, the CRs shouldn't be deleted.
+
+	// Rolling out the resources described on the manifests
+	logger.Info("Applying manifests...")
+	if err := manifest.Apply(); err != nil {
+		logger.Error(err, "applying manifest")
+		return sharedresource.RequeueWithError(err)
 	}
 
-	// Add finalizer
-	if ok := controllerutil.AddFinalizer(sr, common.OpenShiftBuildFinalizerName); ok {
-		logger.Info("Adding finalizer")
-		return ctrl.Result{Requeue: true}, r.Client.Update(ctx, sr)
-	}
+	return sharedresource.NoRequeue()
 
-	// Perform cleanup
-	if !sr.GetDeletionTimestamp().IsZero() {
-		logger.Info("Resource is marked for deletion")
-		return ctrl.Result{Requeue: true}, r.Client.Delete(ctx, sr)
-	}
+	// // _ = log.FromContext(ctx)
+	// logger := log.FromContext(ctx).WithValues("name", req.Name)
+	// logger.Info("Starting resource reconciliation")
 
-	// Update status
-	logger.Info("Updating status")
-	apimeta.SetStatusCondition(&sr.Status.Conditions, metav1.Condition{
-		Type:    operatorv1alpha1.ConditionReady,
-		Status:  metav1.ConditionTrue,
-		Reason:  "Success",
-		Message: "Successfully reconciled SharedResource",
-	})
+	// // Add finalizer
+	// if ok := controllerutil.AddFinalizer(sr, common.OpenShiftBuildFinalizerName); ok {
+	// 	logger.Info("Adding finalizer")
+	// 	return ctrl.Result{Requeue: true}, r.Client.Update(ctx, sr)
+	// }
 
-	return ctrl.Result{}, nil
+	// // Perform cleanup
+	// if !sr.GetDeletionTimestamp().IsZero() {
+	// 	logger.Info("Resource is marked for deletion")
+	// 	return ctrl.Result{Requeue: true}, r.Client.Delete(ctx, sr)
+	// }
+
+	// // Update status
+	// logger.Info("Updating status")
+	// apimeta.SetStatusCondition(&sr.Status.Conditions, metav1.Condition{
+	// 	Type:    operatorv1alpha1.ConditionReady,
+	// 	Status:  metav1.ConditionTrue,
+	// 	Reason:  "Success",
+	// 	Message: "Successfully reconciled SharedResource",
+	// })
+
+	// return ctrl.Result{}, nil
 }
 
 func (r *SharedResourceReconciler) CreateSharedResource(ctx context.Context) error {

@@ -13,6 +13,7 @@ const (
 	OpenShiftBuildCRDName       = "openshiftbuilds.operator.openshift.io"
 	OpenShiftBuildResourceName  = "openshiftbuild"
 	OpenShiftBuildNamespaceName = "openshift-builds"
+	koDataPathEnv               = "KO_DATA_PATH"
 )
 
 var (
