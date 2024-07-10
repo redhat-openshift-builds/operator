@@ -29,7 +29,7 @@ import (
 
 const namespace = "operator-system"
 
-var _ = Describe("controller", Ordered, func() {
+var _ = Describe("controller", Label("e2e"), Ordered, func() {
 	BeforeAll(func() {
 		By("installing prometheus operator")
 		Expect(utils.InstallPrometheusOperator()).To(Succeed())

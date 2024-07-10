@@ -46,19 +46,31 @@ func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	}
 
 	// Initialize Manifest
-	manifestPath := common.ShipwrightBuildManifestPath
-	if path, ok := os.LookupEnv(common.ShipwrightManifestPathEnv); ok {
-		manifestPath = path
-	}
 	manifestivalOptions := []manifestival.Option{
 		manifestival.UseLogger(r.Logger),
 		manifestival.UseClient(manifestivalclient.NewClient(mgr.GetClient())),
+	}
+
+	// Shipwright Build release manifests
+	manifestPath := common.ShipwrightBuildManifestPath
+	if path, ok := os.LookupEnv(common.ShipwrightBuildManifestPathEnv); ok {
+		manifestPath = path
 	}
 	if r.Manifest, err = manifestival.NewManifest(manifestPath, manifestivalOptions...); err != nil {
 		return err
 	}
 
-	_, err = r.CRDClient.CustomResourceDefinitions().Get(context.TODO(), common.OpenShiftBuildCRDName, metav1.GetOptions{})
+	// Shipwright Build strategies manifests
+	manifestPath = common.ShipwrightBuildStrategyManifestPath
+	if path, ok := os.LookupEnv(common.ShipwrightBuildStrategyManifestPathEnv); ok {
+		manifestPath = path
+	}
+	if r.BuildStrategyManifest, err = manifestival.NewManifest(manifestPath, manifestivalOptions...); err != nil {
+		return err
+	}
+
+	// Check if Shipwright Build CRD exists
+	_, err = r.CRDClient.CustomResourceDefinitions().Get(context.TODO(), common.ShipwrightBuildCRDName, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}

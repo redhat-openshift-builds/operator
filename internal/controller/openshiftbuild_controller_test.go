@@ -19,6 +19,8 @@ package controller
 import (
 	"context"
 
+	shipwrightbuild "github.com/redhat-openshift-builds/operator/internal/shipwright/build"
+
 	"github.com/redhat-openshift-builds/operator/internal/common"
 
 	. "github.com/onsi/ginkgo/v2"
@@ -35,7 +37,7 @@ import (
 
 const finalizerName = common.OpenShiftBuildFinalizerName
 
-var _ = Describe("OpenShiftBuild Controller", func() {
+var _ = Describe("OpenShiftBuild Controller", Label("controller", "openshiftbuild"), func() {
 
 	var (
 		reconciler *OpenShiftBuildReconciler
@@ -44,8 +46,10 @@ var _ = Describe("OpenShiftBuild Controller", func() {
 
 	BeforeEach(func() {
 		reconciler = &OpenShiftBuildReconciler{
-			Client: k8sClient,
-			Scheme: k8sClient.Scheme(),
+			APIReader:  k8sClient,
+			Client:     k8sClient,
+			Scheme:     k8sClient.Scheme(),
+			Shipwright: shipwrightbuild.New(k8sClient),
 		}
 		ctx = context.Background()
 	})
@@ -144,7 +148,7 @@ var _ = Describe("OpenShiftBuild Controller", func() {
 			err = reconciler.BootstrapOpenShiftBuild(ctx, k8sClient)
 			Expect(err).NotTo(HaveOccurred(), "boostrap OpenShiftBuild resource")
 
-			// Re-fetch object to get updated values
+			// Re-fetch an object to get updated values
 			resultObj := &operatorv1alpha1.OpenShiftBuild{}
 			err = k8sClient.Get(ctx, types.NamespacedName{Name: common.OpenShiftBuildResourceName}, resultObj)
 			Expect(err).NotTo(HaveOccurred(), "get updated OpenShiftBuild object")

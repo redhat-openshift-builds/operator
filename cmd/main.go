@@ -29,6 +29,7 @@ import (
 
 	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
 	"github.com/redhat-openshift-builds/operator/internal/controller"
+	shipwrightbuild "github.com/redhat-openshift-builds/operator/internal/shipwright/build"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -110,20 +111,24 @@ func main() {
 
 	// Run OpenshiftBuild controller
 	buildReconciler := &controller.OpenShiftBuildReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		APIReader:  mgr.GetAPIReader(),
+		Client:     mgr.GetClient(),
+		Scheme:     mgr.GetScheme(),
+		Shipwright: shipwrightbuild.New(mgr.GetClient()),
 	}
 
-	if err = buildReconciler.SetupWithManager(mgr); err != nil {
+	if err := buildReconciler.SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "OpenShiftBuild")
 		os.Exit(1)
 	}
 
 	// Run ShipwrightBuild Controller
-	if err = (&controller.ShipwrightBuildReconciler{
+	shipwrightReconciler := &controller.ShipwrightBuildReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
+	}
+
+	if err := shipwrightReconciler.SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ShipwrightBuild")
 		os.Exit(1)
 	}

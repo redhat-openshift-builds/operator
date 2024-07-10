@@ -107,6 +107,7 @@ manifests: shipwright controller-gen ## Generate WebhookConfiguration, ClusterRo
 .PHONY: shipwright
 shipwright: ## Copy shipwright CRD and release manifests
 	cd config/crd/bases && curl -sSLO $(SHIPWRIGHT_SOURCE)/config/crd/bases/operator.shipwright.io_shipwrightbuilds.yaml
+	cd config/shipwright/build/release && curl -sSLO $(SHIPWRIGHT_SOURCE)/kodata/release.yaml
 
 .PHONY: generate
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.

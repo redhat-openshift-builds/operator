@@ -18,9 +18,11 @@ package controller
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/redhat-openshift-builds/operator/internal/common"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	apiruntime "k8s.io/apimachinery/pkg/runtime"
@@ -32,18 +34,17 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	openshiftv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
+	shipwrightbuild "github.com/redhat-openshift-builds/operator/internal/shipwright/build"
 	shipwrightv1alpha1 "github.com/shipwright-io/operator/api/v1alpha1"
 )
 
 // OpenShiftBuildReconciler reconciles a OpenShiftBuild object
 type OpenShiftBuildReconciler struct {
-	Client client.Client
-	Scheme *apiruntime.Scheme
+	APIReader  client.Reader
+	Client     client.Client
+	Scheme     *apiruntime.Scheme
+	Shipwright *shipwrightbuild.ShipwrightBuild
 }
-
-//+kubebuilder:rbac:groups=operator.openshift.io,resources=openshiftbuilds,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=operator.openshift.io,resources=openshiftbuilds/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=operator.openshift.io,resources=openshiftbuilds/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -51,16 +52,15 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	logger := log.FromContext(ctx).WithValues("name", req.Name)
 	logger.Info("Starting reconciliation")
 
-	// Create OpenShiftBuild resource if missing
-	openShiftBuild := &openshiftv1alpha1.OpenShiftBuild{
-		ObjectMeta: metav1.ObjectMeta{Name: req.Name},
-	}
-	if result, err := r.CreateOrUpdate(ctx, r.Client, openShiftBuild); err != nil {
-		logger.Error(err, "Failed to create or update resource")
+	// Get OpenShiftBuild resource from cache
+	openShiftBuild := &openshiftv1alpha1.OpenShiftBuild{}
+	if err := r.Client.Get(ctx, req.NamespacedName, openShiftBuild); err != nil {
+		if apierrors.IsNotFound(err) {
+			logger.Info("Resource not found!")
+			return ctrl.Result{}, nil
+		}
+		logger.Error(err, "Failed to get resource from cache")
 		return ctrl.Result{}, err
-	} else if result != controllerutil.OperationResultNone {
-		logger.Info(fmt.Sprintf("Resource %s", result))
-		return ctrl.Result{}, nil
 	}
 
 	// Initialize status
@@ -78,7 +78,22 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		}
 	}
 
-	// TODO: Create ShipwrightBuild CR
+	// TODO: Add any specific cleanup logic
+	if !openShiftBuild.DeletionTimestamp.IsZero() {
+		return ctrl.Result{}, r.HandleDeletion(ctx, openShiftBuild)
+	}
+
+	// Reconcile Shipwright Build
+	if err := r.ReconcileShipwrightBuild(ctx, openShiftBuild); err != nil {
+		logger.Error(err, "Failed to reconcile ShipwrightBuild")
+		apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
+			Type:    openshiftv1alpha1.ConditionReady,
+			Status:  metav1.ConditionFalse,
+			Reason:  "Failed",
+			Message: fmt.Sprintf("Failed to reconcile OpenShiftBuild: %v", err),
+		})
+		return ctrl.Result{}, r.Client.Status().Update(ctx, openShiftBuild)
+	}
 
 	// Update status
 	apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
@@ -120,9 +135,7 @@ func (r *OpenShiftBuildReconciler) BootstrapOpenShiftBuild(ctx context.Context, 
 // CreateOrUpdate will create or update v1alpha1.OpenShiftBuild resource
 func (r *OpenShiftBuildReconciler) CreateOrUpdate(ctx context.Context, client client.Client, object *openshiftv1alpha1.OpenShiftBuild) (controllerutil.OperationResult, error) {
 	return ctrl.CreateOrUpdate(ctx, client, object, func() error {
-		if !controllerutil.ContainsFinalizer(object, common.OpenShiftBuildFinalizerName) {
-			controllerutil.AddFinalizer(object, common.OpenShiftBuildFinalizerName)
-		}
+		controllerutil.AddFinalizer(object, common.OpenShiftBuildFinalizerName)
 		if object.Spec.Shipwright == nil {
 			object.Spec.Shipwright = &openshiftv1alpha1.Shipwright{
 				Build: &openshiftv1alpha1.ShipwrightBuild{
@@ -137,6 +150,44 @@ func (r *OpenShiftBuildReconciler) CreateOrUpdate(ctx context.Context, client cl
 		}
 		return nil
 	})
+}
+
+// HandleDeletion deletes objects created by the controller
+func (r *OpenShiftBuildReconciler) HandleDeletion(ctx context.Context, owner *openshiftv1alpha1.OpenShiftBuild) error {
+	logger := log.FromContext(ctx).WithValues("name", owner.Name)
+	if err := r.Shipwright.Delete(ctx, owner); err != nil && !apierrors.IsNotFound(err) {
+		logger.Error(err, "Failed to delete Shipwright Build")
+		return err
+	}
+	if controllerutil.ContainsFinalizer(owner, common.OpenShiftBuildFinalizerName) {
+		if ok := controllerutil.RemoveFinalizer(owner, common.OpenShiftBuildFinalizerName); ok {
+			return r.Client.Update(ctx, owner)
+		}
+	}
+	return nil
+}
+
+// ReconcileShipwrightBuild creates or deletes ShipwrightBuild object
+func (r *OpenShiftBuildReconciler) ReconcileShipwrightBuild(ctx context.Context, owner *openshiftv1alpha1.OpenShiftBuild) error {
+	logger := log.FromContext(ctx).WithValues("name", owner.Name)
+
+	switch owner.Spec.Shipwright.Build.State {
+	case openshiftv1alpha1.Enabled:
+		result, err := r.Shipwright.CreateOrUpdate(ctx, owner)
+		if err != nil {
+			return err
+		}
+		logger.Info("ShipwrightBuild resource", "result", result)
+	case openshiftv1alpha1.Disabled:
+		if err := r.Shipwright.Delete(ctx, owner); err != nil && !apierrors.IsNotFound(err) {
+			return err
+		}
+		logger.Info("ShipwrightBuild resource", "result", "deleted")
+	default:
+		return errors.New("unknown component state")
+	}
+
+	return nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
