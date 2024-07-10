@@ -26,10 +26,14 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o op
 # Use Red Hat Universal Base Image to package the manager binary
 # Refer to https://catalog.redhat.com/software/containers/ubi9/ubi-micro/615bdf943f6014fa45ae1b58
 FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:8e33df2832f039b4b1adc53efd783f9404449994b46ae321ee4a0bf4499d5c42
+
 WORKDIR /
+
 COPY --from=builder /workspace/operator .
 COPY config/shipwright/ config/shipwright/
+
 USER 65532:65532
+
 ENTRYPOINT ["/operator"]
 
 LABEL \
