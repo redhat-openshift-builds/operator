@@ -1,13 +1,13 @@
-# permissions for end users to edit openshiftbuilds.
+# permissions for end users to edit shipwrightbuilds.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: openshiftbuild-editor
+  name: shipwrightbuild-editor-role
 rules:
 - apiGroups:
-  - operator.openshift.io
+  - operator.shipwright.io
   resources:
-  - openshiftbuilds
+  - shipwrightbuilds
   verbs:
   - create
   - delete
@@ -17,8 +17,8 @@ rules:
   - update
   - watch
 - apiGroups:
-  - operator.openshift.io
+  - operator.shipwright.io
   resources:
-  - openshiftbuilds/status
+  - shipwrightbuilds/status
   verbs:
   - get
