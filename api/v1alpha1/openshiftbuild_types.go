@@ -20,7 +20,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
 const (
@@ -28,51 +27,76 @@ const (
 	ConditionReady = "Ready"
 )
 
-// State defines the desired state of the component
+// State defines the desired state of a component
 // +kubebuilder:validation:Enum="Enabled";"Disabled"
 type State string
 
 const (
-	// Enabled will install the component
+	// Enabled will install the component, including any additional custom resource definitions.
 	Enabled State = "Enabled"
 
-	// Disabled will remove the component
+	// Disabled will remove the component, but may leave behind any custom resource definitions.
 	Disabled State = "Disabled"
 )
 
-// ShipwrightBuild defines the desired state of Shipwright Builds
-type ShipwrightBuild struct {
-	// State defines the desired state of the Shipwright ShipwrightBuild component
-	// +kubebuilder:default="Enabled"
-	State `json:"state"`
+// +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
+// +kubebuilder:resource:scope=Cluster
+
+// OpenShiftBuild describes the desired state of Builds for OpenShift, and the status of
+// all deployed components.
+type OpenShiftBuild struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	Spec   OpenShiftBuildSpec   `json:"spec,omitempty"`
+	Status OpenShiftBuildStatus `json:"status,omitempty"`
+}
+
+// OpenShiftBuildSpec defines the desired state of Builds for OpenShift components.
+type OpenShiftBuildSpec struct {
+
+	// Shipwright defines the desired state of Shipwright components.
+	//
+	// +kubebuilder:validation:Optional
+	// +optional
+	Shipwright *Shipwright `json:"shipwright,omitempty"`
+
+	// SharedResource defines the desired state of the Shared Resource CSI Driver components.
+	//
+	// +kubebuilder:validation:Optional
+	// +optional
+	SharedResource *SharedResource `json:"sharedResource,omitempty"`
 }
 
 // Shipwright defines the desired state of Shipwright components
 type Shipwright struct {
-	// Build defines the desired state of a Shipwright Build component
+
+	// Build defines the desired state of Shipwright Build APIs, controllers, and related components.
+	//
 	// +kubebuilder:validation:Optional
 	// +optional
 	Build *ShipwrightBuild `json:"build,omitempty"`
 }
 
-// SharedResource defines the desired state of Shared Resources CSI Driver
-type SharedResource struct {
-	// State defines the desired state of SharedResource component
+// ShipwrightBuild defines the desired state of Shipwright Builds
+type ShipwrightBuild struct {
+
+	// State defines the desired state of the Shipwright Build controller, APIs, and related
+	// components. Must be one of Enabled or Disabled.
+	//
 	// +kubebuilder:default="Enabled"
 	State `json:"state"`
 }
 
-// OpenShiftBuildSpec defines the desired state of OpenShiftBuild
-type OpenShiftBuildSpec struct {
-	// Shipwright defines the desired state of Shipwright components
-	// +kubebuilder:validation:Optional
-	// +optional
-	Shipwright *Shipwright `json:"shipwright,omitempty"`
+// SharedResource defines the desired state of Shared Resource CSI Driver and components.
+type SharedResource struct {
 
-	// SharedResource defines the desired state of SharedResource component
-	// +kubebuilder:validation:Optional
-	// +optional
-	SharedResource *SharedResource `json:"sharedResource,omitempty"`
+	// State defines the desired state of SharedResource CSI Driver, APIs, and related components.
+	// Must be one of Enabled or Disabled.
+	//
+	// +kubebuilder:default="Enabled"
+	State `json:"state"`
 }
 
 // OpenShiftBuildStatus defines the observed state of OpenShiftBuild
@@ -80,19 +104,6 @@ type OpenShiftBuildStatus struct {
 
 	// Conditions holds the latest available observations of a resource's current state.
 	Conditions []metav1.Condition `json:"conditions,omitempty"`
-}
-
-// +kubebuilder:object:root=true
-// +kubebuilder:subresource:status
-// +kubebuilder:resource:scope=Cluster
-
-// OpenShiftBuild is the Schema for the openshiftbuilds API
-type OpenShiftBuild struct {
-	metav1.TypeMeta   `json:",inline"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
-
-	Spec   OpenShiftBuildSpec   `json:"spec"`
-	Status OpenShiftBuildStatus `json:"status,omitempty"`
 }
 
 // +kubebuilder:object:root=true
