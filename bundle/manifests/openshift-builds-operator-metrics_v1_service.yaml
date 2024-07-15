@@ -1,8 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: operator-metrics
-  namespace: system
+  creationTimestamp: null
+  labels:
+    app.kubernetes.io/part-of: openshift-builds
+    app.kubernetes.io/version: v1.1.0
+  name: openshift-builds-operator-metrics
 spec:
   ports:
   - name: https
@@ -12,3 +15,5 @@ spec:
   selector:
     app: openshift-builds-operator
     control-plane: controller-manager
+status:
+  loadBalancer: {}

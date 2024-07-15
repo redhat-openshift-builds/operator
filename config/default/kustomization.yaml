@@ -1,18 +1,20 @@
 # Adds namespace to all resources.
-namespace: operator-system
+namespace: openshift-builds
 
-# Value of this field is prepended to the
-# names of all resources, e.g. a deployment named
-# "wordpress" becomes "alices-wordpress".
-# Note that it should also match with the prefix (text before '-') of the namespace
-# field above.
-namePrefix: operator-
+# The Value of this field is prepended to the
+# names of all resources.
+namePrefix: openshift-builds-
 
 # Labels to add to all resources and selectors.
 #labels:
 #- includeSelectors: true
 #  pairs:
 #    someName: someValue
+
+labels:
+  - pairs:
+      app.kubernetes.io/part-of: openshift-builds
+      app.kubernetes.io/version: v1.1.0
 
 resources:
 - ../crd
@@ -29,7 +31,7 @@ resources:
 patches:
 # Protect the /metrics endpoint by putting it behind auth.
 # If you want your controller-manager to expose the /metrics
-# endpoint w/o any authn/z, please comment the following line.
+# endpoint w/o any authn/z, please comment on the following line.
 - path: manager_auth_proxy_patch.yaml
 
 # [WEBHOOK] To enable webhook, uncomment all the sections with [WEBHOOK] prefix including the one in

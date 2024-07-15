@@ -1,14 +1,10 @@
 apiVersion: operator.openshift.io/v1alpha1
 kind: OpenShiftBuild
 metadata:
-  labels:
-    app.kubernetes.io/name: openshiftbuild
-    app.kubernetes.io/instance: openshiftbuild-sample
-    app.kubernetes.io/part-of: operator
-    app.kubernetes.io/managed-by: kustomize
-    app.kubernetes.io/created-by: operator
-  name: openshiftbuild-sample
+  name: openshiftbuild
 spec:
+  sharedResource:
+    state: Enabled
   shipwright:
     build:
       state: Enabled

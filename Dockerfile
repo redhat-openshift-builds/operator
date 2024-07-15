@@ -21,13 +21,22 @@ COPY internal/controller/ internal/controller/
 # was called. For example, if we call make docker-build in a local env which has the Apple Silicon M1 SO
 # the docker BUILDPLATFORM arg will be linux/arm64 when for Apple x86 it will be linux/amd64. Therefore,
 # by leaving it empty we can ensure that the container and binary shipped on it will have the same platform.
-RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o manager cmd/main.go
+RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o operator cmd/main.go
 
 # Use Red Hat Universal Base Image to package the manager binary
 # Refer to https://catalog.redhat.com/software/containers/ubi9/ubi-micro/615bdf943f6014fa45ae1b58
 FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:8e33df2832f039b4b1adc53efd783f9404449994b46ae321ee4a0bf4499d5c42
 WORKDIR /
-COPY --from=builder /workspace/manager .
+COPY --from=builder /workspace/operator .
 USER 65532:65532
+ENTRYPOINT ["/operator"]
 
-ENTRYPOINT ["/manager"]
+LABEL \
+    com.redhat.component="openshift-builds-operator-container" \
+    name="openshift-builds/operator" \
+    version="v1.1.0" \
+    summary="Red Hat OpenShift Builds Operator" \
+    maintainer="openshift-builds@redhat.com" \
+    description="Red Hat OpenShift Builds Operator" \
+    io.k8s.display-name="Red Hat OpenShift Builds Operator" \
+    io.openshift.tags="builds,operator"
