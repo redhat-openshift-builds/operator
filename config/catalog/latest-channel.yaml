@@ -1,0 +1,9 @@
+---
+schema: olm.channel
+package: openshift-builds-operator
+name: latest
+entries:
+  - name: openshift-builds-operator.v1.0.2
+  # TODO: Teach Kustomize to inject VERSION here
+  - name: openshift-builds-operator.v1.1.0
+    replaces: openshift-builds-operator.v1.0.2

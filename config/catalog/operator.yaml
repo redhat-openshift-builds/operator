@@ -1,0 +1,4 @@
+---
+defaultChannel: latest
+name: openshift-builds-operator
+schema: olm.package

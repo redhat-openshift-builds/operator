@@ -14,40 +14,34 @@ OpenShift Builds operator deploys and manages the following components
 - kubectl version v1.11.3+.
 - Access to a Kubernetes v1.11.3+ cluster.
 
-### To Deploy on the cluster
-**Build and push your image to the location specified by `IMG`:**
+### Deploy Operator (standalone)
+
+#### Step 1: Build and push your operator image
+
+Use the IMAGE_TAG_BASE variable to change the operator image's target repostiory.
+This should be a proper image name and not end with trailing slashes or special characters.
 
 ```sh
-make docker-build docker-push IMG=<some-registry>/operator:tag
+$ make docker-build docker-push IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
 ```
 
-**NOTE:** This image ought to be published in the personal registry you specified. 
-And it is required to have access to pull the image from the working environment. 
-Make sure you have the proper permission to the registry if the above commands don’t work.
+**NOTE:** You must have permission to push to the container registry referenced in `IMAGE_TAG_BASE`.
+Your cluster must also have permission to pull images from the referenced container registry.
 
-**Install the CRDs into the cluster:**
+#### Step 2: Deploy CRDs and Operator**Install the CRDs into the cluster:**
+
+For this step, you must have the equivalent of "cluster admin" privileges on the cluster.
+
+First, deploy custom resource definitions (CRDs) for the operator by running:
 
 ```sh
-make install
+$ make install
 ```
-
-**Deploy the Manager to the cluster with the image specified by `IMG`:**
+Next, deploy the operator using the same `IMAGE_TAG_BASE` variable as above.
 
 ```sh
-make deploy IMG=<some-registry>/operator:tag
+make deploy IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
 ```
-
-> **NOTE**: If you encounter RBAC errors, you may need to grant yourself cluster-admin 
-privileges or be logged in as admin.
-
-**Create instances of your solution**
-You can apply the samples (examples) from the config/sample:
-
-```sh
-kubectl apply -k config/samples/
-```
-
->**NOTE**: Ensure that the samples has default values to test it out.
 
 ### To Uninstall
 **Delete the instances (CRs) from the cluster:**
@@ -68,6 +62,37 @@ make uninstall
 make undeploy
 ```
 
+### Deploy with OLM
+
+Red Hat operators are designed to be managed by Operator Lifecycle Manager (OLM) and deployed
+through the `OperatorHub` section of the OpenShift web console. To deploy with OpenShift and OLM:
+
+1. Build your operator and push it to a container registry (step 1 above).
+2. Build the operator bundle and push it to a container registry, by running the following `make
+   commands:
+
+   ```sh
+   $ make bundle IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
+   $ make bundle-build bundle-push IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
+   ```
+
+3. Build and push the operator catalog
+
+   ```sh
+   $ make catalog-fbc-build IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
+   $ make catalog-push IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
+   ```
+
+4. Deploy the catalog as a `CatalogSource`
+
+   ```sh
+   $ make catalog-deploy IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
+   ```
+
+5. In the OpenShift web console, navigate to "OperatorHub" in the Administrator view. You should be
+   able to filter for operators in the "Test Candidate Operators" catalog and install the Builds for OpenShift operator from there.
+
+
 ## Contributing
 TBD
 
@@ -77,7 +102,7 @@ More information can be found via the [Kubebuilder Documentation](https://book.k
 
 ## License
 
-Copyright 2024.
+Copyright 2024 Red Hat, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
