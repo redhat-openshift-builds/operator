@@ -20,8 +20,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"os"
 
-	"github.com/redhat-openshift-builds/operator/internal/common"
+	"github.com/go-logr/logr"
+	manifestivalclient "github.com/manifestival/controller-runtime-client"
+	"github.com/manifestival/manifestival"
+	"github.com/redhat-openshift-builds/operator/internal/sharedresource"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -34,16 +38,19 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	openshiftv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
+	"github.com/redhat-openshift-builds/operator/internal/common"
 	shipwrightbuild "github.com/redhat-openshift-builds/operator/internal/shipwright/build"
 	shipwrightv1alpha1 "github.com/shipwright-io/operator/api/v1alpha1"
 )
 
 // OpenShiftBuildReconciler reconciles a OpenShiftBuild object
 type OpenShiftBuildReconciler struct {
-	APIReader  client.Reader
-	Client     client.Client
-	Scheme     *apiruntime.Scheme
-	Shipwright *shipwrightbuild.ShipwrightBuild
+	APIReader      client.Reader
+	Client         client.Client
+	Scheme         *apiruntime.Scheme
+	Logger         logr.Logger
+	SharedResource *sharedresource.SharedResource
+	Shipwright     *shipwrightbuild.ShipwrightBuild
 }
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
@@ -86,6 +93,18 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	// Reconcile Shipwright Build
 	if err := r.ReconcileShipwrightBuild(ctx, openShiftBuild); err != nil {
 		logger.Error(err, "Failed to reconcile ShipwrightBuild")
+		apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
+			Type:    openshiftv1alpha1.ConditionReady,
+			Status:  metav1.ConditionFalse,
+			Reason:  "Failed",
+			Message: fmt.Sprintf("Failed to reconcile OpenShiftBuild: %v", err),
+		})
+		return ctrl.Result{}, r.Client.Status().Update(ctx, openShiftBuild)
+	}
+
+	// Reconcile Shared Resources
+	if err := r.ReconcileSharedResource(ctx, openShiftBuild); err != nil {
+		logger.Error(err, "Failed to reconcile SharedResource")
 		apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
 			Type:    openshiftv1alpha1.ConditionReady,
 			Status:  metav1.ConditionFalse,
@@ -152,11 +171,51 @@ func (r *OpenShiftBuildReconciler) CreateOrUpdate(ctx context.Context, client cl
 	})
 }
 
+// ReconcileSharedResource creates and updates SharedResource objects
+func (r *OpenShiftBuildReconciler) ReconcileSharedResource(ctx context.Context, openshiftBuild *openshiftv1alpha1.OpenShiftBuild) error {
+	logger := log.FromContext(ctx).WithValues("name", openshiftBuild.ObjectMeta.Name)
+
+	logger.Info("Reconciling SharedResource...")
+	if err := r.SharedResource.Reconcile(openshiftBuild); err != nil {
+		logger.Error(err, "Failed reconciling SharedResource...")
+		return err
+	}
+
+	return nil
+}
+
+// BootStrapSharedResource initializes the manifestival to apply Shared Resources
+func (r *OpenShiftBuildReconciler) setupSharedResource(mgr ctrl.Manager) error {
+	// Initialize Manifestival
+	manifestivalOptions := []manifestival.Option{
+		manifestival.UseLogger(r.Logger),
+		manifestival.UseClient(manifestivalclient.NewClient(mgr.GetClient())),
+	}
+
+	// Shared Resource manifests
+	sharedManifestPath := common.SharedResourceManifestPath
+	if path, ok := os.LookupEnv(common.SharedResourceManifestPath); ok {
+		sharedManifestPath = path
+	}
+	sharedManifest, err := manifestival.NewManifest(sharedManifestPath, manifestivalOptions...)
+	if err != nil {
+		return err
+	}
+
+	// Initialize Shared Resource
+	r.SharedResource = sharedresource.New(sharedManifest)
+	return nil
+}
+
 // HandleDeletion deletes objects created by the controller
 func (r *OpenShiftBuildReconciler) HandleDeletion(ctx context.Context, owner *openshiftv1alpha1.OpenShiftBuild) error {
 	logger := log.FromContext(ctx).WithValues("name", owner.Name)
 	if err := r.Shipwright.Delete(ctx, owner); err != nil && !apierrors.IsNotFound(err) {
 		logger.Error(err, "Failed to delete Shipwright Build")
+		return err
+	}
+	if err := r.SharedResource.Reconcile(owner); err != nil {
+		logger.Error(err, "Failed to delete SharedResource")
 		return err
 	}
 	if controllerutil.ContainsFinalizer(owner, common.OpenShiftBuildFinalizerName) {
@@ -192,6 +251,11 @@ func (r *OpenShiftBuildReconciler) ReconcileShipwrightBuild(ctx context.Context,
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *OpenShiftBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
+
+	// bootstrap Shared Resources
+	if err := r.setupSharedResource(mgr); err != nil {
+		return err
+	}
 
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&openshiftv1alpha1.OpenShiftBuild{}).
