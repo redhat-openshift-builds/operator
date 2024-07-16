@@ -20,7 +20,9 @@ spec:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: OpenShiftBuild is the Schema for the openshiftbuilds API
+        description: |-
+          OpenShiftBuild describes the desired state of Builds for OpenShift, and the status of
+          all deployed components.
         properties:
           apiVersion:
             description: |-
@@ -40,15 +42,18 @@ spec:
           metadata:
             type: object
           spec:
-            description: OpenShiftBuildSpec defines the desired state of OpenShiftBuild
+            description: OpenShiftBuildSpec defines the desired state of Builds for
+              OpenShift components.
             properties:
               sharedResource:
-                description: SharedResource defines the desired state of SharedResource
-                  component
+                description: SharedResource defines the desired state of the Shared
+                  Resource CSI Driver components.
                 properties:
                   state:
-                    default: Disabled
-                    description: State defines the desired state of a component
+                    default: Enabled
+                    description: |-
+                      State defines the desired state of SharedResource CSI Driver, APIs, and related components.
+                      Must be one of Enabled or Disabled.
                     enum:
                     - Enabled
                     - Disabled
@@ -57,15 +62,17 @@ spec:
                 - state
                 type: object
               shipwright:
-                description: Shipwright defines the desired state of Shipwright components
+                description: Shipwright defines the desired state of Shipwright components.
                 properties:
                   build:
                     description: Build defines the desired state of Shipwright Build
-                      component
+                      APIs, controllers, and related components.
                     properties:
                       state:
-                        default: Disabled
-                        description: State defines the desired state of a component
+                        default: Enabled
+                        description: |-
+                          State defines the desired state of the Shipwright Build controller, APIs, and related
+                          components. Must be one of Enabled or Disabled.
                         enum:
                         - Enabled
                         - Disabled

@@ -28,7 +28,7 @@ metadata:
             "name": "shipwrightbuild"
           },
           "spec": {
-            "targetNamespace": "openshift-build"
+            "targetNamespace": "openshift-builds"
           }
         }
       ]
@@ -36,9 +36,10 @@ metadata:
     categories: Developer Tools, Integration & Delivery
     certified: "true"
     containerImage: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-operator-rhel9
-    createdAt: "2024-07-15T03:58:00Z"
+    createdAt: "2024-07-16T15:50:27Z"
     description: Builds for Red Hat OpenShift is a framework for building container
       images on Kubernetes.
+    features.operators.openshift.io/csi: "true"
     features.operators.openshift.io/disconnected: "false"
     features.operators.openshift.io/fips-compliant: "false"
     features.operators.openshift.io/proxy-aware: "false"
@@ -58,12 +59,13 @@ metadata:
     operatorframework.io/arch.ppc64le: supported
     operatorframework.io/arch.s390x: supported
   name: openshift-builds-operator.v1.1.0
-  namespace: openshift-build
+  namespace: openshift-builds
 spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
-    - description: OpenShiftBuild is the Schema for the openshiftbuilds API
+    - description: OpenShiftBuild describes the desired state of Builds for OpenShift,
+        and the status of all deployed components.
       displayName: Open Shift Build
       kind: OpenShiftBuild
       name: openshiftbuilds.operator.openshift.io
@@ -288,6 +290,194 @@ spec:
           verbs:
           - '*'
         - apiGroups:
+          - admissionregistration.k8s.io
+          resources:
+          - validatingwebhookconfigurations
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - admissionregistration.k8s.io/v1beta1
+          resources:
+          - validatingwebhookconfigurations
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - apiextensions.k8s.io
+          resources:
+          - customresourcedefinitions
+          verbs:
+          - create
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - apiextensions.k8s.io
+          resourceNames:
+          - buildruns.shipwright.io
+          - builds.shipwright.io
+          - buildstrategies.shipwright.io
+          - clusterbuildstrategies.shipwright.io
+          resources:
+          - customresourcedefinitions
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - apps
+          resources:
+          - deployments
+          verbs:
+          - create
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - apps
+          resourceNames:
+          - shipwright-build-controller
+          resources:
+          - deployments
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - apps
+          resourceNames:
+          - shipwright-build-webhook
+          resources:
+          - deployments
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - apps
+          resourceNames:
+          - shipwright-build-controller
+          resources:
+          - deployments/finalizers
+          verbs:
+          - update
+        - apiGroups:
+          - apps
+          resourceNames:
+          - shipwright-build-webhook
+          resources:
+          - deployments/finalizers
+          verbs:
+          - update
+        - apiGroups:
+          - cert-manager.io
+          resources:
+          - certificates
+          verbs:
+          - create
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - cert-manager.io
+          resourceNames:
+          - shipwright-build-webhook-cert
+          resources:
+          - certificates
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - cert-manager.io
+          resources:
+          - issuers
+          verbs:
+          - create
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - cert-manager.io
+          resourceNames:
+          - selfsigned-issuer
+          resources:
+          - issuers
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          - events
+          - limitranges
+          - namespaces
+          - pods
+          - secrets
+          - services
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - ""
+          resources:
+          - namespaces
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - ""
+          resources:
+          - serviceaccounts
+          verbs:
+          - create
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - ""
+          resourceNames:
+          - shipwright-build-controller
+          resources:
+          - serviceaccounts
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - ""
+          resourceNames:
+          - shipwright-build-webhook
+          resources:
+          - serviceaccounts
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
           - operator.openshift.io
           resources:
           - openshiftbuilds
@@ -311,6 +501,174 @@ spec:
           - openshiftbuilds/status
           verbs:
           - get
+          - patch
+          - update
+        - apiGroups:
+          - operator.shipwright.io
+          resources:
+          - shipwrightbuilds
+          verbs:
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - operator.shipwright.io
+          resources:
+          - shipwrightbuilds/finalizers
+          verbs:
+          - update
+        - apiGroups:
+          - operator.shipwright.io
+          resources:
+          - shipwrightbuilds/status
+          verbs:
+          - get
+          - patch
+          - update
+        - apiGroups:
+          - operator.tekton.dev
+          resources:
+          - tektonconfigs
+          verbs:
+          - create
+          - get
+          - list
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resources:
+          - clusterrolebindings
+          verbs:
+          - create
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resourceNames:
+          - shipwright-build-controller
+          resources:
+          - clusterrolebindings
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resourceNames:
+          - shipwright-build-webhook
+          resources:
+          - clusterrolebindings
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resources:
+          - clusterroles
+          verbs:
+          - create
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resourceNames:
+          - shipwright-build-aggregate-edit
+          resources:
+          - clusterroles
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resourceNames:
+          - shipwright-build-aggregate-view
+          resources:
+          - clusterroles
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resourceNames:
+          - shipwright-build-controller
+          resources:
+          - clusterroles
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resourceNames:
+          - shipwright-build-webhook
+          resources:
+          - clusterroles
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resources:
+          - rolebindings
+          verbs:
+          - create
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resourceNames:
+          - shipwright-build-controller
+          resources:
+          - rolebindings
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resourceNames:
+          - shipwright-build-webhook
+          resources:
+          - rolebindings
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resources:
+          - roles
+          verbs:
+          - create
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resourceNames:
+          - shipwright-build-controller
+          resources:
+          - roles
+          verbs:
+          - delete
+          - patch
+          - update
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resourceNames:
+          - shipwright-build-webhook
+          resources:
+          - roles
+          verbs:
+          - delete
           - patch
           - update
         - apiGroups:
@@ -395,8 +753,8 @@ spec:
                   value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-waiter
                 - name: IMAGE_SHIPWRIGHT_OPENSHIFT_BUILDS_WEBHOOK
                   value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-webhook-
-                image: quay.io/sayan-biswas/openshift-builds-operator:latest
-                imagePullPolicy: Never
+                image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-operator:2cfeec6d0fa3a41152c774f8a561e02597e6774d
+                imagePullPolicy: Always
                 livenessProbe:
                   httpGet:
                     path: /healthz
