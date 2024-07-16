@@ -9,6 +9,7 @@ metadata:
     containerImage: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-operator-rhel9
     description: Builds for Red Hat OpenShift is a framework for building container
       images on Kubernetes.
+    features.operators.openshift.io/csi: "true"
     features.operators.openshift.io/disconnected: "false"
     features.operators.openshift.io/fips-compliant: "false"
     features.operators.openshift.io/proxy-aware: "false"
@@ -16,7 +17,6 @@ metadata:
     features.operators.openshift.io/token-auth-aws: "false"
     features.operators.openshift.io/token-auth-azure: "false"
     features.operators.openshift.io/token-auth-gcp: "false"
-    features.operators.openshift.io/csi: "true"
     operators.openshift.io/valid-subscription: '["OpenShift Container Platform", "OpenShift
       Platform Plus"]'
     repository: https://github.com/shipwright-io/operator
@@ -38,7 +38,8 @@ spec:
       kind: ShipwrightBuild
       name: shipwrightbuilds.operator.shipwright.io
       version: v1alpha1
-    - description: OpenShiftBuild is the Schema for the openshiftbuilds API
+    - description: OpenShiftBuild describes the desired state of Builds for OpenShift,
+        and the status of all deployed components.
       displayName: Open Shift Build
       kind: OpenShiftBuild
       name: openshiftbuilds.operator.openshift.io
