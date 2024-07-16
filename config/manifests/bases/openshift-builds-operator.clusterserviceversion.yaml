@@ -113,4 +113,10 @@ spec:
     name: OPENSHIFT_BUILDS_WAITER
   - image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-webhook
     name: OPENSHIFT_BUILDS_WEBHOOK
+  - image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-shared-resource-webhook@sha256:b12843ee24f6d23e459af1584ba29466e709c8e13f285f54a8ddb35b366ab20a
+    name: OPENSHIFT_BUILDS_SHARED_RESOURCE_WEBHOOK
+  - image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-shared-resource@sha256:09c805ff3fcb41fdfc4848136261a1bfa3455d67266a463c45b2cf45c0722c7f
+    name: OPENSHIFT_BUILDS_SHARED_RESOURCE
+  - image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar@sha256:98341f0b80eeb6064540b61626acb6c6772c1e5c6991b67cfec3768cf459da14
+    name: OPENSHIFT_BUILDS_SHARED_RESOURCE_NODE_REGISTRAR
   version: 1.1.0

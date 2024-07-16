@@ -29,5 +29,9 @@ var (
 )
 
 var (
+	SharedResourceManifestPath = filepath.Join("config", "sharedresource")
+)
+
+var (
 	CurrentNamespaceName string
 )

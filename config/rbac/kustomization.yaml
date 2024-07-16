@@ -24,3 +24,7 @@ resources:
 - shipwright_build_aggregate_role_binding.yaml
 - shipwright_build_webhook_role.yaml
 - shipwright_build_webhook_role_binding.yaml
+- shared_node_privileged_role.yaml
+- shared_node_privileged_rolebinding.yaml
+- shared_prometheus_role.yaml
+- shared_prometheus_rolebinding.yaml

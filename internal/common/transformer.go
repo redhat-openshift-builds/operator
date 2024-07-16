@@ -7,6 +7,7 @@ import (
 	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/client-go/kubernetes/scheme"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 // RemoveRunAsUserRunAsGroup is a Manifestival transformer function that removes runAsUser and runAsGroup
@@ -43,6 +44,18 @@ func InjectAnnotations(kinds, names []string, annotations map[string]string) man
 		}
 		object.SetAnnotations(annotations)
 
+		return nil
+	}
+}
+
+// InjectFinalizer appends finalizer to the passed resources metadata.
+func InjectFinalizer(finalizer string) manifestival.Transformer {
+	return func(u *unstructured.Unstructured) error {
+		finalizers := u.GetFinalizers()
+		if !controllerutil.ContainsFinalizer(u, finalizer) {
+			finalizers = append(finalizers, finalizer)
+			u.SetFinalizers(finalizers)
+		}
 		return nil
 	}
 }
