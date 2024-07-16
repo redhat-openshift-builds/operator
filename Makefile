@@ -52,11 +52,14 @@ endif
 # This is useful for CI or a project to utilize a specific version of the operator-sdk toolkit.
 OPERATOR_SDK_VERSION ?= v1.34.1
 
-# Image URL to use all building/pushing image targets
+# Use OPERATOR_TAG to use a different tag to build and push the operator image.
+# This defaults to semantic version of the operator above.
+#
 # Note: Konflux pushes tags that match the git commit sha for the operator image on merge.
-# OPERATOR_GIT_SHA should be updated to the corresponding image to ensure bundles are assembled with the correct image.
-OPERATOR_GIT_SHA ?= 2cfeec6d0fa3a41152c774f8a561e02597e6774d
-IMG ?= $(IMAGE_TAG_BASE):$(OPERATOR_GIT_SHA)
+# OPERATOR_TAG should be updated to the corresponding image tag to ensure bundles are assembled with the correct image.
+OPERATOR_TAG ?= v$(VERSION)
+# Image URL to use all building/pushing image targets
+IMG ?= $(IMAGE_TAG_BASE):$(OPERATOR_TAG)
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.28.3
 
@@ -308,14 +311,32 @@ ifneq ($(origin CATALOG_BASE_IMG), undefined)
 FROM_INDEX_OPT := --from-index $(CATALOG_BASE_IMG)
 endif
 
+OPM_CONTAINER_TOOL ?= podman
+
+.PHONY: catalog-fbc-build
+catalog-fbc-build: opm ## Build a file-based OLM catalog image.
+	rm -rf _output
+	mkdir -p _output/catalog
+	$(OPM) generate dockerfile _output/catalog
+	cp -r config/catalog _output/
+	$(OPM) render $(BUNDLE_IMG) --output yaml > _output/catalog/openshift-builds-latest.yaml
+	$(OPM) validate _output/catalog
+	cd _output && $(CONTAINER_TOOL) build -f catalog.Dockerfile -t $(CATALOG_IMG) .
+
 # Build a catalog image by adding bundle images to an empty catalog using the operator package manager tool, 'opm'.
 # This recipe invokes 'opm' in 'semver' bundle add mode. For more information on add modes, see:
 # https://github.com/operator-framework/community-operators/blob/7f1438c/docs/packaging-operator.md#updating-your-existing-operator
 .PHONY: catalog-build
 catalog-build: opm ## Build a catalog image.
-	$(OPM) index add --container-tool docker --mode semver --tag $(CATALOG_IMG) --bundles $(BUNDLE_IMGS) $(FROM_INDEX_OPT)
+	$(OPM) index add --container-tool $(OPM_CONTAINER_TOOL) --mode semver --tag $(CATALOG_IMG) --bundles $(BUNDLE_IMGS) $(FROM_INDEX_OPT)
 
 # Push the catalog image.
 .PHONY: catalog-push
 catalog-push: ## Push a catalog image.
 	$(MAKE) docker-push IMG=$(CATALOG_IMG)
+
+# Deploy the catalog image as a CatalogSource in the cluster.
+.PHONY: catalog-deploy
+catalog-deploy: kustomize ## Deploy the catalog image to the cluster.
+	cd config/olm && $(KUSTOMIZE) edit set image catalog=$(CATALOG_IMG)
+	$(KUSTOMIZE) build config/olm | $(KUBECTL) apply -f -
