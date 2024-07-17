@@ -21,7 +21,6 @@ import (
 	"fmt"
 
 	"github.com/redhat-openshift-builds/operator/internal/common"
-	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	apiruntime "k8s.io/apimachinery/pkg/runtime"
@@ -56,7 +55,7 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	openShiftBuild := &openshiftv1alpha1.OpenShiftBuild{
 		ObjectMeta: metav1.ObjectMeta{Name: req.Name},
 	}
-	if result, err := r.CreateOrUpdate(ctx, openShiftBuild); err != nil {
+	if result, err := r.CreateOrUpdate(ctx, r.Client, openShiftBuild); err != nil {
 		logger.Error(err, "Failed to create or update resource")
 		return ctrl.Result{}, err
 	} else if result != controllerutil.OperationResultNone {
@@ -97,9 +96,30 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	return ctrl.Result{}, nil
 }
 
+// BootstrapOpenShiftBuild creates the default OpenShiftBuild instance ("cluster") if it is not
+// present on the cluster.
+func (r *OpenShiftBuildReconciler) BootstrapOpenShiftBuild(ctx context.Context, client client.Client) error {
+	logger := log.FromContext(ctx).WithValues("name", common.OpenShiftBuildResourceName)
+	bootstrapOpenShiftBuild := &openshiftv1alpha1.OpenShiftBuild{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: common.OpenShiftBuildResourceName,
+		},
+	}
+	if client == nil {
+		client = r.Client
+	}
+	result, err := r.CreateOrUpdate(ctx, client, bootstrapOpenShiftBuild)
+	if err != nil {
+		logger.Error(err, "failed to boostrap OpenShiftBuild")
+		return err
+	}
+	logger.Info("boostrap OpenShiftBuild reconciled", "result", result)
+	return nil
+}
+
 // CreateOrUpdate will create or update v1alpha1.OpenShiftBuild resource
-func (r *OpenShiftBuildReconciler) CreateOrUpdate(ctx context.Context, object *openshiftv1alpha1.OpenShiftBuild) (controllerutil.OperationResult, error) {
-	return ctrl.CreateOrUpdate(ctx, r.Client, object, func() error {
+func (r *OpenShiftBuildReconciler) CreateOrUpdate(ctx context.Context, client client.Client, object *openshiftv1alpha1.OpenShiftBuild) (controllerutil.OperationResult, error) {
+	return ctrl.CreateOrUpdate(ctx, client, object, func() error {
 		if !controllerutil.ContainsFinalizer(object, common.OpenShiftBuildFinalizerName) {
 			controllerutil.AddFinalizer(object, common.OpenShiftBuildFinalizerName)
 		}
@@ -121,36 +141,6 @@ func (r *OpenShiftBuildReconciler) CreateOrUpdate(ctx context.Context, object *o
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *OpenShiftBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	// Check if OpenShiftBuild CRD is present
-	CRDClient, err := apiextensionsv1.NewForConfig(mgr.GetConfig())
-	if err != nil {
-		return err
-	}
-	_, err = CRDClient.CustomResourceDefinitions().Get(context.TODO(), common.OpenShiftBuildCRDName, metav1.GetOptions{})
-	if err != nil {
-		return err
-	}
-
-	// Replace the client with a non-cached client to create resource before starting manager
-	client, err := client.New(mgr.GetConfig(), client.Options{Scheme: r.Scheme})
-	if err != nil {
-		return err
-	}
-
-	// Create OpenShitBuild CR if not present
-	list := openshiftv1alpha1.OpenShiftBuildList{}
-	if err := client.List(context.TODO(), &list); err != nil {
-		return err
-	}
-	if len(list.Items) == 0 {
-		if err := client.Create(context.TODO(), &openshiftv1alpha1.OpenShiftBuild{
-			ObjectMeta: metav1.ObjectMeta{
-				Name: common.OpenShiftBuildResourceName,
-			},
-		}); err != nil {
-			return err
-		}
-	}
 
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&openshiftv1alpha1.OpenShiftBuild{}).

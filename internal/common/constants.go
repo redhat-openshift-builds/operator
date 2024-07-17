@@ -11,7 +11,7 @@ const (
 const (
 	OpenShiftBuildFinalizerName = "operator.openshift.io/openshiftbuilds"
 	OpenShiftBuildCRDName       = "openshiftbuilds.operator.openshift.io"
-	OpenShiftBuildResourceName  = "openshiftbuild"
+	OpenShiftBuildResourceName  = "cluster"
 	OpenShiftBuildNamespaceName = "openshift-builds"
 )
 

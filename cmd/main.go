@@ -33,6 +33,7 @@ import (
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
@@ -108,10 +109,12 @@ func main() {
 	}
 
 	// Run OpenshiftBuild controller
-	if err = (&controller.OpenShiftBuildReconciler{
+	buildReconciler := &controller.OpenShiftBuildReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
+	}
+
+	if err = buildReconciler.SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "OpenShiftBuild")
 		os.Exit(1)
 	}
@@ -137,8 +140,25 @@ func main() {
 		os.Exit(1)
 	}
 
+	ctxMain := ctrl.SetupSignalHandler()
+
+	// Create a non-cached client to bootstrap the OpenShiftBuild resource.
+	// If we use the same client as the manager, the bootstrap command will hang waiting for caches
+	// to be populated.
+	boostrapClient, err := client.New(ctrl.GetConfigOrDie(), client.Options{Scheme: scheme})
+	if err != nil {
+		setupLog.Error(err, "unable to create bootstrap client")
+		os.Exit(1)
+	}
+
+	setupLog.Info("bootstrapping OpenShiftBuild resource")
+	if err := buildReconciler.BootstrapOpenShiftBuild(ctxMain, boostrapClient); err != nil {
+		setupLog.Error(err, "unable to bootstrap OpenShiftBuild resource")
+		os.Exit(1)
+	}
+
 	setupLog.Info("starting manager")
-	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
+	if err := mgr.Start(ctxMain); err != nil {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}
