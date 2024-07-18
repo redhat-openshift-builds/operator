@@ -15,13 +15,15 @@ import (
 
 // ShipwrightBuild type defines methods to Get, Create, Delete v1alpha1.ShipwrightBuild resource
 type ShipwrightBuild struct {
-	Client client.Client
+	Client    client.Client
+	Namespace string
 }
 
 // New creates new instance of ShipwrightBuild type
-func New(client client.Client) *ShipwrightBuild {
+func New(client client.Client, namespace string) *ShipwrightBuild {
 	return &ShipwrightBuild{
-		Client: client,
+		Client:    client,
+		Namespace: namespace,
 	}
 }
 
@@ -68,7 +70,7 @@ func (sb *ShipwrightBuild) CreateOrUpdate(ctx context.Context, owner client.Obje
 
 	return ctrl.CreateOrUpdate(ctx, sb.Client, object, func() error {
 		object.Spec = shipwrightv1alpha1.ShipwrightBuildSpec{
-			TargetNamespace: common.OpenShiftBuildNamespaceName,
+			TargetNamespace: sb.Namespace,
 		}
 		controllerutil.AddFinalizer(object, common.OpenShiftBuildFinalizerName)
 		if err := ctrl.SetControllerReference(owner, object, sb.Client.Scheme()); err != nil {

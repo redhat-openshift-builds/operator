@@ -25,11 +25,13 @@ var _ = Describe("Build", Label("shipwright", "build"), func() {
 		shipwrightBuild *build.ShipwrightBuild
 		list            *shipwrightv1alpha1.ShipwrightBuildList
 		object          *shipwrightv1alpha1.ShipwrightBuild
+		namespace       string
 	)
 
 	BeforeEach(OncePerOrdered, func() {
 		ctx = context.Background()
-		shipwrightBuild = build.New(fake.NewClientBuilder().WithScheme(scheme).Build())
+		namespace = common.OpenShiftBuilNamespaceName
+		shipwrightBuild = build.New(fake.NewClientBuilder().WithScheme(scheme).Build(), namespace)
 	})
 
 	JustBeforeEach(OncePerOrdered, func() {
@@ -78,8 +80,8 @@ var _ = Describe("Build", Label("shipwright", "build"), func() {
 			It("should have the controller reference", func() {
 				Expect(metav1.IsControlledBy(object, owner)).To(BeTrue())
 			})
-			It("should have target namespace set to openshift build", func() {
-				Expect(object.Spec.TargetNamespace).To(Equal(common.OpenShiftBuildNamespaceName))
+			It("should have target namespace set to openshift builds", func() {
+				Expect(object.Spec.TargetNamespace).To(Equal(namespace))
 			})
 		})
 		When("there is an existing resource with same spec", Ordered, func() {
@@ -110,7 +112,7 @@ var _ = Describe("Build", Label("shipwright", "build"), func() {
 				Expect(result).To(Equal(controllerutil.OperationResultUpdated))
 			})
 			It("should update the specs to match expected", func() {
-				Expect(object.Spec.TargetNamespace).To(Equal(common.OpenShiftBuildNamespaceName))
+				Expect(object.Spec.TargetNamespace).To(Equal(namespace))
 			})
 		})
 	})
