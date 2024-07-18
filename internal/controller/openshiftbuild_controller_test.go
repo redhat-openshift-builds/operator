@@ -42,14 +42,16 @@ var _ = Describe("OpenShiftBuild Controller", Label("controller", "openshiftbuil
 	var (
 		reconciler *OpenShiftBuildReconciler
 		ctx        context.Context
+		namespace  string
 	)
 
 	BeforeEach(func() {
+		namespace = common.OpenShiftBuilNamespaceName
 		reconciler = &OpenShiftBuildReconciler{
 			APIReader:  k8sClient,
 			Client:     k8sClient,
 			Scheme:     k8sClient.Scheme(),
-			Shipwright: shipwrightbuild.New(k8sClient),
+			Shipwright: shipwrightbuild.New(k8sClient, namespace),
 		}
 		ctx = context.Background()
 	})

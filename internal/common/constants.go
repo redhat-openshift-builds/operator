@@ -8,7 +8,7 @@ const (
 	OpenShiftBuildFinalizerName = "operator.openshift.io/openshiftbuilds"
 	OpenShiftBuildCRDName       = "openshiftbuilds.operator.openshift.io"
 	OpenShiftBuildResourceName  = "cluster"
-	OpenShiftBuildNamespaceName = "openshift-builds"
+	OpenShiftBuilNamespaceName  = "openshift-builds"
 )
 
 const (
@@ -20,4 +20,5 @@ const (
 var (
 	ShipwrightBuildManifestPath         = filepath.Join("config", "shipwright", "build", "release")
 	ShipwrightBuildStrategyManifestPath = filepath.Join("config", "shipwright", "build", "strategy")
+	CurrentNamespaceName                string
 )

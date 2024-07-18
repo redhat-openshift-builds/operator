@@ -28,6 +28,7 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
 	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
+	"github.com/redhat-openshift-builds/operator/internal/common"
 	"github.com/redhat-openshift-builds/operator/internal/controller"
 	shipwrightbuild "github.com/redhat-openshift-builds/operator/internal/shipwright/build"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -109,11 +110,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Fetch the namespace and store for later use
+	namespace := common.FetchCurrentNamespaceName()
+
 	// Run OpenshiftBuild controller
 	buildReconciler := &controller.OpenShiftBuildReconciler{
 		Client:     mgr.GetClient(),
 		Scheme:     mgr.GetScheme(),
-		Shipwright: shipwrightbuild.New(mgr.GetClient()),
+		Shipwright: shipwrightbuild.New(mgr.GetClient(), namespace),
 	}
 
 	if err := buildReconciler.SetupWithManager(mgr); err != nil {

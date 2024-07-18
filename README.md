@@ -1,14 +1,18 @@
-# operator
+# OpenShift Builds Operator
+
 OpenShift Builds operator provides the API to manage Shipwright Build and Shared Resource CSI Driver.
 
 ## Description
+
 OpenShift Builds operator deploys and manages the following components
+
 - Shipwright Components (pending implementation)
 - Shared Resource CSI Driver (pending implementation)
 
 ## Getting Started
 
 ### Prerequisites
+
 - go version v1.20.0+
 - docker version 17.03+.
 - kubectl version v1.11.3+.
@@ -22,21 +26,22 @@ Use the IMAGE_TAG_BASE variable to change the operator image's target repostiory
 This should be a proper image name and not end with trailing slashes or special characters.
 
 ```sh
-$ make docker-build docker-push IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
+make docker-build docker-push IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
 ```
 
 **NOTE:** You must have permission to push to the container registry referenced in `IMAGE_TAG_BASE`.
 Your cluster must also have permission to pull images from the referenced container registry.
 
-#### Step 2: Deploy CRDs and Operator**Install the CRDs into the cluster:**
+#### Step 2: Deploy CRDs and Operator **Install the CRDs into the cluster:**
 
 For this step, you must have the equivalent of "cluster admin" privileges on the cluster.
 
 First, deploy custom resource definitions (CRDs) for the operator by running:
 
 ```sh
-$ make install
+make install
 ```
+
 Next, deploy the operator using the same `IMAGE_TAG_BASE` variable as above.
 
 ```sh
@@ -44,6 +49,7 @@ make deploy IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
 ```
 
 ### To Uninstall
+
 **Delete the instances (CRs) from the cluster:**
 
 ```sh
@@ -67,33 +73,42 @@ make undeploy
 Red Hat operators are designed to be managed by Operator Lifecycle Manager (OLM) and deployed
 through the `OperatorHub` section of the OpenShift web console. To deploy with OpenShift and OLM:
 
+> [!TIP]
+> You can combine all or multiple `make` commands in one single command if you don't have anything to modify in between the steps.
+>
+> ```sh
+> make docker-build docker-push bundle bundle-build bundle-push catalog-fbc-build catalog-push catalog-deploy IMAGE_TAG_BASE=quay.io/musername/rh-openshift-builds/operator
+> ```
+
 1. Build your operator and push it to a container registry (step 1 above).
 2. Build the operator bundle and push it to a container registry, by running the following `make
    commands:
 
    ```sh
-   $ make bundle IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
-   $ make bundle-build bundle-push IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
+   make bundle IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
+   make bundle-build bundle-push IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
    ```
 
 3. Build and push the operator catalog
 
    ```sh
-   $ make catalog-fbc-build IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
-   $ make catalog-push IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
+   make catalog-fbc-build IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
+   make catalog-push IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
    ```
 
 4. Deploy the catalog as a `CatalogSource`
 
    ```sh
-   $ make catalog-deploy IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
+   make catalog-deploy IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
    ```
 
 5. In the OpenShift web console, navigate to "OperatorHub" in the Administrator view. You should be
    able to filter for operators in the "Test Candidate Operators" catalog and install the Builds for OpenShift operator from there.
 
+6. By default the Openshift Builds Operator and its operands will get installed in the `openshift-builds` namespace.
 
 ## Contributing
+
 TBD
 
 **NOTE:** Run `make help` for more information on all potential `make` targets
