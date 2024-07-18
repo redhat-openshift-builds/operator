@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"context"
 	"os"
 
 	manifestivalclient "github.com/manifestival/controller-runtime-client"
@@ -66,12 +65,6 @@ func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		manifestPath = path
 	}
 	if r.BuildStrategyManifest, err = manifestival.NewManifest(manifestPath, manifestivalOptions...); err != nil {
-		return err
-	}
-
-	// Check if Shipwright Build CRD exists
-	_, err = r.CRDClient.CustomResourceDefinitions().Get(context.TODO(), common.ShipwrightBuildCRDName, metav1.GetOptions{})
-	if err != nil {
 		return err
 	}
 

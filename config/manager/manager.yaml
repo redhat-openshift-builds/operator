@@ -65,22 +65,23 @@ spec:
         imagePullPolicy: Always
         name: operator
         env:
-          - name: USE_MANAGED_WEBHOOK_CERTS
-            value: "false"
+          # TODO: This needs code changes upstream
+          # - name: USE_MANAGED_WEBHOOK_CERTS
+          #   value: "false"
           - name: PLATFORM
             value: "openshift"
-          - name: IMAGE_SHIPWRIGHT_OPENSHIFT_BUILDS_CONTROLLER
-            value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-controller
+          - name: IMAGE_SHIPWRIGHT_SHIPWRIGHT_BUILD
+            value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-controller@sha256:0054cda756fb647e19cacfcaa60632746b098f066ed4518cec538f5c447eceee
           - name: IMAGE_SHIPWRIGHT_GIT_CONTAINER_IMAGE
-            value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-git-cloner
+            value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-git-cloner@sha256:4f83387ced1c7619ae40cb50cae15047cfaaf070b6ccfd664a9b1f34dc2ebc7d
           - name: IMAGE_SHIPWRIGHT_IMAGE_PROCESSING_CONTAINER_IMAGE
-            value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-image-processing
+            value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-image-processing@sha256:3a17a41daeaa308796f63f14f8efeb60982b6c3b27bd9adf92dd69ff832851a3
           - name: IMAGE_SHIPWRIGHT_BUNDLE_CONTAINER_IMAGE
-            value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-image-bundler
+            value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-image-bundler@sha256:427c0c750d8058e0d3e6277f2d50a7c032c53ea5debf1a6113c3dc5d91f3059a
           - name: IMAGE_SHIPWRIGHT_WAITER_CONTAINER_IMAGE
-            value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-waiter
-          - name: IMAGE_SHIPWRIGHT_OPENSHIFT_BUILDS_WEBHOOK
-            value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-webhook-
+            value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-waiter@sha256:e04a0308814b77ce475112b3a2cc569488d005b673c95ba5c0f30ef06f7a59c3
+          - name: IMAGE_SHIPWRIGHT_SHP_BUILD_WEBHOOK
+            value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-webhook@sha256:3402ebfffa2e40df8547d715c352b1761dafabddb510f20c29bb6804d89ec51e
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
