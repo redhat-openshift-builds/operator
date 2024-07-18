@@ -111,7 +111,6 @@ func main() {
 
 	// Run OpenshiftBuild controller
 	buildReconciler := &controller.OpenShiftBuildReconciler{
-		APIReader:  mgr.GetAPIReader(),
 		Client:     mgr.GetClient(),
 		Scheme:     mgr.GetScheme(),
 		Shipwright: shipwrightbuild.New(mgr.GetClient()),
