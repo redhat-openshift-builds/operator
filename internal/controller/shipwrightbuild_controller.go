@@ -59,6 +59,11 @@ func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		return err
 	}
 
+	// Remove runAsUser and runAsGroup from a Deployment container's security context
+	if r.Manifest, err = r.Manifest.Transform(common.RemoveRunAsUserRunAsGroup); err != nil {
+		return err
+	}
+
 	// Shipwright Build strategies manifests
 	manifestPath = common.ShipwrightBuildStrategyManifestPath
 	if path, ok := os.LookupEnv(common.ShipwrightBuildStrategyManifestPathEnv); ok {
