@@ -38,7 +38,10 @@ IMAGE_TAG_BASE ?= quay.io/redhat-user-workloads/rh-openshift-builds-tenant/opens
 BUNDLE_IMG ?= $(IMAGE_TAG_BASE)-bundle:v$(VERSION)
 
 # BUNDLE_GEN_FLAGS are the flags passed to the operator-sdk generate bundle command
-BUNDLE_GEN_FLAGS ?= -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
+# Setting `--overwrite=false`, which unfortunately requires `bundle.Dockerfile` labels and
+# `annotations.yaml` data to be manually synced.
+# See https://github.com/operator-framework/operator-sdk/issues/6787
+BUNDLE_GEN_FLAGS ?= -q --overwrite=false --version $(VERSION) $(BUNDLE_METADATA_OPTS)
 
 # USE_IMAGE_DIGESTS defines if images are resolved via tags or digests
 # You can enable this value if you would like to use SHA Based Digests

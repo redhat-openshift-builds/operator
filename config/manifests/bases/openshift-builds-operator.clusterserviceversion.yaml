@@ -26,7 +26,7 @@ metadata:
     operatorframework.io/arch.arm64: supported
     operatorframework.io/arch.ppc64le: supported
     operatorframework.io/arch.s390x: supported
-  name: openshift-builds-operator.v1.1.0
+  name: openshift-builds-operator.v0.0.0
   namespace: openshift-builds
 spec:
   apiservicedefinitions: {}
@@ -86,14 +86,14 @@ spec:
   - cicd
   links:
   - name: Documentation
-    url: https://docs.openshift.com/builds/1.0/about/overview-openshift-builds.html
+    url: https://docs.openshift.com/builds/latest/about/overview-openshift-builds.html
   - name: Builds for Openshift
     url: https://github.com/redhat-openshift-builds/operator
   maintainers:
   - email: openshift-builds@redhat.com
     name: Red Hat OpenShift Builds Team
-  maturity: alpha
-  minKubeVersion: 1.24.0
+  maturity: stable
+  minKubeVersion: 1.25.0
   provider:
     name: Red Hat
     url: https://www.redhat.com
