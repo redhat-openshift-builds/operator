@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: operator
   newName: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-operator
-  newTag: 2cfeec6d0fa3a41152c774f8a561e02597e6774d
+  newTag: 4c95f2f44f98dc4bf4b2510904548f9e5b2192f5

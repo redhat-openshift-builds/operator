@@ -36,7 +36,7 @@ metadata:
     categories: Developer Tools, Integration & Delivery
     certified: "true"
     containerImage: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-operator-rhel9
-    createdAt: "2024-07-18T06:21:29Z"
+    createdAt: "2024-07-23T14:24:57Z"
     description: Builds for Red Hat OpenShift is a framework for building container
       images on Kubernetes.
     features.operators.openshift.io/csi: "true"
@@ -765,7 +765,7 @@ spec:
                   value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-waiter@sha256:e04a0308814b77ce475112b3a2cc569488d005b673c95ba5c0f30ef06f7a59c3
                 - name: IMAGE_SHIPWRIGHT_SHP_BUILD_WEBHOOK
                   value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-webhook@sha256:3402ebfffa2e40df8547d715c352b1761dafabddb510f20c29bb6804d89ec51e
-                image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-operator@sha256:dba3f565217646704a66aa8de7c828fbf0e812ac60431b91706b6ba22137d558
+                image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-operator:4c95f2f44f98dc4bf4b2510904548f9e5b2192f5
                 imagePullPolicy: Always
                 livenessProbe:
                   httpGet:
@@ -847,14 +847,14 @@ spec:
   - cicd
   links:
   - name: Documentation
-    url: https://docs.openshift.com/builds/1.0/about/overview-openshift-builds.html
+    url: https://docs.openshift.com/builds/latest/about/overview-openshift-builds.html
   - name: Builds for Openshift
     url: https://github.com/redhat-openshift-builds/operator
   maintainers:
   - email: openshift-builds@redhat.com
     name: Red Hat OpenShift Builds Team
-  maturity: alpha
-  minKubeVersion: 1.24.0
+  maturity: stable
+  minKubeVersion: 1.25.0
   provider:
     name: Red Hat
     url: https://www.redhat.com
