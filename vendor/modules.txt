@@ -199,6 +199,9 @@ github.com/openshift/client-go/security/applyconfigurations/security/v1
 github.com/openshift/client-go/security/clientset/versioned
 github.com/openshift/client-go/security/clientset/versioned/scheme
 github.com/openshift/client-go/security/clientset/versioned/typed/security/v1
+# github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3
+## explicit; go 1.21
+github.com/openshift/service-ca-operator/pkg/controller/api
 # github.com/pkg/errors v0.9.1
 ## explicit
 github.com/pkg/errors

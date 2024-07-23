@@ -30,7 +30,7 @@ var _ = Describe("Build", Label("shipwright", "build"), func() {
 
 	BeforeEach(OncePerOrdered, func() {
 		ctx = context.Background()
-		namespace = common.OpenShiftBuilNamespaceName
+		namespace = common.OpenShiftBuildNamespaceName
 		shipwrightBuild = build.New(fake.NewClientBuilder().WithScheme(scheme).Build(), namespace)
 	})
 

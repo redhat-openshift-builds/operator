@@ -5,6 +5,7 @@ import (
 
 	manifestivalclient "github.com/manifestival/controller-runtime-client"
 	"github.com/manifestival/manifestival"
+	openshiftserviceca "github.com/openshift/service-ca-operator/pkg/controller/api"
 	openshiftv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
 	"github.com/redhat-openshift-builds/operator/internal/common"
 	shipwrightv1alpha1 "github.com/shipwright-io/operator/api/v1alpha1"
@@ -60,7 +61,24 @@ func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	}
 
 	// Remove runAsUser and runAsGroup from a Deployment container's security context
-	if r.Manifest, err = r.Manifest.Transform(common.RemoveRunAsUserRunAsGroup); err != nil {
+	// Insert Openshift Service CA annotations in service and CRD
+	if r.Manifest, err = r.Manifest.Transform(
+		common.RemoveRunAsUserRunAsGroup,
+		common.InjectAnnotations(
+			[]string{"Service"},
+			[]string{common.ShipwrightWebhookServiceName},
+			map[string]string{
+				openshiftserviceca.ServingCertSecretAnnotation: common.ShipwrightWebhookCertSecretName,
+			},
+		),
+		common.InjectAnnotations(
+			[]string{"CustomResourceDefinition"},
+			common.ShipwrightBuildCRDNames,
+			map[string]string{
+				openshiftserviceca.InjectCABundleAnnotationName: "true",
+			},
+		),
+	); err != nil {
 		return err
 	}
 

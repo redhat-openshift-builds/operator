@@ -9,8 +9,10 @@ require (
 	github.com/manifestival/manifestival v0.7.2
 	github.com/onsi/ginkgo/v2 v2.19.0
 	github.com/onsi/gomega v1.33.1
+	github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3
 	github.com/shipwright-io/operator v0.13.0
 	github.com/tektoncd/operator v0.71.0
+	k8s.io/api v0.30.2
 	k8s.io/apiextensions-apiserver v0.30.2
 	k8s.io/apimachinery v0.30.2
 	k8s.io/client-go v1.5.2
@@ -91,7 +93,6 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/api v0.30.2 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20240620174524-b456828f718b // indirect
 	knative.dev/pkg v0.0.0-20240625144936-ee1db869c7ef // indirect
