@@ -1,6 +1,9 @@
 package common
 
 import (
+	"slices"
+
+	"github.com/manifestival/manifestival"
 	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/client-go/kubernetes/scheme"
@@ -27,4 +30,19 @@ func RemoveRunAsUserRunAsGroup(object *unstructured.Unstructured) error {
 	}
 
 	return scheme.Scheme.Convert(deployment, object, nil)
+}
+
+// InjectAnnotations is a Manifestival transformer to add given annotations in resources of provided Kinds.
+func InjectAnnotations(kinds, names []string, annotations map[string]string) manifestival.Transformer {
+	return func(object *unstructured.Unstructured) error {
+		if len(kinds) > 0 && !slices.Contains(kinds, object.GetKind()) {
+			return nil
+		}
+		if len(names) > 0 && !slices.Contains(names, object.GetName()) {
+			return nil
+		}
+		object.SetAnnotations(annotations)
+
+		return nil
+	}
 }

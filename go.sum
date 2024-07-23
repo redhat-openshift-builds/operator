@@ -1176,6 +1176,8 @@ github.com/openshift/apiserver-library-go v0.0.0-20240528110119-d099d1006d9d h1:
 github.com/openshift/apiserver-library-go v0.0.0-20240528110119-d099d1006d9d/go.mod h1:DDVeKBhMfq0TwM4p90dCGz80UeUKPIOCXNBNj3bEXtU=
 github.com/openshift/client-go v0.0.0-20240528061634-b054aa794d87 h1:JtLhaGpSEconE+1IKmIgCOof/Len5ceG6H1pk43yv5U=
 github.com/openshift/client-go v0.0.0-20240528061634-b054aa794d87/go.mod h1:3IPD4U0qyovZS4EFady2kqY32m8lGcbs/Wx+yprg9z8=
+github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3 h1:rvIns2reOYdlyHr79ckw0RN0SH2hxn1QQyMbg8pcCzk=
+github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3/go.mod h1:FMa8l31U/Vq3SYQ/L8MxogbVjUh/YjwkYplIrEUBQ/w=
 github.com/openzipkin/zipkin-go v0.4.3 h1:9EGwpqkgnwdEIJ+Od7QVSEIH+ocmm5nPat0G7sjsSdg=
 github.com/openzipkin/zipkin-go v0.4.3/go.mod h1:M9wCJZFWCo2RiY+o1eBCEMe0Dp2S5LDHcMZmk3RmK7c=
 github.com/pborman/uuid v1.2.0/go.mod h1:X/NO0urCmaxf9VXbdlT7C2Yzkj2IKimNn4k+gtPdI/k=

@@ -4,6 +4,8 @@ ARG TARGETOS
 ARG TARGETARCH
 
 WORKDIR /workspace
+RUN chmod 755 /workspace
+
 # Copy the Go Modules manifests
 COPY go.mod go.mod
 COPY go.sum go.sum

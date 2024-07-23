@@ -46,7 +46,7 @@ var _ = Describe("OpenShiftBuild Controller", Label("controller", "openshiftbuil
 	)
 
 	BeforeEach(func() {
-		namespace = common.OpenShiftBuilNamespaceName
+		namespace = common.OpenShiftBuildNamespaceName
 		reconciler = &OpenShiftBuildReconciler{
 			APIReader:  k8sClient,
 			Client:     k8sClient,
