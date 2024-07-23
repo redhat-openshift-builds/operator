@@ -1,5 +1,5 @@
 # Build the manager binary
-FROM golang:1.22 AS builder
+FROM registry.access.redhat.com/ubi9/go-toolset:1.21@sha256:5c948cdfd0132e982426bc9d3a81eeae66871080ef274abdde1a4a8303509188 AS builder
 ARG TARGETOS
 ARG TARGETARCH
 
@@ -7,8 +7,15 @@ WORKDIR /workspace
 # Copy the Go Modules manifests
 COPY go.mod go.mod
 COPY go.sum go.sum
+
+# Set the GOTOOLCHAIN environment variable so the appropriate SDK is used to compile the operator.
+# Note: This might not function correctly for hermetic builds, and should match the go toolchain
+# version in go.mod
+ENV GOTOOLCHAIN=go1.22.4
 # cache deps before building and copying source so that we don't need to re-download as much
 # and so that source changes don't invalidate our downloaded layer
+# Note: this probably needs to be removed for hermetic builds. Any go dependencies should be pre-
+# fetched or vendored.
 RUN go mod download
 
 # Copy the go source
@@ -23,9 +30,9 @@ COPY internal/ internal/
 # by leaving it empty we can ensure that the container and binary shipped on it will have the same platform.
 RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -a -o operator cmd/main.go
 
-# Use Red Hat Universal Base Image to package the manager binary
+# Use Red Hat Universal Base Image Micro (aka UBI Distroless) to package the manager binary
 # Refer to https://catalog.redhat.com/software/containers/ubi9/ubi-micro/615bdf943f6014fa45ae1b58
-FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:8e33df2832f039b4b1adc53efd783f9404449994b46ae321ee4a0bf4499d5c42
+FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:2044e2ca8e258d00332f40532db9f55fb3d0bfd77ecc84c4aa4c1b7af3626ffb
 
 WORKDIR /
 
