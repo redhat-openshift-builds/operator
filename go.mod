@@ -2,8 +2,6 @@ module github.com/redhat-openshift-builds/operator
 
 go 1.22.0
 
-toolchain go1.22.4
-
 require (
 	github.com/manifestival/controller-runtime-client v0.4.0
 	github.com/manifestival/manifestival v0.7.2

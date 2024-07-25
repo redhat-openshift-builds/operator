@@ -10,15 +10,16 @@ RUN chmod 755 /workspace
 COPY go.mod go.mod
 COPY go.sum go.sum
 
-# Set the GOTOOLCHAIN environment variable so the appropriate SDK is used to compile the operator.
-# Note: This might not function correctly for hermetic builds, and should match the go toolchain
-# version in go.mod
-ENV GOTOOLCHAIN=go1.22.4
+# Set GOTOOLCHAIN=auto to allow automatic toolchain selection based on go.mod.
+# This enables compatibility with newer Go micro releases without updating the
+# base image, addressing issues with Go 1.21+ toolchain requirements and cachi2 compatibility.
+ENV GOTOOLCHAIN=auto
+
 # cache deps before building and copying source so that we don't need to re-download as much
 # and so that source changes don't invalidate our downloaded layer
 # Note: this probably needs to be removed for hermetic builds. Any go dependencies should be pre-
 # fetched or vendored.
-RUN go mod download
+# RUN go mod download
 
 # Copy the go source
 COPY cmd/main.go cmd/main.go

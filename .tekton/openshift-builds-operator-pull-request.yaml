@@ -12,9 +12,9 @@ metadata:
       event == "pull_request" &&
       target_branch == "main" &&
       (
-        files.all.exists(x, x.matches('api/|internal/|test/')) ||      
-        files.all.exists(x, x.matches('main.go|go.mod|go.sum|Dockerfile')) ||     
-        files.all.exists(x, x.matches('.tekton/openshift-builds-operator-unit-test.yaml')) ||     
+        files.all.exists(x, x.matches('api/|internal/|test/')) ||
+        files.all.exists(x, x.matches('main.go|go.mod|go.sum|Dockerfile')) ||
+        files.all.exists(x, x.matches('.tekton/openshift-builds-operator-unit-test.yaml')) ||
         files.all.exists(x, x.matches('.tekton/openshift-builds-operator-pull-request.yaml'))
       )
   creationTimestamp: null
@@ -36,6 +36,12 @@ spec:
     value: 5d
   - name: dockerfile
     value: Dockerfile
+  - name: hermetic
+    value: "true"
+  - name: prefetch-input
+    # --gomod-vendor-check - if the vendor/ directory does not exist, do the same thing as gomod-vendor.
+    # Otherwise, call go mod vendor and verify that nothing changed in the vendor/ directory. If anything did change, raise an error.
+    value: '{"packages": [{"type": "gomod"}], "flags": ["gomod-vendor-check"]}'
   pipelineSpec:
     finally:
     - name: show-sbom
