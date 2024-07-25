@@ -300,9 +300,6 @@ func withBackoff(bs internalbackoff.Strategy) DialOption {
 //
 // Use of this feature is not recommended.  For more information, please see:
 // https://github.com/grpc/grpc-go/blob/master/Documentation/anti-patterns.md
-//
-// Deprecated: this DialOption is not supported by NewClient.
-// Will be supported throughout 1.x.
 func WithBlock() DialOption {
 	return newFuncDialOption(func(o *dialOptions) {
 		o.block = true
@@ -317,8 +314,10 @@ func WithBlock() DialOption {
 // Use of this feature is not recommended.  For more information, please see:
 // https://github.com/grpc/grpc-go/blob/master/Documentation/anti-patterns.md
 //
-// Deprecated: this DialOption is not supported by NewClient.
-// Will be supported throughout 1.x.
+// # Experimental
+//
+// Notice: This API is EXPERIMENTAL and may be changed or removed in a
+// later release.
 func WithReturnConnectionError() DialOption {
 	return newFuncDialOption(func(o *dialOptions) {
 		o.block = true
@@ -388,8 +387,8 @@ func WithCredentialsBundle(b credentials.Bundle) DialOption {
 // WithTimeout returns a DialOption that configures a timeout for dialing a
 // ClientConn initially. This is valid if and only if WithBlock() is present.
 //
-// Deprecated: this DialOption is not supported by NewClient.
-// Will be supported throughout 1.x.
+// Deprecated: use DialContext instead of Dial and context.WithTimeout
+// instead.  Will be supported throughout 1.x.
 func WithTimeout(d time.Duration) DialOption {
 	return newFuncDialOption(func(o *dialOptions) {
 		o.timeout = d
@@ -471,8 +470,9 @@ func withBinaryLogger(bl binarylog.Logger) DialOption {
 // Use of this feature is not recommended.  For more information, please see:
 // https://github.com/grpc/grpc-go/blob/master/Documentation/anti-patterns.md
 //
-// Deprecated: this DialOption is not supported by NewClient.
-// This API may be changed or removed in a
+// # Experimental
+//
+// Notice: This API is EXPERIMENTAL and may be changed or removed in a
 // later release.
 func FailOnNonTempDialError(f bool) DialOption {
 	return newFuncDialOption(func(o *dialOptions) {
@@ -601,22 +601,12 @@ func WithDisableRetry() DialOption {
 	})
 }
 
-// MaxHeaderListSizeDialOption is a DialOption that specifies the maximum
-// (uncompressed) size of header list that the client is prepared to accept.
-type MaxHeaderListSizeDialOption struct {
-	MaxHeaderListSize uint32
-}
-
-func (o MaxHeaderListSizeDialOption) apply(do *dialOptions) {
-	do.copts.MaxHeaderListSize = &o.MaxHeaderListSize
-}
-
 // WithMaxHeaderListSize returns a DialOption that specifies the maximum
 // (uncompressed) size of header list that the client is prepared to accept.
 func WithMaxHeaderListSize(s uint32) DialOption {
-	return MaxHeaderListSizeDialOption{
-		MaxHeaderListSize: s,
-	}
+	return newFuncDialOption(func(o *dialOptions) {
+		o.copts.MaxHeaderListSize = &s
+	})
 }
 
 // WithDisableHealthCheck disables the LB channel health checking for all
@@ -658,7 +648,7 @@ func defaultDialOptions() dialOptions {
 	}
 }
 
-// withMinConnectDeadline specifies the function that clientconn uses to
+// withGetMinConnectDeadline specifies the function that clientconn uses to
 // get minConnectDeadline. This can be used to make connection attempts happen
 // faster/slower.
 //

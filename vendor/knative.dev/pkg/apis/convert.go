@@ -24,6 +24,7 @@ func ConvertToViaProxy(
 	ctx context.Context,
 	source, proxy, sink Convertible,
 ) error {
+
 	if err := source.ConvertTo(ctx, proxy); err != nil {
 		return err
 	}
@@ -37,6 +38,7 @@ func ConvertFromViaProxy(
 	ctx context.Context,
 	source, proxy, sink Convertible,
 ) error {
+
 	if err := proxy.ConvertFrom(ctx, source); err != nil {
 		return err
 	}

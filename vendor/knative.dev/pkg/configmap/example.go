@@ -31,8 +31,10 @@ const (
 	ExampleChecksumAnnotation = "knative.dev/example-checksum"
 )
 
-// Allows for normalizing by collapsing newlines.
-var sequentialNewlines = regexp.MustCompile("(?:\r?\n)+")
+var (
+	// Allows for normalizing by collapsing newlines.
+	sequentialNewlines = regexp.MustCompile("(?:\r?\n)+")
+)
 
 // Checksum generates a checksum for the example value to be compared against
 // a respective annotation.

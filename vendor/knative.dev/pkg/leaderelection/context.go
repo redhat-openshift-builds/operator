@@ -117,8 +117,7 @@ type standardBuilder struct {
 }
 
 func (b *standardBuilder) buildElector(ctx context.Context, la reconciler.LeaderAware,
-	queueName string, enq func(reconciler.Bucket, types.NamespacedName),
-) (Elector, error) {
+	queueName string, enq func(reconciler.Bucket, types.NamespacedName)) (Elector, error) {
 	logger := logging.FromContext(ctx)
 
 	id := b.lec.Identity
@@ -133,6 +132,9 @@ func (b *standardBuilder) buildElector(ctx context.Context, la reconciler.Leader
 	bkts := newStandardBuckets(queueName, b.lec)
 	electors := make([]Elector, 0, b.lec.Buckets)
 	for _, bkt := range bkts {
+		// Use a local var which won't change across the for loop since it is
+		// used in a callback asynchronously.
+		bkt := bkt
 		rl, err := resourcelock.New(knativeResourceLock,
 			system.Namespace(), // use namespace we are running in
 			bkt.Name(),
@@ -189,7 +191,7 @@ func newStandardBuckets(queueName string, cc ComponentConfig) []reconciler.Bucke
 		}
 	}
 	names := make(sets.Set[string], cc.Buckets)
-	for i := range cc.Buckets {
+	for i := uint32(0); i < cc.Buckets; i++ {
 		names.Insert(ln(i))
 	}
 
@@ -236,7 +238,7 @@ func NewStatefulSetBucketAndSet(buckets int) (reconciler.Bucket, *hash.BucketSet
 	}
 
 	names := make(sets.Set[string], buckets)
-	for i := range buckets {
+	for i := 0; i < buckets; i++ {
 		names.Insert(statefulSetPodDNS(i, ssc))
 	}
 
