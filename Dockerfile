@@ -3,22 +3,12 @@ FROM registry.access.redhat.com/ubi9/go-toolset:1.21@sha256:5c948cdfd0132e982426
 ARG TARGETOS
 ARG TARGETARCH
 
-WORKDIR /workspace
-RUN chmod 755 /workspace
-
 # Copy the Go Modules manifests
 COPY go.mod go.mod
 COPY go.sum go.sum
 
-# Set the GOTOOLCHAIN environment variable so the appropriate SDK is used to compile the operator.
-# Note: This might not function correctly for hermetic builds, and should match the go toolchain
-# version in go.mod
-ENV GOTOOLCHAIN=go1.22.4
-# cache deps before building and copying source so that we don't need to re-download as much
-# and so that source changes don't invalidate our downloaded layer
-# Note: this probably needs to be removed for hermetic builds. Any go dependencies should be pre-
-# fetched or vendored.
-RUN go mod download
+# This operator vendors dependencies. Copy this layer first to take advantage of cache hits.
+COPY vendor/ vendor/
 
 # Copy the go source
 COPY cmd/main.go cmd/main.go
@@ -38,7 +28,7 @@ FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:2044e2ca8e258d00332f40532d
 
 WORKDIR /
 
-COPY --from=builder /workspace/operator .
+COPY --from=builder /opt/app-root/src/operator .
 COPY config/shipwright/ config/shipwright/
 COPY config/sharedresource/ config/sharedresource/
 USER 65532:65532
