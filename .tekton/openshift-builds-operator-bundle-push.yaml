@@ -10,8 +10,8 @@ metadata:
       event == "push" &&
       target_branch == "main" &&
       (
-        files.all.exists(x, x.matches('bundle/')) ||      
-        files.all.exists(x, x.matches('bundle.Dockerfile')) ||     
+        files.all.exists(x, x.matches('bundle/')) ||
+        files.all.exists(x, x.matches('bundle.Dockerfile')) ||
         files.all.exists(x, x.matches('.tekton/openshift-builds-operator-bundle-push.yaml'))
       )
   creationTimestamp: null
@@ -31,6 +31,8 @@ spec:
     value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-operator-bundle:{{revision}}
   - name: dockerfile
     value: bundle.Dockerfile
+  - name: hermetic
+    value: "true"
   pipelineSpec:
     finally:
     - name: show-sbom

@@ -25,7 +25,7 @@ spec:
     name: GOMODCACHE
   steps:
   - name: run-test
-    image: docker.io/library/golang:1.22
+    image: registry.access.redhat.com/ubi9/go-toolset:1.21@sha256:5c948cdfd0132e982426bc9d3a81eeae66871080ef274abdde1a4a8303509188
     env:
     - name: GOOS
       value: $(params.GOOS)
