@@ -16,7 +16,19 @@ LABEL operators.operatorframework.io.test.mediatype.v1=scorecard+v1
 LABEL operators.operatorframework.io.test.config.v1=tests/scorecard/
 
 # Labels for Red Hat Operators
-LABEL com.redhat.openshift.versions="v4.12-v4.17"
+LABEL com.redhat.openshift.versions="v4.12-v4.17" \
+    com.redhat.component="openshift-builds-operator-bundle-container" \
+    description="Red Hat OpenShift Builds Operator Bundle" \
+    distribution-scope="public" \
+    io.k8s.description="Red Hat OpenShift Builds Operator Bundle" \
+    io.k8s.display-name="Red Hat OpenShift Builds Operator Bundle" \
+    maintainer="openshift-builds@redhat.com" \
+    name="openshift-builds/operator-bundle" \
+    release="0" \
+    summary="Red Hat OpenShift Builds Operator Bundle" \
+    url="https://catalog.redhat.com/software/containers/openshift-builds/openshift-builds-operator-bundle" \
+    vendor="Red Hat, Inc." \
+    version="v1.1.0"
 
 # Copy files to locations specified by labels.
 COPY bundle/manifests /manifests/
