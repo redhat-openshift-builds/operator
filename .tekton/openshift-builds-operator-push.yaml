@@ -33,6 +33,8 @@ spec:
     value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-operator:{{revision}}
   - name: dockerfile
     value: Dockerfile
+  - name: build-source-image
+    value: "true"
   - name: hermetic
     value: "true"
   - name: prefetch-input

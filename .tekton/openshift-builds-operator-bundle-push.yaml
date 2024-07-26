@@ -31,6 +31,8 @@ spec:
     value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-operator-bundle:{{revision}}
   - name: dockerfile
     value: bundle.Dockerfile
+  - name: build-source-image
+    value: "true"
   - name: hermetic
     value: "true"
   pipelineSpec:
