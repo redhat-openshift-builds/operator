@@ -94,7 +94,7 @@ func getPrefixedNamedFieldValues(prefix string, obj interface{}) (map[string]ref
 		return fields, inlined
 	}
 
-	for i := range objValue.NumField() {
+	for i := 0; i < objValue.NumField(); i++ {
 		tf := objValue.Type().Field(i)
 		if v := objValue.Field(i); v.IsValid() {
 			jTag := tf.Tag.Get("json")

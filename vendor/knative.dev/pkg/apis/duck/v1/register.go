@@ -52,8 +52,6 @@ func addKnownTypes(scheme *runtime.Scheme) error {
 		(&KResource{}).GetListType(),
 		&AddressableType{},
 		(&AddressableType{}).GetListType(),
-		&AuthenticatableType{},
-		(&AuthenticatableType{}).GetListType(),
 		&Source{},
 		(&Source{}).GetListType(),
 		&WithPod{},

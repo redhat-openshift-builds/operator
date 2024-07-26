@@ -103,11 +103,11 @@ func (d *Destination) SetDefaults(ctx context.Context) {
 	}
 }
 
-func validateCACerts(caCert *string) *apis.FieldError {
+func validateCACerts(CACert *string) *apis.FieldError {
 	// Check the object.
 	var errs *apis.FieldError
 
-	block, err := pem.Decode([]byte(*caCert))
+	block, err := pem.Decode([]byte(*CACert))
 	if err != nil && block == nil {
 		errs = errs.Also(apis.ErrInvalidValue("CA Cert provided is invalid", "caCert"))
 		return errs

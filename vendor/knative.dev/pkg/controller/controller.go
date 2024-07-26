@@ -54,12 +54,14 @@ const (
 	DefaultResyncPeriod = 10 * time.Hour
 )
 
-// DefaultThreadsPerController is the number of threads to use
-// when processing the controller's workqueue.  Controller binaries
-// may adjust this process-wide default.  For finer control, invoke
-// Run on the controller directly.
-// TODO rename the const to Concurrency and deprecated this
-var DefaultThreadsPerController = 2
+var (
+	// DefaultThreadsPerController is the number of threads to use
+	// when processing the controller's workqueue.  Controller binaries
+	// may adjust this process-wide default.  For finer control, invoke
+	// Run on the controller directly.
+	// TODO rename the const to Concurrency and deprecated this
+	DefaultThreadsPerController = 2
+)
 
 // Reconciler is the interface that controller implementations are expected
 // to implement, so that the shared controller.Impl can drive work through it.
@@ -224,7 +226,7 @@ type Impl struct {
 
 // ControllerOptions encapsulates options for creating a new controller,
 // including throttling and stats behavior.
-type ControllerOptions struct {
+type ControllerOptions struct { //nolint // for backcompat.
 	WorkQueueName string
 	Logger        *zap.SugaredLogger
 	Reporter      StatsReporter
@@ -482,7 +484,7 @@ func (c *Impl) RunContext(ctx context.Context, threadiness int) error {
 
 	// Launch workers to process resources that get enqueued to our workqueue.
 	c.logger.Info("Starting controller and workers")
-	for range threadiness {
+	for i := 0; i < threadiness; i++ {
 		sg.Add(1)
 		go func() {
 			defer sg.Done()
@@ -623,6 +625,7 @@ func IsSkipKey(err error) bool {
 // Is implements the Is() interface of error. It returns whether the target
 // error can be treated as equivalent to a permanentError.
 func (skipKeyError) Is(target error) bool {
+	//nolint: errorlint // This check is actually fine.
 	_, ok := target.(skipKeyError)
 	return ok
 }
@@ -649,6 +652,7 @@ func IsPermanentError(err error) bool {
 // Is implements the Is() interface of error. It returns whether the target
 // error can be treated as equivalent to a permanentError.
 func (permanentError) Is(target error) bool {
+	//nolint: errorlint // This check is actually fine.
 	_, ok := target.(permanentError)
 	return ok
 }
@@ -708,6 +712,7 @@ func IsRequeueKey(err error) (bool, time.Duration) {
 // Is implements the Is() interface of error. It returns whether the target
 // error can be treated as equivalent to a requeueKeyError.
 func (requeueKeyError) Is(target error) bool {
+	//nolint: errorlint // This check is actually fine.
 	_, ok := target.(requeueKeyError)
 	return ok
 }
@@ -723,6 +728,7 @@ type Informer interface {
 // of them to synchronize.
 func StartInformers(stopCh <-chan struct{}, informers ...Informer) error {
 	for _, informer := range informers {
+		informer := informer
 		go informer.Run(stopCh)
 	}
 
@@ -740,6 +746,7 @@ func RunInformers(stopCh <-chan struct{}, informers ...Informer) (func(), error)
 	var wg sync.WaitGroup
 	wg.Add(len(informers))
 	for _, informer := range informers {
+		informer := informer
 		go func() {
 			defer wg.Done()
 			informer.Run(stopCh)
@@ -757,8 +764,8 @@ func RunInformers(stopCh <-chan struct{}, informers ...Informer) (func(), error)
 // WaitForCacheSyncQuick is the same as cache.WaitForCacheSync but with a much reduced
 // check-rate for the sync period.
 func WaitForCacheSyncQuick(stopCh <-chan struct{}, cacheSyncs ...cache.InformerSynced) bool {
-	err := wait.PollUntilContextCancel(wait.ContextForChannel(stopCh), time.Millisecond, true,
-		func(context.Context) (bool, error) {
+	err := wait.PollImmediateUntil(time.Millisecond,
+		func() (bool, error) {
 			for _, syncFunc := range cacheSyncs {
 				if !syncFunc() {
 					return false, nil
@@ -766,7 +773,7 @@ func WaitForCacheSyncQuick(stopCh <-chan struct{}, cacheSyncs ...cache.InformerS
 			}
 			return true, nil
 		},
-	)
+		stopCh)
 	return err == nil
 }
 

@@ -86,6 +86,7 @@ func (c *ClientConfig) GetRESTConfig() (*rest.Config, error) {
 		loadingRules,
 		overrides,
 	).ClientConfig()
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to create client config: %w", err)
 	}

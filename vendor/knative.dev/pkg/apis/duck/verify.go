@@ -24,10 +24,8 @@ import (
 	"knative.dev/pkg/kmp"
 )
 
-type (
-	Implementable = ducktypes.Implementable
-	Populatable   = ducktypes.Populatable
-)
+type Implementable = ducktypes.Implementable
+type Populatable = ducktypes.Populatable
 
 // VerifyType verifies that a particular concrete resource properly implements
 // the provided Implementable duck type.  It is expected that under the resource

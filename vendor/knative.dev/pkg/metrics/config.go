@@ -58,9 +58,11 @@ const (
 	prometheusHostEnvName            = "METRICS_PROMETHEUS_HOST"
 )
 
-// TestOverrideBundleCount is a variable for testing to reduce the size (number of metrics) buffered before
-// OpenCensus will send a bundled metric report. Only applies if non-zero.
-var TestOverrideBundleCount = 0
+var (
+	// TestOverrideBundleCount is a variable for testing to reduce the size (number of metrics) buffered before
+	// OpenCensus will send a bundled metric report. Only applies if non-zero.
+	TestOverrideBundleCount = 0
+)
 
 // Metrics backend "enum".
 const (
