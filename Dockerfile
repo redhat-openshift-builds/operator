@@ -31,6 +31,8 @@ WORKDIR /
 COPY --from=builder /opt/app-root/src/operator .
 COPY config/shipwright/ config/shipwright/
 COPY config/sharedresource/ config/sharedresource/
+COPY LICENSE /licenses/
+
 USER 65532:65532
 
 ENTRYPOINT ["/operator"]

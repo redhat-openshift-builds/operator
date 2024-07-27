@@ -1,4 +1,4 @@
-FROM scratch
+FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:104cf11d890aeb7dd5728b7d7732e175a0e4018f1bb00d2faebcc8f6bf29bd52
 
 # Core bundle labels.
 LABEL operators.operatorframework.io.bundle.mediatype.v1=registry+v1
@@ -22,6 +22,7 @@ LABEL com.redhat.openshift.versions="v4.12-v4.17" \
     distribution-scope="public" \
     io.k8s.description="Red Hat OpenShift Builds Operator Bundle" \
     io.k8s.display-name="Red Hat OpenShift Builds Operator Bundle" \
+    io.openshift.tags="builds,operator,bundle" \
     maintainer="openshift-builds@redhat.com" \
     name="openshift-builds/operator-bundle" \
     release="0" \
@@ -34,3 +35,6 @@ LABEL com.redhat.openshift.versions="v4.12-v4.17" \
 COPY bundle/manifests /manifests/
 COPY bundle/metadata /metadata/
 COPY bundle/tests/scorecard /tests/scorecard/
+COPY LICENSE /licenses/
+
+USER 65532:65532
