@@ -77,7 +77,7 @@ through the `OperatorHub` section of the OpenShift web console. To deploy with O
 > You can combine all or multiple `make` commands in one single command if you don't have anything to modify in between the steps.
 >
 > ```sh
-> make docker-build docker-push bundle bundle-build bundle-push catalog-fbc-build catalog-push catalog-deploy IMAGE_TAG_BASE=quay.io/musername/rh-openshift-builds/operator
+> make docker-build docker-push bundle bundle-build bundle-push catalog-fbc-build catalog-build catalog-push catalog-deploy IMAGE_TAG_BASE=quay.io/musername/rh-openshift-builds/operator
 > ```
 
 1. Build your operator and push it to a container registry (step 1 above).
@@ -93,6 +93,7 @@ through the `OperatorHub` section of the OpenShift web console. To deploy with O
 
    ```sh
    make catalog-fbc-build IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
+   make catalog-build IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
    make catalog-push IMAGE_TAG_BASE=quay.io/myusername/rh-openshift-builds/operator
    ```
 
