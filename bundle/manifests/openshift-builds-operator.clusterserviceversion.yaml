@@ -977,7 +977,7 @@ spec:
       name: OPENSHIFT_BUILDS_WEBHOOK
     - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:16d8b5c51294daa246b31a3cc707f7d80360ecf100a693d3448e8b2c1b3fe51b
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_WEBHOOK
-    - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:26e7c86ee7dd7f59474db44393d633d00d5b418d13f7767f9722535341190372
+    - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:a3c6d69bf079ab04f386f4ae99922b2a7ce226daf41f3d362214094bfd6cea41
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE
     - image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar@sha256:98341f0b80eeb6064540b61626acb6c6772c1e5c6991b67cfec3768cf459da14
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_NODE_REGISTRAR
