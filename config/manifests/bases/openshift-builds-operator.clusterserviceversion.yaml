@@ -6,7 +6,7 @@ metadata:
     capabilities: Full Lifecycle
     categories: Developer Tools, Integration & Delivery
     certified: "true"
-    containerImage: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-operator-rhel9
+    containerImage: registry.redhat.io/openshift-builds/openshift-builds-operator-rhel9
     description: Builds for Red Hat OpenShift is a framework for building container
       images on Kubernetes.
     features.operators.openshift.io/cnf: "false"
@@ -100,27 +100,27 @@ spec:
   provider:
     name: Red Hat
     url: https://www.redhat.com
+  version: 1.1.0
   relatedImages:
-  - image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-operator@sha256:99481b5ebe12e4b0f91f5c2c94218276ff8b09ba19a8ff4dbaef5067ce8a0b47
+  - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:ec78d30280a1d7b7f9425e2c370dc8cf2fb62b2d9d7cda829b0cf003ec5a58ba
     name: OPENSHIFT_BUILDS_OPERATOR
-  - image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-controller@sha256:d8f0a2e2cea4ec2523522f88dc5b29b99635b156c0dd716241124b21708efcb7
+  - image: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:a911fd84b3d9bf2ec221660507f4f234ec1ecfc232e9a511a4bd18a2598783df
     name: OPENSHIFT_BUILDS_CONTROLLER
-  - image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-git-cloner@sha256:efda8e9dad994f90bfb8fba6c7ec75792018ac8c28d0136eb518ae62e32a0519
+  - image: registry.redhat.io/openshift-builds/openshift-builds-git-cloner-rhel9@sha256:f9494f1408db4fe36e3ddd5bb5c6ca97aec4468e1efbd423c5a4d3f43dd5f7ab
     name: OPENSHIFT_BUILDS_GIT_CLONER
-  - image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-image-processing@sha256:8bcd515f19b53edcc47ae3e578f0f48d285b4668bae68066322b41c836a61288
+  - image: registry.redhat.io/openshift-builds/openshift-builds-image-processing-rhel9@sha256:7bbe8727e99c99eae5a269a3e1e5296c1bf1b1750bd014fabafbc545da2da2a7
     name: OPENSHIFT_BUILDS_IMAGE_PROCESSING
-  - image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-image-bundler@sha256:e707f4096929f93e6e70150dd50ce2ea525966f9e85c67c2dd10b58ab3e88203
+  - image: registry.redhat.io/openshift-builds/openshift-builds-image-bundler-rhel9@sha256:aebf65b8c3a83ba4b5e7a8b36e90b6bdf220c5528039ec0310f363a4dea0d54f
     name: OPENSHIFT_BUILDS_IMAGE_BUNDLER
-  - image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-waiters@sha256:5dd6a22eac7b89da21f0f4643555e88afdee04a28cd9910e38867e8c5de042e4
+  - image: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:4bd4dbe6aa6c06551763738b24c43e992b336dfae6c05728fc980ee0291b0ac6
     name: OPENSHIFT_BUILDS_WAITER
-  - image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-webhook@sha256:b0b6288d5d32df3fadcacccafd415898e0664ffd385a02d793797786232bc3d9
+  - image: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:d997fe638a6b6129ff310dff743da52d08abb263a90404f61f33fb999eda4e77
     name: OPENSHIFT_BUILDS_WEBHOOK
-  - image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-shared-resource-webhook@sha256:953d91f47bd25600016aea7661956316333b6473cbdcdde7f2a234b321d03536
+  - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:16d8b5c51294daa246b31a3cc707f7d80360ecf100a693d3448e8b2c1b3fe51b
     name: OPENSHIFT_BUILDS_SHARED_RESOURCE_WEBHOOK
-  - image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds/openshift-builds-shared-resource@sha256:439ac450d3353894835bd46d181944d268ddf53926bb60e73d9374f30d3bcc17
+  - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:26e7c86ee7dd7f59474db44393d633d00d5b418d13f7767f9722535341190372
     name: OPENSHIFT_BUILDS_SHARED_RESOURCE
   - image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar@sha256:98341f0b80eeb6064540b61626acb6c6772c1e5c6991b67cfec3768cf459da14
     name: OPENSHIFT_BUILDS_SHARED_RESOURCE_NODE_REGISTRAR
   - image: registry.redhat.io/openshift4/ose-kube-rbac-proxy@sha256:97cade2c1ee468261aec5400728c8d44de387b459134aec7a4c3b5ec5a335d2c
     name: OPENSHIFT_BUILDS_KUBE_RBAC_PROXY
-  version: 1.1.0
