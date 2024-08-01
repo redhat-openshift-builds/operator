@@ -11,7 +11,7 @@ metadata:
       event == "push" &&
       target_branch == "builds-1.1" &&
       (
-        files.all.exists(x, x.matches('api/|internal/|test/|vendor/')) ||
+        files.all.exists(x, x.matches('api/|internal/|test/|vendor/|config/sharedresource/|config/shipwright/')) ||
         files.all.exists(x, x.matches('main.go|go.mod|go.sum|Dockerfile')) ||
         files.all.exists(x, x.matches('.tekton/openshift-builds-operator-unit-test.yaml')) ||
         files.all.exists(x, x.matches('.tekton/openshift-builds-operator-push.yaml'))
