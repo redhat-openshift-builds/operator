@@ -56,7 +56,7 @@ spec:
           # for development purposes; eventually switch to IfNotPresent
           imagePullPolicy: IfNotPresent
           command:
-            - csi-driver-shared-resource
+            - /openshift-builds-shared-resource
           args:
             - --config=/var/run/configmaps/config/config.yaml
             - "--drivername=csi.sharedresource.openshift.io"
