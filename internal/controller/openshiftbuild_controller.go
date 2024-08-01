@@ -19,7 +19,6 @@ package controller
 import (
 	"context"
 	"errors"
-	"fmt"
 	"os"
 
 	"github.com/go-logr/logr"
@@ -59,6 +58,8 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	logger := log.FromContext(ctx).WithValues("name", req.Name)
 	logger.Info("Starting reconciliation")
 
+	var shipwrightBuildReady, sharedResourceReady metav1.ConditionStatus
+
 	// Get OpenShiftBuild resource from cache
 	openShiftBuild := &openshiftv1alpha1.OpenShiftBuild{}
 	if err := r.Client.Get(ctx, req.NamespacedName, openShiftBuild); err != nil {
@@ -73,6 +74,7 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	// Initialize status
 	if openShiftBuild.Status.Conditions == nil {
 		openShiftBuild.Status.Conditions = []metav1.Condition{}
+		shipwrightBuildReady, sharedResourceReady = metav1.ConditionUnknown, metav1.ConditionUnknown
 		apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
 			Type:    openshiftv1alpha1.ConditionReady,
 			Status:  metav1.ConditionUnknown,
@@ -93,34 +95,39 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	// Reconcile Shipwright Build
 	if err := r.ReconcileShipwrightBuild(ctx, openShiftBuild); err != nil {
 		logger.Error(err, "Failed to reconcile ShipwrightBuild")
-		apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
-			Type:    openshiftv1alpha1.ConditionReady,
-			Status:  metav1.ConditionFalse,
-			Reason:  "Failed",
-			Message: fmt.Sprintf("Failed to reconcile OpenShiftBuild: %v", err),
-		})
-		return ctrl.Result{}, r.Client.Status().Update(ctx, openShiftBuild)
+		shipwrightBuildReady = metav1.ConditionFalse
+		return ctrl.Result{}, err
+	} else {
+		logger.Info("Successfully reconciled ShipwrightBuild")
+		shipwrightBuildReady = metav1.ConditionTrue
 	}
 
 	// Reconcile Shared Resources
 	if err := r.ReconcileSharedResource(ctx, openShiftBuild); err != nil {
 		logger.Error(err, "Failed to reconcile SharedResource")
+		sharedResourceReady = metav1.ConditionFalse
+		return ctrl.Result{}, err
+	} else {
+		logger.Info("Successfully reconciled SharedResource")
+		sharedResourceReady = metav1.ConditionTrue
+	}
+
+	// Update status
+	if isEnabledReady(openShiftBuild, shipwrightBuildReady, sharedResourceReady) {
+		apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
+			Type:    openshiftv1alpha1.ConditionReady,
+			Status:  metav1.ConditionTrue,
+			Reason:  "Success",
+			Message: "Successfully reconciled OpenShiftBuild",
+		})
+	} else {
 		apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
 			Type:    openshiftv1alpha1.ConditionReady,
 			Status:  metav1.ConditionFalse,
 			Reason:  "Failed",
-			Message: fmt.Sprintf("Failed to reconcile OpenShiftBuild: %v", err),
+			Message: "Failed reconciling OpenShiftBuild",
 		})
-		return ctrl.Result{}, r.Client.Status().Update(ctx, openShiftBuild)
 	}
-
-	// Update status
-	apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
-		Type:    openshiftv1alpha1.ConditionReady,
-		Status:  metav1.ConditionTrue,
-		Reason:  "Success",
-		Message: "Successfully reconciled OpenShiftBuild",
-	})
 	if err := r.Client.Status().Update(ctx, openShiftBuild); err != nil {
 		logger.Error(err, "Failed to update status")
 		return ctrl.Result{}, err
@@ -171,6 +178,29 @@ func (r *OpenShiftBuildReconciler) CreateOrUpdate(ctx context.Context, client cl
 	})
 }
 
+// ReconcileShipwrightBuild creates or deletes ShipwrightBuild object
+func (r *OpenShiftBuildReconciler) ReconcileShipwrightBuild(ctx context.Context, owner *openshiftv1alpha1.OpenShiftBuild) error {
+	logger := log.FromContext(ctx).WithValues("name", owner.Name)
+
+	switch owner.Spec.Shipwright.Build.State {
+	case openshiftv1alpha1.Enabled:
+		result, err := r.Shipwright.CreateOrUpdate(ctx, owner)
+		if err != nil {
+			return err
+		}
+		logger.Info("ShipwrightBuild resource", "result", result)
+	case openshiftv1alpha1.Disabled:
+		if err := r.Shipwright.Delete(ctx, owner); err != nil && !apierrors.IsNotFound(err) {
+			return err
+		}
+		logger.Info("ShipwrightBuild resource", "result", "deleted")
+	default:
+		return errors.New("unknown component state")
+	}
+
+	return nil
+}
+
 // ReconcileSharedResource creates and updates SharedResource objects
 func (r *OpenShiftBuildReconciler) ReconcileSharedResource(ctx context.Context, openshiftBuild *openshiftv1alpha1.OpenShiftBuild) error {
 	logger := log.FromContext(ctx).WithValues("name", openshiftBuild.ObjectMeta.Name)
@@ -207,6 +237,18 @@ func (r *OpenShiftBuildReconciler) setupSharedResource(mgr ctrl.Manager) error {
 	return nil
 }
 
+// isEnabledReady checks whether the enabled components (shipwrightBuild or sharedResource) have status set to True.
+func isEnabledReady(osb *openshiftv1alpha1.OpenShiftBuild, shp, shr metav1.ConditionStatus) bool {
+	shpEnabledReady := osb.Spec.Shipwright.Build.State == openshiftv1alpha1.Enabled && shp == metav1.ConditionTrue
+	shrEnabledReady := osb.Spec.SharedResource.State == openshiftv1alpha1.Enabled && shr == metav1.ConditionTrue
+	bothDisabled := osb.Spec.Shipwright.Build.State == openshiftv1alpha1.Disabled && osb.Spec.SharedResource.State == openshiftv1alpha1.Disabled
+
+	if shpEnabledReady || shrEnabledReady || bothDisabled {
+		return true
+	}
+	return false
+}
+
 // HandleDeletion deletes objects created by the controller
 func (r *OpenShiftBuildReconciler) HandleDeletion(ctx context.Context, owner *openshiftv1alpha1.OpenShiftBuild) error {
 	logger := log.FromContext(ctx).WithValues("name", owner.Name)
@@ -223,29 +265,6 @@ func (r *OpenShiftBuildReconciler) HandleDeletion(ctx context.Context, owner *op
 			return r.Client.Update(ctx, owner)
 		}
 	}
-	return nil
-}
-
-// ReconcileShipwrightBuild creates or deletes ShipwrightBuild object
-func (r *OpenShiftBuildReconciler) ReconcileShipwrightBuild(ctx context.Context, owner *openshiftv1alpha1.OpenShiftBuild) error {
-	logger := log.FromContext(ctx).WithValues("name", owner.Name)
-
-	switch owner.Spec.Shipwright.Build.State {
-	case openshiftv1alpha1.Enabled:
-		result, err := r.Shipwright.CreateOrUpdate(ctx, owner)
-		if err != nil {
-			return err
-		}
-		logger.Info("ShipwrightBuild resource", "result", result)
-	case openshiftv1alpha1.Disabled:
-		if err := r.Shipwright.Delete(ctx, owner); err != nil && !apierrors.IsNotFound(err) {
-			return err
-		}
-		logger.Info("ShipwrightBuild resource", "result", "deleted")
-	default:
-		return errors.New("unknown component state")
-	}
-
 	return nil
 }
 
