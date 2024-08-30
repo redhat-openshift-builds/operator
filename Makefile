@@ -84,6 +84,13 @@ CONTAINER_TOOL ?= podman
 SHELL = /usr/bin/env bash -o pipefail
 .SHELLFLAGS = -ec
 
+# Fetches the current OS & arch details to be used during image builds.
+# export PLATFORM to required os/arch to build images for preferred platform.
+# for ex; PLATFORM=linux/amd64 make docker-build
+CURRENT_OS ?= $(shell uname -s | tr A-Z a-z)
+CURRENT_ARCH ?= $(shell uname -m | tr A-Z a-z)
+PLATFORM ?= $(CURRENT_OS)/$(CURRENT_ARCH)
+
 .PHONY: all
 all: build
 
@@ -167,7 +174,7 @@ run: manifests generate fmt vet ## Run a controller from your host.
 # More info: https://docs.docker.com/develop/develop-images/build_enhancements/
 .PHONY: docker-build
 docker-build: ## Build docker image with the manager.
-	$(CONTAINER_TOOL) build -t ${IMG} .
+	$(CONTAINER_TOOL) build --platform=$(PLATFORM) -t ${IMG} .
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
@@ -280,7 +287,7 @@ bundle: manifests kustomize operator-sdk ## Generate bundle manifests and metada
 
 .PHONY: bundle-build
 bundle-build: ## Build the bundle image.
-	$(CONTAINER_TOOL) build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
+	$(CONTAINER_TOOL) build --platform=$(PLATFORM) -f bundle.Dockerfile -t $(BUNDLE_IMG) .
 
 .PHONY: bundle-push
 bundle-push: ## Push the bundle image.
@@ -316,6 +323,7 @@ FROM_INDEX_OPT := --from-index $(CATALOG_BASE_IMG)
 endif
 
 OPM_CONTAINER_TOOL ?= podman
+OPM_BASE_IMAGE_MAC ?= quay.io/operator-framework/opm:master-amd64
 
 .PHONY: catalog-fbc-build
 catalog-fbc-build: opm ## Build a file-based OLM catalog image.
@@ -325,7 +333,7 @@ catalog-fbc-build: opm ## Build a file-based OLM catalog image.
 	cp -r config/catalog _output/
 	$(OPM) render $(BUNDLE_IMG) --output yaml > _output/catalog/openshift-builds-latest.yaml
 	$(OPM) validate _output/catalog
-	cd _output && $(CONTAINER_TOOL) build -f catalog.Dockerfile -t $(CATALOG_IMG) .
+	cd _output && $(CONTAINER_TOOL) build --platform=$(PLATFORM) -f catalog.Dockerfile -t $(CATALOG_IMG) .
 
 # Build a catalog image by adding bundle images to an empty catalog using the operator package manager tool, 'opm'.
 # This recipe invokes 'opm' in 'semver' bundle add mode. For more information on add modes, see:
