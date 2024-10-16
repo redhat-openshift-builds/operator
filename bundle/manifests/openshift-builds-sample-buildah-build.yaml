@@ -1,0 +1,30 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleYAMLSample
+metadata:
+  name: buildah-build
+spec:
+  description: A sample Build using buildah BuildStrategy
+  snippet: false
+  targetResource:
+    apiVersion: shipwright.io/v1beta1
+    kind: Build
+  title: Buildah Build
+  yaml: |
+    apiVersion: shipwright.io/v1beta1
+    kind: Build
+    metadata:
+      name: buildah-golang-build
+    spec:
+      source:
+        type: Git
+        git:
+          url: https://github.com/shipwright-io/sample-go
+        contextDir: docker-build
+      strategy:
+        name: buildah
+        kind: ClusterBuildStrategy
+      paramValues:
+      - name: dockerfile
+        value: Dockerfile
+      output:
+        image: image-registry.openshift-image-registry.svc:5000/namespace/sample-go-app
