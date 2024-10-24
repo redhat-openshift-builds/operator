@@ -168,6 +168,9 @@ spec:
         - $(params.registries-insecure[*])
         - --registries-search
         - $(params.registries-search[*])
+      volumeMounts:
+      - mountPath: /etc/pki/entitlement
+        name: etc-pki-entitlement
       resources:
         limits:
           cpu: "1"
@@ -199,6 +202,10 @@ spec:
       type: string
       default: "vfs"
       # For details see the "--storage-driver" section of https://github.com/containers/buildah/blob/main/docs/buildah.1.md#options
+  volumes:
+  - name: etc-pki-entitlement
+    emptydir: {}
+    overridable: true
   securityContext:
     runAsUser: 0
     runAsGroup: 0
