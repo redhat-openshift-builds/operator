@@ -6,6 +6,7 @@ metadata:
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
+    pipelinesascode.tekton.dev/task: "[.tekton/openshift-builds-operator-unit-test.yaml]"
     pipelinesascode.tekton.dev/on-cel-expression: |
       event == "push" &&
       target_branch == "main" &&
@@ -214,6 +215,19 @@ spec:
         workspace: git-auth
       - name: netrc
         workspace: netrc
+    - name: unit-test
+      params:
+      - name : SOURCE_ARTIFACT
+        value : $(tasks.clone-repository.results.SOURCE_ARTIFACT)
+      runAfter:
+      - prefetch-dependencies
+      taskRef:
+        name: unit-test
+      when:
+      - input: $(params.skip-unit-test)
+        operator: in
+        values:
+          - "false"
     - matrix:
         params:
         - name: PLATFORM
@@ -247,7 +261,7 @@ spec:
       - name: IMAGE_APPEND_PLATFORM
         value: "true"
       runAfter:
-      - prefetch-dependencies
+      - unit-test
       taskRef:
         params:
         - name: name
