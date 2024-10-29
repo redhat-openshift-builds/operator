@@ -18,8 +18,8 @@ spec:
       source:
         type: Git
         git:
-          url: https://github.com/shipwright-io/sample-go
-        contextDir: docker-build
+          url: https://github.com/redhat-openshift-builds/samples/
+        contextDir: buildah-build
       strategy:
         name: buildah
         kind: ClusterBuildStrategy
@@ -28,7 +28,7 @@ spec:
         value: Dockerfile
       output:
         # For a successful image push, a pushSecret with relevant credentials must be available in the same namespace as builds.
-        # Detailed steps are available at: https://docs.openshift.com/builds/1.1/authenticating/understanding-authentication-at-runtime.html#ob-authentication-to-container-registries_understanding-authentication-at-runtime
+        # Detailed steps are available at: https://docs.redhat.com/en/documentation/builds_for_red_hat_openshift/1.1/html-single/authentication/index?extIdCarryOver=true&sc_cid=701f2000001Css5AAC#ob-authentication-to-container-registries_understanding-authentication-at-runtime
         pushSecret: secretName
         # The "quayRepo" in the image needs to be replaced with a valid Quay.io organization or Quay username.
         image: quay.io/quayRepo/sample-go-app

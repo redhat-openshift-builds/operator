@@ -18,8 +18,8 @@ spec:
       source:
         type: Git
         git:
-          url: https://github.com/shipwright-io/sample-go
-        contextDir: docker-build
+          url: https://github.com/redhat-openshift-builds/samples/
+        contextDir: buildah-build
       strategy:
         name: buildah
         kind: ClusterBuildStrategy
@@ -27,4 +27,6 @@ spec:
       - name: dockerfile
         value: Dockerfile
       output:
+        # The "namespace" in the image needs to be replaced with the namespace name where related build exists.
+        # If the following image value is passed as is, the pod will error out while pushing the image due to authentication failures.
         image: image-registry.openshift-image-registry.svc:5000/namespace/sample-go-app
