@@ -1,0 +1,13 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  labels:
+    operators.coreos.com/openshift-builds-operator.openshift-builds: ""
+  name: openshift-builds-operator
+  namespace: openshift-builds
+spec:
+  channel: latest
+  installPlanApproval: Automatic
+  name: openshift-builds-operator
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace

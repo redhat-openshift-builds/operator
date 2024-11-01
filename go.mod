@@ -17,6 +17,7 @@ require (
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20240502163921-fe8a2dddb1d0
 	sigs.k8s.io/controller-runtime v0.17.4
+	sigs.k8s.io/yaml v1.4.0
 )
 
 require (
@@ -97,7 +98,6 @@ require (
 	knative.dev/pkg v0.0.0-20240404013351-5d4af76051e4 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
-	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
 replace k8s.io/client-go => k8s.io/client-go v0.29.7
