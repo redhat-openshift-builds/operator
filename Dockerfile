@@ -1,30 +1,10 @@
-# Build the manager binary
-FROM registry.access.redhat.com/ubi9/go-toolset:1.21.11-7@sha256:d128c3d36878251f039606f144ef2608746c3203708b722295e6c571df1d8613 AS builder
-ARG TARGETOS
-ARG TARGETARCH
+FROM registry.access.redhat.com/ubi9/go-toolset@sha256:97e30a01caeece72ee967013e7c7af777ea4ee93840681ddcfe38a87eb4c084a AS builder
 
-# Copy the Go Modules manifests
-COPY go.mod go.mod
-COPY go.sum go.sum
+COPY . .
 
-# This operator vendors dependencies. Copy this layer first to take advantage of cache hits.
-COPY vendor/ vendor/
-
-# Copy the go source
-COPY cmd/main.go cmd/main.go
-COPY api/ api/
-COPY internal/ internal/
-
-# Build
-# the GOARCH has not a default value to allow the binary be built according to the host where the command
-# was called. For example, if we call make docker-build in a local env which has the Apple Silicon M1 SO
-# the docker BUILDPLATFORM arg will be linux/arm64 when for Apple x86 it will be linux/amd64. Therefore,
-# by leaving it empty we can ensure that the container and binary shipped on it will have the same platform.
 RUN CGO_ENABLED=0 GO111MODULE=on go build -a -mod vendor -o operator cmd/main.go
 
-# Use Red Hat Universal Base Image Micro (aka UBI Distroless) to package the manager binary
-# Refer to https://catalog.redhat.com/software/containers/ubi9/ubi-micro/615bdf943f6014fa45ae1b58
-FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:9dbba858e5c8821fbe1a36c376ba23b83ba00f100126f2073baa32df2c8e183a
+FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:7f376b75faf8ea546f28f8529c37d24adcde33dca4103f4897ae19a43d58192b
 
 WORKDIR /
 
