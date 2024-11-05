@@ -1,6 +1,5 @@
-FROM registry.access.redhat.com/ubi9/ubi-minimal@sha256:104cf11d890aeb7dd5728b7d7732e175a0e4018f1bb00d2faebcc8f6bf29bd52
+FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:7f376b75faf8ea546f28f8529c37d24adcde33dca4103f4897ae19a43d58192b
 
-# Core bundle labels.
 LABEL operators.operatorframework.io.bundle.mediatype.v1=registry+v1
 LABEL operators.operatorframework.io.bundle.manifests.v1=manifests/
 LABEL operators.operatorframework.io.bundle.metadata.v1=metadata/
@@ -11,11 +10,9 @@ LABEL operators.operatorframework.io.metrics.builder=operator-sdk-v1.35.0
 LABEL operators.operatorframework.io.metrics.mediatype.v1=metrics+v1
 LABEL operators.operatorframework.io.metrics.project_layout=go.kubebuilder.io/v4
 
-# Labels for testing.
 LABEL operators.operatorframework.io.test.mediatype.v1=scorecard+v1
 LABEL operators.operatorframework.io.test.config.v1=tests/scorecard/
 
-# Labels for Red Hat Operators
 LABEL com.redhat.openshift.versions="v4.12-v4.17" \
     com.redhat.component="openshift-builds-operator-bundle-container" \
     description="Red Hat OpenShift Builds Operator Bundle" \
@@ -31,10 +28,7 @@ LABEL com.redhat.openshift.versions="v4.12-v4.17" \
     vendor="Red Hat, Inc." \
     version="v1.1.0"
 
-# Copy files to locations specified by labels.
-COPY bundle/manifests /manifests/
-COPY bundle/metadata /metadata/
-COPY bundle/tests/scorecard /tests/scorecard/
+COPY bundle/ /bundle/
 COPY LICENSE /licenses/
 
 USER 65532:65532
