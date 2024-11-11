@@ -20,10 +20,15 @@ import (
 	. "github.com/onsi/ginkgo/v2" //nolint:golint,revive
 	. "github.com/onsi/gomega"    //nolint:golint,revive
 
+	extv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
 	"github.com/redhat-openshift-builds/operator/test/setup"
+	shpoperatorv1alpha1 "github.com/shipwright-io/operator/api/v1alpha1"
 )
 
 var (
@@ -32,11 +37,18 @@ var (
 )
 
 var _ = BeforeSuite(func(ctx SpecContext) {
+	scheme := runtime.NewScheme()
+	Expect(clientgoscheme.AddToScheme(scheme)).To(Succeed(), "setting up kubeClient")
+	Expect(extv1.AddToScheme(scheme)).To(Succeed(), "setting up kubeClient")
+	Expect(operatorv1alpha1.AddToScheme(scheme)).To(Succeed(), "setting up kubeClient")
+	Expect(shpoperatorv1alpha1.AddToScheme(scheme)).To(Succeed(), "setting up kubeClient")
 
 	ctrl.SetLogger(GinkgoLogr)
 	config, err := ctrl.GetConfig()
 	Expect(err).NotTo(HaveOccurred(), "getting KUBECONFIG")
-	kubeClient, err = client.New(config, client.Options{})
+	kubeClient, err = client.New(config, client.Options{
+		Scheme: scheme,
+	})
 	Expect(err).NotTo(HaveOccurred(), "setting up kubeClient")
 
 	By("installing operators", func() {
