@@ -9,7 +9,7 @@ metadata:
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-cel-expression: |
       event == "pull_request" &&
-      target_branch == "main" &&
+      target_branch == "builds-1.2" &&
       (
         files.all.exists(x, x.matches('bundle/')) ||
         files.all.exists(x, x.matches('bundle.Dockerfile')) ||
@@ -17,8 +17,8 @@ metadata:
       )
   creationTimestamp: null
   labels:
-    appstudio.openshift.io/application: openshift-builds
-    appstudio.openshift.io/component: openshift-builds-operator-bundle
+    appstudio.openshift.io/application: openshift-builds-1-2
+    appstudio.openshift.io/component: openshift-builds-operator-bundle-1-2
     pipelines.appstudio.openshift.io/type: build
   name: openshift-builds-operator-bundle-on-pull-request
   namespace: rh-openshift-builds-tenant
@@ -29,7 +29,7 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds-operator-bundle:on-pr-{{revision}}
+    value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds-operator-bundle-1-2:on-pr-{{revision}}
   - name: image-expires-after
     value: 5d
   - name: dockerfile
