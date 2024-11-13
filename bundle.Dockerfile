@@ -28,7 +28,7 @@ LABEL com.redhat.openshift.versions="v4.12-v4.17" \
     vendor="Red Hat, Inc." \
     version="v1.1.0"
 
-COPY bundle/ /bundle/
+COPY bundle/ /
 COPY LICENSE /licenses/
 
 USER 65532:65532
