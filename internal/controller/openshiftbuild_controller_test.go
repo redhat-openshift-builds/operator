@@ -22,6 +22,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -72,7 +73,7 @@ var _ = Describe("OpenShiftBuild controller", Label("integration", "openshiftbui
 			}).WithContext(ctx).Should(Equal(operatorv1alpha1.Enabled), "check spec.shipwright.build is enabled")
 		}, SpecTimeout(1*time.Minute))
 
-		It("enables Shared Resources", func(ctx SpecContext) {
+		It("enables and deploys Shared Resources", Label("shared-resources"), func(ctx SpecContext) {
 			buildObj := &operatorv1alpha1.OpenShiftBuild{
 				ObjectMeta: metav1.ObjectMeta{
 					Name: common.OpenShiftBuildResourceName,
@@ -87,6 +88,25 @@ var _ = Describe("OpenShiftBuild controller", Label("integration", "openshiftbui
 				}
 				return buildObj.Spec.SharedResource.State
 			}).WithContext(ctx).Should(Equal(operatorv1alpha1.Enabled), "check spec.sharedResource is enabled")
+
+			Eventually(func() error {
+				sarRole := &rbacv1.ClusterRole{
+					ObjectMeta: metav1.ObjectMeta{
+						Name: "csi-driver-shared-resource",
+					},
+				}
+				return k8sClient.Get(ctx, client.ObjectKeyFromObject(sarRole), sarRole)
+			}).WithContext(ctx).Should(Succeed(), "deploy shared resources SAR Role")
+
+			Eventually(func() error {
+				sarRoleBinding := &rbacv1.ClusterRoleBinding{
+					ObjectMeta: metav1.ObjectMeta{
+						Name: "csi-driver-shared-resource",
+					},
+				}
+				return k8sClient.Get(ctx, client.ObjectKeyFromObject(sarRoleBinding), sarRoleBinding)
+			}).WithContext(ctx).Should(Succeed(), "deploy shared resources SAR Role")
+
 		}, SpecTimeout(1*time.Minute))
 	})
 })
