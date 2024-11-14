@@ -49,6 +49,7 @@ metadata:
     features.operators.openshift.io/token-auth-azure: "false"
     features.operators.openshift.io/token-auth-gcp: "false"
     operatorframework.io/suggested-namespace: openshift-builds
+    operators.operatorframework.io/internal-objects: '["openshiftbuilds.operator.openshift.io","shipwrightbuilds.operator.shipwright.io"]'
     operators.openshift.io/valid-subscription: '["OpenShift Container Platform", "OpenShift Platform Plus"]'
     operators.operatorframework.io/builder: operator-sdk-v1.35.0
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v4
