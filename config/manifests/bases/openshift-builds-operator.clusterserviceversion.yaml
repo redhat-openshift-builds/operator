@@ -20,9 +20,9 @@ metadata:
     features.operators.openshift.io/token-auth-azure: "false"
     features.operators.openshift.io/token-auth-gcp: "false"
     operatorframework.io/suggested-namespace: openshift-builds
-    operators.operatorframework.io/internal-objects: '["openshiftbuilds.operator.openshift.io","shipwrightbuilds.operator.shipwright.io"]'
     operators.openshift.io/valid-subscription: '["OpenShift Container Platform", "OpenShift
       Platform Plus"]'
+    operators.operatorframework.io/internal-objects: '["openshiftbuilds.operator.openshift.io","shipwrightbuilds.operator.shipwright.io"]'
     repository: https://github.com/shipwright-io/operator
     support: Red Hat
   labels:
@@ -101,7 +101,6 @@ spec:
   provider:
     name: Red Hat
     url: https://www.redhat.com
-  version: 1.1.0
   relatedImages:
   - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:3ecc42df618054809d79f60de80b258a69ca25c66e43f9f2a879e3ce6b840f03
     name: OPENSHIFT_BUILDS_OPERATOR
@@ -125,3 +124,4 @@ spec:
     name: OPENSHIFT_BUILDS_SHARED_RESOURCE_NODE_REGISTRAR
   - image: registry.redhat.io/openshift4/ose-kube-rbac-proxy@sha256:97cade2c1ee468261aec5400728c8d44de387b459134aec7a4c3b5ec5a335d2c
     name: OPENSHIFT_BUILDS_KUBE_RBAC_PROXY
+  version: 1.1.0
