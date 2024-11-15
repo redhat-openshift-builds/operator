@@ -17,6 +17,7 @@ limitations under the License.
 package controller
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
 	"runtime"
@@ -25,23 +26,32 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/rest"
+	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/envtest"
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
+	"github.com/redhat-openshift-builds/operator/internal/common"
+	shipwrightbuild "github.com/redhat-openshift-builds/operator/internal/shipwright/build"
+	shipwrightv1alpha1 "github.com/shipwright-io/operator/api/v1alpha1"
 	//+kubebuilder:scaffold:imports
 )
 
 // These tests use Ginkgo (BDD-style Go testing framework). Refer to
 // http://onsi.github.io/ginkgo/ to learn more about Ginkgo.
 
-var cfg *rest.Config
-var k8sClient client.Client
-var testEnv *envtest.Environment
+var (
+	cfg       *rest.Config
+	k8sClient client.Client
+	testEnv   *envtest.Environment
+	mgrCtx    context.Context
+	cancel    context.CancelFunc
+)
 
 func TestControllers(t *testing.T) {
 	RegisterFailHandler(Fail)
@@ -49,12 +59,18 @@ func TestControllers(t *testing.T) {
 	RunSpecs(t, "Controller Suite")
 }
 
-var _ = BeforeSuite(func() {
+var _ = BeforeSuite(func(ctx SpecContext) {
 	logf.SetLogger(zap.New(zap.WriteTo(GinkgoWriter), zap.UseDevMode(true)))
+
+	mgrCtx, cancel = context.WithCancel(context.Background())
 
 	By("bootstrapping test environment")
 	testEnv = &envtest.Environment{
-		CRDDirectoryPaths:     []string{filepath.Join("..", "..", "config", "crd", "bases")},
+		CRDDirectoryPaths: []string{
+			filepath.Join("..", "..", "config", "crd", "bases"),
+			// Add CRDs that are required for integration tests
+			filepath.Join("..", "..", "test", "integration", "crd"),
+		},
 		ErrorIfCRDPathMissing: true,
 
 		// The BinaryAssetsDirectory is only required if you want to run the tests directly
@@ -72,8 +88,8 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(cfg).NotTo(BeNil())
 
-	err = operatorv1alpha1.AddToScheme(scheme.Scheme)
-	Expect(err).NotTo(HaveOccurred())
+	Expect(operatorv1alpha1.AddToScheme(scheme.Scheme)).To(Succeed())
+	Expect(shipwrightv1alpha1.AddToScheme(scheme.Scheme)).To(Succeed())
 
 	//+kubebuilder:scaffold:scheme
 
@@ -81,10 +97,42 @@ var _ = BeforeSuite(func() {
 	Expect(err).NotTo(HaveOccurred())
 	Expect(k8sClient).NotTo(BeNil())
 
+	mgr, err := ctrl.NewManager(cfg, ctrl.Options{
+		Scheme: scheme.Scheme,
+	})
+	Expect(err).NotTo(HaveOccurred())
+
+	opBuildReconciler := &OpenShiftBuildReconciler{
+		Client:     mgr.GetClient(),
+		Scheme:     mgr.GetScheme(),
+		Shipwright: shipwrightbuild.New(mgr.GetClient(), "openshift-builds"),
+	}
+
+	// HACK - working directory is the test suite's parent directory.
+	// Override the global shared resource path to the correct location.
+	// TODO: Make manifest paths a field on the respective reconciler.
+	common.SharedResourceManifestPath = filepath.Join("..", "..", "config", "sharedresource")
+	Expect(opBuildReconciler.SetupWithManager(mgr)).To(Succeed())
+
+	// Create namespace where operands are deployed. Manifestival does a check for existence.
+	namespace := &corev1.Namespace{
+		ObjectMeta: ctrl.ObjectMeta{
+			Name: common.OpenShiftBuildNamespaceName,
+		},
+	}
+	Expect(k8sClient.Create(ctx, namespace)).To(Succeed())
+
+	go func() {
+		defer GinkgoRecover()
+		err := mgr.Start(mgrCtx)
+		Expect(err).NotTo(HaveOccurred())
+	}()
+
 })
 
 var _ = AfterSuite(func() {
 	By("tearing down the test environment")
+	cancel()
 	err := testEnv.Stop()
 	Expect(err).NotTo(HaveOccurred())
 })
