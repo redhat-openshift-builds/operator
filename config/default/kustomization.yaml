@@ -14,7 +14,7 @@ namePrefix: openshift-builds-
 labels:
   - pairs:
       app.kubernetes.io/part-of: openshift-builds
-      app.kubernetes.io/version: v1.1.0
+      app.kubernetes.io/version: v1.2.0
 
 resources:
 - ../crd
