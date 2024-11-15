@@ -176,7 +176,7 @@ func (r *OpenShiftBuildReconciler) ReconcileSharedResource(ctx context.Context, 
 	logger := log.FromContext(ctx).WithValues("name", openshiftBuild.ObjectMeta.Name)
 
 	logger.Info("Reconciling SharedResource...")
-	if err := r.SharedResource.Reconcile(openshiftBuild); err != nil {
+	if err := r.SharedResource.Reconcile(ctx, openshiftBuild); err != nil {
 		logger.Error(err, "Failed reconciling SharedResource...")
 		return err
 	}
@@ -203,7 +203,7 @@ func (r *OpenShiftBuildReconciler) setupSharedResource(mgr ctrl.Manager) error {
 	}
 
 	// Initialize Shared Resource
-	r.SharedResource = sharedresource.New(sharedManifest)
+	r.SharedResource = sharedresource.New(mgr.GetClient(), sharedManifest)
 	return nil
 }
 
@@ -214,7 +214,7 @@ func (r *OpenShiftBuildReconciler) HandleDeletion(ctx context.Context, owner *op
 		logger.Error(err, "Failed to delete Shipwright Build")
 		return err
 	}
-	if err := r.SharedResource.Reconcile(owner); err != nil {
+	if err := r.SharedResource.Reconcile(ctx, owner); err != nil {
 		logger.Error(err, "Failed to delete SharedResource")
 		return err
 	}
@@ -229,6 +229,28 @@ func (r *OpenShiftBuildReconciler) HandleDeletion(ctx context.Context, owner *op
 // ReconcileShipwrightBuild creates or deletes ShipwrightBuild object
 func (r *OpenShiftBuildReconciler) ReconcileShipwrightBuild(ctx context.Context, owner *openshiftv1alpha1.OpenShiftBuild) error {
 	logger := log.FromContext(ctx).WithValues("name", owner.Name)
+
+	updateOwner := false
+	if owner.Spec.Shipwright == nil {
+		owner.Spec.Shipwright = &openshiftv1alpha1.Shipwright{
+			Build: &openshiftv1alpha1.ShipwrightBuild{
+				State: openshiftv1alpha1.Enabled,
+			},
+		}
+		updateOwner = true
+	}
+	if owner.Spec.Shipwright.Build == nil {
+		owner.Spec.Shipwright.Build = &openshiftv1alpha1.ShipwrightBuild{
+			State: openshiftv1alpha1.Enabled,
+		}
+		updateOwner = true
+	}
+
+	if updateOwner {
+		if err := r.Client.Update(ctx, owner); err != nil {
+			return fmt.Errorf("failed to update OpenShiftBuild with default values: %v", err)
+		}
+	}
 
 	switch owner.Spec.Shipwright.Build.State {
 	case openshiftv1alpha1.Enabled:
