@@ -867,7 +867,7 @@ spec:
                         value: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:b58242d654b67f71844e2dec00506651496381fe9a173e9c719086c7d9519ab6
                       - name: IMAGE_SHIPWRIGHT_SHP_BUILD_WEBHOOK
                         value: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:3ce032366c007a161a2fd92d68dc12c123b57693fa974c92aaec9c13ca63cccc
-                    image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:449210b78b12c6f1d85ff459b1b3d7ec4921b68e1879faf082bb4d4d326393d8
+                    image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:10e6f445071e25ae2bba88e539869874525456dcf9f3751de604b915e8b70333
                     imagePullPolicy: Always
                     livenessProbe:
                       httpGet:
@@ -961,7 +961,7 @@ spec:
     name: Red Hat
     url: https://www.redhat.com
   relatedImages:
-    - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:449210b78b12c6f1d85ff459b1b3d7ec4921b68e1879faf082bb4d4d326393d8
+    - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:10e6f445071e25ae2bba88e539869874525456dcf9f3751de604b915e8b70333
       name: OPENSHIFT_BUILDS_OPERATOR
     - image: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:540974bc3ecbbea131ea555c61a064917d897d814bcb20f8b2ec111e0709a059
       name: OPENSHIFT_BUILDS_CONTROLLER
@@ -983,4 +983,8 @@ spec:
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_NODE_REGISTRAR
     - image: registry.redhat.io/openshift4/ose-kube-rbac-proxy-rhel9@sha256:3fa22124916523b958c67af8ad652e73a2c3d68bb5579da1cba1ade537f3b7ae
       name: OPENSHIFT_BUILDS_KUBE_RBAC_PROXY
+    - image: registry.redhat.io/ubi8/buildah@sha256:1c89cc3cab0ac0fc7387c1fe5e63443468219aab6fd531c8dad6d22fd999819e
+      name: OPENSHIFT_BUILDS_BUILDAH
+    - image: registry.redhat.io/source-to-image/source-to-image-rhel8@sha256:d041c1bbe503d152d0759598f79802e257816d674b342670ef61c6f9e6d401c5
+      name: OPENSHIFT_BUILDS_SOURCE_TO_IMAGE
   version: 1.2.0
