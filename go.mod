@@ -1,6 +1,8 @@
 module github.com/redhat-openshift-builds/operator
 
-go 1.21.0
+go 1.22.0
+
+toolchain go1.22.7
 
 require (
 	github.com/go-logr/logr v1.4.2
@@ -9,7 +11,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.19.0
 	github.com/onsi/gomega v1.33.1
 	github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3
-	github.com/shipwright-io/operator v0.13.0
+	github.com/shipwright-io/operator v0.13.1-0.20241212074358-4d844440bda6
 	github.com/tektoncd/operator v0.71.0
 	k8s.io/api v0.29.7
 	k8s.io/apiextensions-apiserver v0.29.7
@@ -75,14 +77,14 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/exp v0.0.0-20240325151524-a685a6edb6d8 // indirect
-	golang.org/x/net v0.25.0 // indirect
-	golang.org/x/oauth2 v0.19.0 // indirect
-	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.20.0 // indirect
-	golang.org/x/term v0.20.0 // indirect
-	golang.org/x/text v0.15.0 // indirect
-	golang.org/x/time v0.5.0 // indirect
-	golang.org/x/tools v0.21.0 // indirect
+	golang.org/x/net v0.32.0 // indirect
+	golang.org/x/oauth2 v0.24.0 // indirect
+	golang.org/x/sync v0.10.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/term v0.27.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
+	golang.org/x/time v0.8.0 // indirect
+	golang.org/x/tools v0.28.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
 	google.golang.org/api v0.172.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240401170217-c3f982113cda // indirect
