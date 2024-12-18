@@ -6,7 +6,7 @@ metadata:
 spec:
   buildSteps:
     - name: build-and-push
-      image: registry.redhat.io/ubi8/buildah@sha256:1c89cc3cab0ac0fc7387c1fe5e63443468219aab6fd531c8dad6d22fd999819e
+      image: registry.redhat.io/ubi8/buildah:8.10-9
       workingDir: $(params.shp-source-root)
       securityContext:
         capabilities:
@@ -168,9 +168,9 @@ spec:
         - $(params.registries-insecure[*])
         - --registries-search
         - $(params.registries-search[*])
-      volumeMounts:
-      - mountPath: /etc/pki/entitlement
-        name: etc-pki-entitlement
+        volumeMounts:
+        - mountPath: /etc/pki/entitlement
+          name: etc-pki-entitlement
       resources:
         limits:
           cpu: "1"
@@ -203,9 +203,9 @@ spec:
       default: "vfs"
       # For details see the "--storage-driver" section of https://github.com/containers/buildah/blob/main/docs/buildah.1.md#options
   volumes:
-  - name: etc-pki-entitlement
-    emptydir: {}
-    overridable: true
+    - name: etc-pki-entitlement
+      emptydir: {}
+      overridable: true
   securityContext:
     runAsUser: 0
     runAsGroup: 0
