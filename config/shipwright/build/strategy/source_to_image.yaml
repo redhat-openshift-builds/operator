@@ -12,7 +12,7 @@ spec:
       overridable: true
   buildSteps:
     - name: s2i-generate
-      image: registry.redhat.io/source-to-image/source-to-image-rhel8@sha256:d041c1bbe503d152d0759598f79802e257816d674b342670ef61c6f9e6d401c5
+      image: registry.redhat.io/source-to-image/source-to-image-rhel8:1.4.1
       workingDir: $(params.shp-source-root)
       command: 
         - /usr/local/bin/s2i
@@ -25,10 +25,10 @@ spec:
       volumeMounts:
         - name: s2i
           mountPath: /s2i
-        - mountPath: /etc/pki/entitlement
-          name: etc-pki-entitlement
+        - name: etc-pki-entitlement
+          mountPath: /etc/pki/entitlement
     - name: buildah
-      image: registry.redhat.io/ubi8/buildah@sha256:1c89cc3cab0ac0fc7387c1fe5e63443468219aab6fd531c8dad6d22fd999819e
+      image: registry.redhat.io/ubi8/buildah:8.10-9
       workingDir: /s2i
       securityContext:
         capabilities:
@@ -139,8 +139,8 @@ spec:
       volumeMounts:
         - name: s2i
           mountPath: /s2i
-        - mountPath: /etc/pki/entitlement
-          name: etc-pki-entitlement
+        - name: etc-pki-entitlement
+          mountPath: /etc/pki/entitlement
   parameters:
     - name: registries-block
       description: The registries that need to block pull access.
