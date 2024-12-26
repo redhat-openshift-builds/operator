@@ -12,7 +12,7 @@ spec:
     scheme: https
     tlsConfig:
       caFile: /etc/prometheus/configmaps/serving-certs-ca-bundle/service-ca.crt
-      serverName: shared-resource-csi-driver-node-metrics.openshift-cluster-csi-drivers.svc
+      serverName: shared-resource-csi-driver-node-metrics.openshift-builds.svc
   - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
     interval: 30s
     path: /metrics
@@ -20,7 +20,7 @@ spec:
     scheme: https
     tlsConfig:
       caFile: /etc/prometheus/configmaps/serving-certs-ca-bundle/service-ca.crt
-      serverName: shared-resource-csi-driver-node-metrics.openshift-cluster-csi-drivers.svc
+      serverName: shared-resource-csi-driver-node-metrics.openshift-builds.svc
   - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
     interval: 30s
     path: /metrics
@@ -28,7 +28,7 @@ spec:
     scheme: https
     tlsConfig:
       caFile: /etc/prometheus/configmaps/serving-certs-ca-bundle/service-ca.crt
-      serverName: shared-resource-csi-driver-node-metrics.openshift-cluster-csi-drivers.svc
+      serverName: shared-resource-csi-driver-node-metrics.openshift-builds.svc
   jobLabel: component
   selector:
     matchLabels:
