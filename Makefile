@@ -231,7 +231,7 @@ KUSTOMIZE_VERSION ?= v5.3
 CONTROLLER_TOOLS_VERSION ?= v0.14.0
 
 ## Upstream Sources
-SHIPWRIGHT_RELEASE ?= release-v0.13
+SHIPWRIGHT_RELEASE ?= release-v0.14
 SHIPWRIGHT_SOURCE ?= https://raw.githubusercontent.com/shipwright-io/operator/$(SHIPWRIGHT_RELEASE)
 
 .PHONY: kustomize
