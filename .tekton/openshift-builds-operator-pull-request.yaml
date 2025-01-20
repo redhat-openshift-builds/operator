@@ -10,7 +10,7 @@ metadata:
     pipelinesascode.tekton.dev/task: "[.tekton/openshift-builds-operator-unit-test.yaml]"
     pipelinesascode.tekton.dev/on-cel-expression: |
       event == "pull_request" &&
-      target_branch == "main" &&
+      target_branch == "builds-1.3" &&
       (
         files.all.exists(x, x.matches('api/|internal/|test/|vendor/|config/sharedresource/|config/shipwright/')) ||
         files.all.exists(x, x.matches('main.go|go.mod|go.sum|Dockerfile')) ||
@@ -19,8 +19,8 @@ metadata:
       )
   creationTimestamp: null
   labels:
-    appstudio.openshift.io/application: openshift-builds
-    appstudio.openshift.io/component: openshift-builds-operator
+    appstudio.openshift.io/application: openshift-builds-1-3
+    appstudio.openshift.io/component: openshift-builds-operator-1-3
     pipelines.appstudio.openshift.io/type: build
   name: openshift-builds-operator-on-pull-request
   namespace: rh-openshift-builds-tenant
@@ -31,7 +31,7 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds-operator:on-pr-{{revision}}
+    value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds-operator-1-3:on-pr-{{revision}}
   - name: image-expires-after
     value: 5d
   - name: dockerfile
