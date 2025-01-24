@@ -6,7 +6,7 @@ metadata:
 spec:
   buildSteps:
     - name: build-and-push
-      image: registry.redhat.io/ubi8/buildah:8.8
+      image: registry.redhat.io/ubi8/buildah@sha256:56c71ecd450f284325ba8434cbf5b3006078b11f0625c6258689699fa811c95d
       workingDir: $(params.shp-source-root)
       securityContext:
         capabilities:
