@@ -6,7 +6,6 @@ metadata:
     capabilities: Full Lifecycle
     categories: Developer Tools, Integration & Delivery
     certified: "true"
-    containerImage: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator
     description: Builds for Red Hat OpenShift is a framework for building container
       images on Kubernetes.
     features.operators.openshift.io/cnf: "false"
@@ -101,7 +100,7 @@ spec:
     name: Red Hat
     url: https://www.redhat.com
   relatedImages:
-  - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:eb855e7b7e799b2b46d6480033ae320859ef469d4d23b4eb69492443e6fb270f
+  - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:e9f7b8741f265a332008424a2c5b3dae9ea154e623c469085c2abafb53fc62d4
     name: OPENSHIFT_BUILDS_OPERATOR
   - image: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:5babdf590730b217deb59acbccf142c0500bc692542131810714cc00724ee02c
     name: OPENSHIFT_BUILDS_CONTROLLER
