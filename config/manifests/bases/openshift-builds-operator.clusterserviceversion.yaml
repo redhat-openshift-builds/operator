@@ -124,8 +124,8 @@ spec:
     name: OPENSHIFT_BUILDS_SHARED_RESOURCE_NODE_REGISTRAR
   - image: registry.redhat.io/openshift4/ose-kube-rbac-proxy-rhel9@sha256:3fa22124916523b958c67af8ad652e73a2c3d68bb5579da1cba1ade537f3b7ae
     name: OPENSHIFT_BUILDS_KUBE_RBAC_PROXY
-  - image: registry.redhat.io/ubi8/buildah@sha256:1c89cc3cab0ac0fc7387c1fe5e63443468219aab6fd531c8dad6d22fd999819e
+  - image: registry.redhat.io/ubi9/buildah@sha256:27d837f9bc69ad3c3651cf3315e2501b137c11baa553d9d46140e5cf7fa7873a
     name: OPENSHIFT_BUILDS_BUILDAH
-  - image: registry.redhat.io/source-to-image/source-to-image-rhel8@sha256:d041c1bbe503d152d0759598f79802e257816d674b342670ef61c6f9e6d401c5
+  - image: registry.redhat.io/source-to-image/source-to-image-rhel8@sha256:ed3fdd1e85f5c5434de6ec0feaec8c7fe4e680ca6c64258287f18ec2886bb71f
     name: OPENSHIFT_BUILDS_SOURCE_TO_IMAGE
   version: 1.2.0
