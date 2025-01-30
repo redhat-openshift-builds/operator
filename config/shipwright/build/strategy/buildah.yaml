@@ -168,7 +168,7 @@ spec:
         - $(params.registries-insecure[*])
         - --registries-search
         - $(params.registries-search[*])
-        volumeMounts:
+      volumeMounts:
         - mountPath: /etc/pki/entitlement
           name: etc-pki-entitlement
       resources:
