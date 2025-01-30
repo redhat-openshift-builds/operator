@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:a410623c2b8e9429f9606af821be0231fef2372bd0f5f853fbe9743a0ddf7b34
+FROM registry.redhat.io/ubi9/ubi-minimal@sha256:b87097994ed62fbf1de70bc75debe8dacf3ea6e00dd577d74503ef66452c59d6
 
 LABEL operators.operatorframework.io.bundle.mediatype.v1=registry+v1
 LABEL operators.operatorframework.io.bundle.manifests.v1=manifests/
@@ -13,7 +13,7 @@ LABEL operators.operatorframework.io.metrics.project_layout=go.kubebuilder.io/v4
 LABEL operators.operatorframework.io.test.mediatype.v1=scorecard+v1
 LABEL operators.operatorframework.io.test.config.v1=tests/scorecard/
 
-LABEL com.redhat.openshift.versions="v4.12-v4.17" \
+LABEL com.redhat.openshift.versions="v4.14-v4.18" \
     com.redhat.component="openshift-builds-operator-bundle-container" \
     description="Red Hat OpenShift Builds Operator Bundle" \
     distribution-scope="public" \
@@ -22,11 +22,10 @@ LABEL com.redhat.openshift.versions="v4.12-v4.17" \
     io.openshift.tags="builds,operator,bundle" \
     maintainer="openshift-builds@redhat.com" \
     name="openshift-builds/operator-bundle" \
-    release="0" \
     summary="Red Hat OpenShift Builds Operator Bundle" \
     url="https://catalog.redhat.com/software/containers/openshift-builds/openshift-builds-operator-bundle" \
     vendor="Red Hat, Inc." \
-    version="v1.1.0"
+    version="v1.3.0"
 
 COPY bundle/ /
 COPY LICENSE /licenses/
