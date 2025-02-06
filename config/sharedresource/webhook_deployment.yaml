@@ -51,8 +51,6 @@ spec:
         terminationMessagePolicy: FallbackToLogsOnError
       priorityClassName: system-cluster-critical
       serviceAccountName: shared-resource-csi-driver-webhook
-      nodeSelector:
-        node-role.kubernetes.io/master: ""
       tolerations:
       - key: CriticalAddonsOnly
         operator: Exists
