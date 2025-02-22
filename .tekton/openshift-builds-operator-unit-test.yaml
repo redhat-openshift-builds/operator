@@ -37,7 +37,7 @@ spec:
   steps:
   # step to fetch the Trusted Artifact and make it available to the next steps.
   - name: use-trusted-artifact
-    image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:52f1391e6f1c472fd10bb838f64fae2ed3320c636f536014978a5ddbdfc6b3af
+    image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:9b180776a41d9a22a1c51539f1647c60defbbd55b44bbebdd4130e33512d8b0d
     args:
       - use
       - $(params.SOURCE_ARTIFACT)=/var/workdir/source
