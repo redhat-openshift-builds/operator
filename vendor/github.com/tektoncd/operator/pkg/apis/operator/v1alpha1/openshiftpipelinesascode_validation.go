@@ -19,11 +19,8 @@ package v1alpha1
 import (
 	"context"
 	"fmt"
-	"net/url"
-	"regexp"
-	"strings"
+	"reflect"
 
-	pacConfigutil "github.com/openshift-pipelines/pipelines-as-code/pkg/configutil"
 	pacSettings "github.com/openshift-pipelines/pipelines-as-code/pkg/params/settings"
 	"go.uber.org/zap"
 	kubernetesValidation "k8s.io/apimachinery/pkg/util/validation"
@@ -56,13 +53,7 @@ func (ps *PACSettings) validate(logger *zap.SugaredLogger, path string) *apis.Fi
 	var errs *apis.FieldError
 
 	defaultPacSettings := pacSettings.DefaultSettings()
-	if err := pacConfigutil.ValidateAndAssignValues(nil, ps.Settings, &defaultPacSettings, map[string]func(string) error{
-		"ErrorDetectionSimpleRegexp": isValidRegex,
-		"TektonDashboardURL":         isValidURL,
-		"CustomConsoleURL":           isValidURL,
-		"CustomConsolePRTaskLog":     startWithHTTPorHTTPS,
-		"CustomConsolePRDetail":      startWithHTTPorHTTPS,
-	}, false); err != nil {
+	if err := pacSettings.SyncConfig(logger, &defaultPacSettings, ps.Settings, pacSettings.DefaultValidators()); err != nil {
 		errs = errs.Also(apis.ErrInvalidValue(err, fmt.Sprintf("%s.settings", path)))
 	}
 
@@ -71,13 +62,13 @@ func (ps *PACSettings) validate(logger *zap.SugaredLogger, path string) *apis.Fi
 			errs = errs.Also(apis.ErrInvalidValue(err, fmt.Sprintf("%s.additionalPACControllers", path)))
 		}
 
-		errs = errs.Also(additionalPACControllerConfig.validate(logger, fmt.Sprintf("%s.additionalPACControllers", path)))
+		errs = errs.Also(additionalPACControllerConfig.validate(fmt.Sprintf("%s.additionalPACControllers", path)))
 	}
 
 	return errs
 }
 
-func (aps AdditionalPACControllerConfig) validate(logger *zap.SugaredLogger, path string) *apis.FieldError {
+func (aps AdditionalPACControllerConfig) validate(path string) *apis.FieldError {
 	var errs *apis.FieldError
 
 	if err := validateKubernetesName(aps.ConfigMapName); err != nil {
@@ -88,14 +79,7 @@ func (aps AdditionalPACControllerConfig) validate(logger *zap.SugaredLogger, pat
 		errs = errs.Also(apis.ErrInvalidValue(err, fmt.Sprintf("%s.secretName", path)))
 	}
 
-	defaultPacSettings := pacSettings.DefaultSettings()
-	if err := pacConfigutil.ValidateAndAssignValues(logger, aps.Settings, &defaultPacSettings, map[string]func(string) error{
-		"ErrorDetectionSimpleRegexp": isValidRegex,
-		"TektonDashboardURL":         isValidURL,
-		"CustomConsoleURL":           isValidURL,
-		"CustomConsolePRTaskLog":     startWithHTTPorHTTPS,
-		"CustomConsolePRDetail":      startWithHTTPorHTTPS,
-	}, false); err != nil {
+	if err := validateAdditionalPACControllerSettings(aps.Settings); err != nil {
 		errs = errs.Also(apis.ErrInvalidValue(err, fmt.Sprintf("%s.settings", path)))
 	}
 
@@ -138,24 +122,40 @@ func validateKubernetesName(name string) *apis.FieldError {
 	return nil
 }
 
-// TODO: expose the default custom validators from PAC vendor and remove the below three functions
-func isValidURL(rawURL string) error {
-	if _, err := url.ParseRequestURI(rawURL); err != nil {
-		return fmt.Errorf("invalid value for URL, error: %w", err)
+// validates the settings of the additionalPACController
+func validateAdditionalPACControllerSettings(settings map[string]string) *apis.FieldError {
+	var errs *apis.FieldError
+	validators := pacSettings.DefaultValidators()
+	if len(settings) > 0 {
+		fieldTagMapDetails := getFieldTagMap()
+		for key, value := range settings {
+			fieldName, ok := fieldTagMapDetails[key]
+			if !ok {
+				continue
+			}
+			if validationFunc, ok := validators[fieldName]; ok && value != "" {
+				if err := validationFunc(value); err != nil {
+					errs = errs.Also(apis.ErrInvalidValue(err, fmt.Sprintf("validation failed for field %s", key)))
+					continue
+				}
+			}
+		}
+		return errs
 	}
 	return nil
 }
 
-func isValidRegex(regex string) error {
-	if _, err := regexp.Compile(regex); err != nil {
-		return fmt.Errorf("invalid regex: %w", err)
+// this will return map with all the json tags with value equal to their field names
+func getFieldTagMap() map[string]string {
+	var fieldTagMapping = make(map[string]string)
+	rt := reflect.TypeOf(pacSettings.Settings{})
+	for i := 0; i < rt.NumField(); i++ {
+		f := rt.Field(i)
+		v := f.Tag.Get("json")
+		if v == "" || v == "-" {
+			continue
+		}
+		fieldTagMapping[v] = f.Name
 	}
-	return nil
-}
-
-func startWithHTTPorHTTPS(url string) error {
-	if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
-		return fmt.Errorf("invalid value, must start with http:// or https://")
-	}
-	return nil
+	return fieldTagMapping
 }
