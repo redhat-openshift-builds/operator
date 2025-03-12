@@ -102,23 +102,23 @@ spec:
     name: Red Hat
     url: https://www.redhat.com
   relatedImages:
-  - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:aa47c4a7d83d797bd743414813bcd5dee1fb4f5a510397de31a521674d67d46f
+  - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:69b54b7e985e1dc4c329f153440bb4936bfce63541c532381228701b6dfebae0
     name: OPENSHIFT_BUILDS_OPERATOR
-  - image: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:497d52f191554ca1e69858e6b963f61529acdcd2544c8f0308d97b5862b1b3f6
+  - image: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:5cba6650a97cb499c0d6617d9066b85aa835db3307c299c736b58bd727de75f9
     name: OPENSHIFT_BUILDS_CONTROLLER
-  - image: registry.redhat.io/openshift-builds/openshift-builds-git-cloner-rhel9@sha256:100e30705dc0c2d8bb9c0dc95db294493856b82d546c9b6599587dd340cee076
+  - image: registry.redhat.io/openshift-builds/openshift-builds-git-cloner-rhel9@sha256:a26a9376ca8fb4df36798598ab915f50ea2407be610dac0c86ec883eb78ce970
     name: OPENSHIFT_BUILDS_GIT_CLONER
-  - image: registry.redhat.io/openshift-builds/openshift-builds-image-processing-rhel9@sha256:b8118b072cebd47cb30a8afb561b6c7fffe4159ab0d349120facbda7e6efaf4d
+  - image: registry.redhat.io/openshift-builds/openshift-builds-image-processing-rhel9@sha256:f6bfdc12fda6f7ea55f337956295f09d7ea9b22d9d85aa143624737075b7af40
     name: OPENSHIFT_BUILDS_IMAGE_PROCESSING
-  - image: registry.redhat.io/openshift-builds/openshift-builds-image-bundler-rhel9@sha256:168eb59e4f4dcaa69ae59d96ba7d6b0be3009d6c89ea040ac000571e82b1547d
+  - image: registry.redhat.io/openshift-builds/openshift-builds-image-bundler-rhel9@sha256:0cc769b0e9af76920355d3856786ed189b86be5266e2ec0992604208f8c777c1
     name: OPENSHIFT_BUILDS_IMAGE_BUNDLER
-  - image: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:c8411c36a49c94a6ba0f702f9c1315e1d6314f7acb2a6eeb35815de6d8837e3e
+  - image: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:b60bdd4cc51af44d44949d82f0445e71d8507ecf85f5af8b632e742f86f04d86
     name: OPENSHIFT_BUILDS_WAITER
-  - image: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:40838b6bd28a21ea88c411abea8bf6c192c6fbe03a417ab6602ca6d02b60946b
+  - image: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:d0f522c32761ef388532b324f61673ddfe06f065e5ce54d7db8b1b60da46bd84
     name: OPENSHIFT_BUILDS_WEBHOOK
-  - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:eaa6c528e069ca3674536ad1b47b06ea4772aa286eb6728ccacd90bb7a9602bf
+  - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:6f9c20dc6d1ce272a52e435f9b727e6ee462ecf111236e5b3cc64969574730a9
     name: OPENSHIFT_BUILDS_SHARED_RESOURCE_WEBHOOK
-  - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:619494b414cfddaa9a75a07bb70570935c5c38944551da0537af302723476961
+  - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:3cceab27bd4e7640feba87ded5a3a992fed85c7b849746e8ca8691efcfd8c483
     name: OPENSHIFT_BUILDS_SHARED_RESOURCE
   - image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar-rhel9@sha256:e8582857566020c71653228355cbadc2c1cda41e36fc767c204a4edb05e7f42a
     name: OPENSHIFT_BUILDS_SHARED_RESOURCE_NODE_REGISTRAR
