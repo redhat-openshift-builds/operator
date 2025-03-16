@@ -33,10 +33,10 @@ const (
 	ProfileLite  = "lite"
 
 	// Addon Params
-	ClusterTasksParam      = "clusterTasks"
+	CommunityResolverTasks = "communityResolverTasks"
 	PipelineTemplatesParam = "pipelineTemplates"
-	CommunityClusterTasks  = "communityClusterTasks"
 	ResolverTasks          = "resolverTasks"
+	ResolverStepActions    = "resolverStepActions"
 
 	// Hub Params
 	EnableDevconsoleIntegrationParam = "enable-devconsole-integration"
@@ -110,10 +110,10 @@ var (
 	}
 
 	AddonParams = map[string]ParamValue{
-		ClusterTasksParam:      defaultParamValue,
+		CommunityResolverTasks: defaultParamValue,
 		PipelineTemplatesParam: defaultParamValue,
-		CommunityClusterTasks:  defaultParamValue,
 		ResolverTasks:          defaultParamValue,
+		ResolverStepActions:    defaultParamValue,
 	}
 
 	HubParams = map[string]ParamValue{
