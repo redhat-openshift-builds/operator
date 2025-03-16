@@ -49,7 +49,11 @@ func (tp *TektonPipeline) Validate(ctx context.Context) (errs *apis.FieldError) 
 	// execute common spec validations
 	errs = errs.Also(tp.Spec.CommonSpec.validate("spec"))
 
-	return errs.Also(tp.Spec.PipelineProperties.validate("spec"))
+	errs = errs.Also(tp.Spec.PipelineProperties.validate("spec"))
+
+	errs = errs.Also(tp.Spec.Options.validate("spec"))
+
+	return errs
 }
 
 func (p *PipelineProperties) validate(path string) (errs *apis.FieldError) {
@@ -109,6 +113,16 @@ func (prof *PipelinePerformanceProperties) validate(path string) *apis.FieldErro
 	if prof.Buckets != nil {
 		if *prof.Buckets < 1 || *prof.Buckets > 10 {
 			errs = errs.Also(apis.ErrOutOfBoundsValue(*prof.Buckets, 1, 10, bucketsPath))
+		}
+	}
+
+	// check for StatefulsetOrdinals and Replicas
+	if prof.StatefulsetOrdinals != nil && *prof.StatefulsetOrdinals {
+		if prof.Replicas != nil {
+			replicas := uint(*prof.Replicas)
+			if *prof.Buckets != replicas {
+				errs = errs.Also(apis.ErrInvalidValue(*prof.Replicas, fmt.Sprintf("%s.replicas", path), "spec.performance.replicas must equal spec.performance.buckets for statefulset ordinals"))
+			}
 		}
 	}
 
