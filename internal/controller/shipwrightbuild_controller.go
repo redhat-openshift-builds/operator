@@ -2,6 +2,7 @@ package controller
 
 import (
 	"os"
+	"path/filepath"
 
 	manifestivalclient "github.com/manifestival/controller-runtime-client"
 	"github.com/manifestival/manifestival"
@@ -110,4 +111,18 @@ func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			},
 		}).
 		Complete(&reconciler)
+}
+
+// setupManifestival instantiate manifestival with local controller attributes, as well as tekton prereqs.
+func (r *ShipwrightBuildReconciler) setupManifestival() error {
+	var err error
+	r.Manifest, err = common.SetupManifestival(r.Client, filepath.Join("shipwright", "build", "release", "release.yaml"), false, r.Logger)
+	if err != nil {
+		return err
+	}
+	r.BuildStrategyManifest, err = common.SetupManifestival(r.Client, filepath.Join("shipwright", "build", "strategy"), true, r.Logger)
+	if err != nil {
+		return err
+	}
+	return nil
 }
