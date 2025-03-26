@@ -4,7 +4,7 @@ COPY . .
 
 RUN CGO_ENABLED=0 GO111MODULE=on go build -a -mod vendor -o operator cmd/main.go
 
-FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:d115f8aad9c4ae7ee21ae75bbcb3dc2c5dbf9b57bf6dad6dcb5aac5c02003bde
+FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:414cfa255ea10eaef4528a26d5618eb67cf487b635ee20f8f14b9317bfd6a4be
 
 WORKDIR /
 
