@@ -1,12 +1,13 @@
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: ClusterBuildStrategy
 metadata:
   name: buildah
 spec:
-  buildSteps:
+  steps:
     - name: build-and-push
-      image: registry.redhat.io/ubi8/buildah@sha256:56c71ecd450f284325ba8434cbf5b3006078b11f0625c6258689699fa811c95d
+      image: registry.redhat.io/ubi8/buildah:8.10-9
+      imagePullPolicy: Always
       workingDir: $(params.shp-source-root)
       securityContext:
         capabilities:
@@ -23,7 +24,7 @@ spec:
           context=
           dockerfile=
           image=
-          buildArgs=()
+          budArgs=()
           inBuildArgs=false
           registriesBlock=""
           inRegistriesBlock=false
@@ -57,6 +58,15 @@ spec:
               inRegistriesSearch=false
               image="$1"
               shift
+            elif [ "${arg}" == "--target" ]; then
+              inBuildArgs=false
+              inRegistriesBlock=false
+              inRegistriesInsecure=false
+              inRegistriesSearch=false
+              if [ "$1" != "" ]; then
+                budArgs+=(--target "$1")
+              fi
+              shift
             elif [ "${arg}" == "--build-args" ]; then
               inBuildArgs=true
               inRegistriesBlock=false
@@ -78,7 +88,7 @@ spec:
               inRegistriesBlock=false
               inRegistriesInsecure=false
             elif [ "${inBuildArgs}" == "true" ]; then
-              buildArgs+=("--build-arg" "${arg}")
+              budArgs+=("--build-arg" "${arg}")
             elif [ "${inRegistriesBlock}" == "true" ]; then
               registriesBlock="${registriesBlock}'${arg}', "
             elif [ "${inRegistriesInsecure}" == "true" ]; then
@@ -139,7 +149,7 @@ spec:
           # Building the image
           echo "[INFO] Building image ${image}"
           buildah --storage-driver=$(params.storage-driver) \
-            bud "${buildArgs[@]}" \
+            bud "${budArgs[@]}" \
             --registries-conf=/tmp/registries.conf \
             --tag="${image}" \
             --file="${dockerfile}" \
@@ -157,7 +167,7 @@ spec:
         - --context
         - $(params.shp-source-context)
         - --dockerfile
-        - $(build.dockerfile)
+        - $(params.dockerfile)
         - --image
         - $(params.shp-output-image)
         - --build-args
@@ -168,6 +178,8 @@ spec:
         - $(params.registries-insecure[*])
         - --registries-search
         - $(params.registries-search[*])
+        - --target
+        - $(params.target)
       volumeMounts:
         - mountPath: /etc/pki/entitlement
           name: etc-pki-entitlement
@@ -197,14 +209,22 @@ spec:
       defaults:
         - registry.redhat.io
         - quay.io
+    - name: dockerfile
+      description: The path to the Dockerfile to be used for building the image.
+      type: string
+      default: "Dockerfile"
     - name: storage-driver
       description: "The storage driver to use, such as 'overlay' or 'vfs'"
       type: string
       default: "vfs"
       # For details see the "--storage-driver" section of https://github.com/containers/buildah/blob/main/docs/buildah.1.md#options
+    - name: target
+      description: "Sets the target stage to be built."
+      type: string
+      default: ""
   volumes:
     - name: etc-pki-entitlement
-      emptydir: {}
+      emptyDir: {}
       overridable: true
   securityContext:
     runAsUser: 0
