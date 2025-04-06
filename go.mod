@@ -16,7 +16,7 @@ require (
 	k8s.io/apimachinery v0.30.8
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20240502163921-fe8a2dddb1d0
-	sigs.k8s.io/controller-runtime v0.18.6
+	sigs.k8s.io/controller-runtime v0.20.4
 	sigs.k8s.io/yaml v1.4.0
 )
 
@@ -103,4 +103,4 @@ replace k8s.io/client-go => k8s.io/client-go v0.30.8
 
 replace github.com/tektoncd/operator => github.com/tektoncd/operator v0.71.0
 
-replace sigs.k8s.io/controller-runtime/pkg/envtest/printer => sigs.k8s.io/controller-runtime v0.13.2
+replace sigs.k8s.io/controller-runtime/pkg/envtest/printer => sigs.k8s.io/controller-runtime v0.20.4
