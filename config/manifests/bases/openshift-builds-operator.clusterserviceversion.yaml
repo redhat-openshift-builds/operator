@@ -128,4 +128,4 @@ spec:
     name: OPENSHIFT_BUILDS_BUILDAH
   - image: registry.redhat.io/source-to-image/source-to-image-rhel8@sha256:ed3fdd1e85f5c5434de6ec0feaec8c7fe4e680ca6c64258287f18ec2886bb71f
     name: OPENSHIFT_BUILDS_SOURCE_TO_IMAGE
-  version: 1.3.1
+  version: 1.3.2
