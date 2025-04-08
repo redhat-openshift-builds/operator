@@ -1,10 +1,10 @@
-FROM registry.redhat.io/ubi9/ubi-minimal@sha256:14f14e03d68f7fd5f2b18a13478b6b127c341b346c86b6e0b886ed2b7573b8e0
+FROM scratch
 
 LABEL operators.operatorframework.io.bundle.mediatype.v1=registry+v1
 LABEL operators.operatorframework.io.bundle.manifests.v1=manifests/
 LABEL operators.operatorframework.io.bundle.metadata.v1=metadata/
 LABEL operators.operatorframework.io.bundle.package.v1=openshift-builds-operator
-LABEL operators.operatorframework.io.bundle.channels.v1=latest,openshift-builds-1.1
+LABEL operators.operatorframework.io.bundle.channels.v1=latest
 LABEL operators.operatorframework.io.bundle.channel.default.v1=latest
 LABEL operators.operatorframework.io.metrics.builder=operator-sdk-v1.35.0
 LABEL operators.operatorframework.io.metrics.mediatype.v1=metrics+v1
