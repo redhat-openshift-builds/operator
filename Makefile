@@ -3,14 +3,14 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 1.2.0
+VERSION ?= 1.4.0
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "candidate,fast,stable")
 # To re-generate a bundle for other specific channels without changing the standard setup, you can:
 # - use the CHANNELS as arg of the bundle target (e.g make bundle CHANNELS=candidate,fast,stable)
 # - use environment variables to overwrite this value (e.g export CHANNELS="candidate,fast,stable")
-CHANNELS ?= "latest,openshift-builds-1.2"
+CHANNELS ?= "latest,openshift-builds-1.4"
 ifneq ($(origin CHANNELS), undefined)
 BUNDLE_CHANNELS := --channels=$(CHANNELS)
 endif
@@ -231,7 +231,7 @@ KUSTOMIZE_VERSION ?= v5.3
 CONTROLLER_TOOLS_VERSION ?= v0.14.0
 
 ## Upstream Sources
-SHIPWRIGHT_RELEASE ?= release-v0.14
+SHIPWRIGHT_RELEASE ?= release-v0.15
 SHIPWRIGHT_SOURCE ?= https://raw.githubusercontent.com/shipwright-io/operator/$(SHIPWRIGHT_RELEASE)
 
 .PHONY: kustomize
