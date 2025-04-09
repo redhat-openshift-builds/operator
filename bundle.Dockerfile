@@ -1,4 +1,4 @@
-FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:d115f8aad9c4ae7ee21ae75bbcb3dc2c5dbf9b57bf6dad6dcb5aac5c02003bde
+FROM registry.access.redhat.com/ubi9/ubi-micro@sha256:dca8bc186bb579f36414c6ad28f1dbeda33e5cf0bd5fc1c51430cc578e25f819
 
 LABEL operators.operatorframework.io.bundle.mediatype.v1=registry+v1
 LABEL operators.operatorframework.io.bundle.manifests.v1=manifests/
