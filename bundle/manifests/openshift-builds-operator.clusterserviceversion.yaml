@@ -876,7 +876,7 @@ spec:
                         value: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:b58242d654b67f71844e2dec00506651496381fe9a173e9c719086c7d9519ab6
                       - name: IMAGE_SHIPWRIGHT_SHIPWRIGHT_BUILD_WEBHOOK
                         value: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:3ce032366c007a161a2fd92d68dc12c123b57693fa974c92aaec9c13ca63cccc
-                    image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:10e6f445071e25ae2bba88e539869874525456dcf9f3751de604b915e8b70333
+                    image: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds-operator-bundle@sha256:ba2e56621114b63aec7c508510812eea7a4b11e19557d95fb6595a8f19ca3338
                     imagePullPolicy: Always
                     livenessProbe:
                       httpGet:
