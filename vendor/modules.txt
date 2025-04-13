@@ -237,7 +237,7 @@ github.com/shipwright-io/operator/pkg/buildstrategy
 github.com/shipwright-io/operator/pkg/certmanager
 github.com/shipwright-io/operator/pkg/common
 github.com/shipwright-io/operator/pkg/tekton
-# github.com/spf13/pflag v1.0.5
+# github.com/spf13/pflag v1.0.6
 ## explicit; go 1.12
 github.com/spf13/pflag
 # github.com/tektoncd/operator v0.71.0 => github.com/tektoncd/operator v0.71.0
