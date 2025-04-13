@@ -67,7 +67,7 @@ require (
 	github.com/prometheus/client_golang v1.21.0 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.62.0 // indirect
-	github.com/prometheus/procfs v0.15.1 // indirect
+	github.com/prometheus/procfs v0.16.0 // indirect
 	github.com/prometheus/statsd_exporter v0.28.0 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/tektoncd/pipeline v0.68.0 // indirect
