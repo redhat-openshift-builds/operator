@@ -59,7 +59,7 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/openshift-pipelines/pipelines-as-code v0.27.2 // indirect
+	github.com/openshift-pipelines/pipelines-as-code v0.33.0 // indirect
 	github.com/openshift/api v0.0.0-20240521185306-0314f31e7774 // indirect
 	github.com/openshift/apiserver-library-go v0.0.0-20230816171015-6bfafa975bfb // indirect
 	github.com/openshift/client-go v0.0.0-20240523113335-452272e0496d // indirect
@@ -97,8 +97,8 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20241105132330-32ad38e42d3f // indirect
-	knative.dev/pkg v0.0.0-20240416145024-0f34a8815650 // indirect
-	sigs.k8s.io/json v0.0.0-20241010143419-9aa6b5e7a4b3 // indirect
+	knative.dev/pkg v0.0.0-20241106013442-0a99635c789e // indirect
+	sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.2 // indirect
 )
 
