@@ -104,4 +104,4 @@ require (
 
 replace k8s.io/client-go => k8s.io/client-go v0.32.3
 
-replace sigs.k8s.io/controller-runtime/pkg/envtest/printer => sigs.k8s.io/controller-runtime v0.13.2
+replace sigs.k8s.io/controller-runtime/pkg/envtest/printer => sigs.k8s.io/controller-runtime v0.20.4
