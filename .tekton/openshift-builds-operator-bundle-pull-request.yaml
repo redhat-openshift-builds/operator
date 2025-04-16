@@ -52,7 +52,7 @@ spec:
       - name: revision
         value: main
       - name: pathInRepo
-        value: /pipelines/konflux-build-multi-platform.yaml
+        value: /pipelines/konflux-build-bundle.yaml
   taskRunTemplate: {}
   workspaces:
   - name: git-auth
