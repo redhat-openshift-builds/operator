@@ -6,22 +6,20 @@ metadata:
     build.appstudio.redhat.com/commit_sha: '{{revision}}'
     build.appstudio.redhat.com/target_branch: '{{target_branch}}'
     pipelinesascode.tekton.dev/max-keep-runs: "3"
-    pipelinesascode.tekton.dev/task: "[.tekton/openshift-builds-operator-unit-test.yaml]"
     pipelinesascode.tekton.dev/on-cel-expression: |
       event == "push" &&
-      target_branch == "main" &&
+      target_branch == "builds-1.4" &&
       (
         files.all.exists(x, x.matches('api/|internal/|test/|vendor/|config/sharedresource/|config/shipwright/')) ||
         files.all.exists(x, x.matches('main.go|go.mod|go.sum|Dockerfile')) ||
-        files.all.exists(x, x.matches('.tekton/openshift-builds-operator-unit-test.yaml')) ||
         files.all.exists(x, x.matches('.tekton/openshift-builds-operator-push.yaml'))
       )
   creationTimestamp: null
   labels:
-    appstudio.openshift.io/application: openshift-builds
-    appstudio.openshift.io/component: openshift-builds-operator
+    appstudio.openshift.io/application: openshift-builds-1-4
+    appstudio.openshift.io/component: openshift-builds-operator-1-4
     pipelines.appstudio.openshift.io/type: build
-  name: openshift-builds-operator-on-push
+  name: openshift-builds-operator-1-4-on-push
   namespace: rh-openshift-builds-tenant
 spec:
   params:
@@ -30,7 +28,7 @@ spec:
   - name: revision
     value: '{{revision}}'
   - name: output-image
-    value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds-operator:{{revision}}
+    value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds-operator-1-4:{{revision}}
   - name: dockerfile
     value: Dockerfile
   - name: build-source-image
