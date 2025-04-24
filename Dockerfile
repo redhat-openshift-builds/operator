@@ -1,6 +1,16 @@
-FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder:rhel_9_1.23 AS builder
+FROM registry.redhat.io/ubi9/go-toolset:1.23 AS builder
 
-COPY . .
+USER 1001
+
+WORKDIR /opt/app-root/src
+
+# Copy the Go Modules manifests
+COPY --chown=1001:0 go.mod go.mod
+COPY --chown=1001:0 go.sum go.sum
+
+
+# Copy the go source
+COPY --chown=1001:0 . .
 
 ENV GOEXPERIMENT=strictfipsruntime
 
@@ -10,7 +20,8 @@ FROM registry.redhat.io/ubi9/ubi-minimal@sha256:ac61c96b93894b9169221e8771873335
 
 WORKDIR /
 
-COPY --from=builder /operator .
+COPY --from=builder /opt/app-root/src /opt/app-root/src
+COPY --from=builder /opt/app-root/src/operator .
 COPY config/shipwright/ config/shipwright/
 COPY config/sharedresource/ config/sharedresource/
 COPY LICENSE /licenses/

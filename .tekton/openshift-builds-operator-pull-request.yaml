@@ -31,6 +31,16 @@ spec:
     value: '{{revision}}'
   - name: output-image
     value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds-operator:on-pr-{{revision}}
+  - name: component
+    value: 'openshift-builds-{{ repo_name }}'
+  - name: branch
+    value: '{{ target_branch }}'
+  - name: repository-url
+    value: '{{ repo_url }}'
+  - name: test-event
+    value: '{{ event_type }}'
+  - name: pull-request-number
+    value: '{{ pull_request_number }}'
   - name: image-expires-after
     value: 5d
   - name: dockerfile
