@@ -1,0 +1,10 @@
+apiVersion: operator.openshift.io/v1alpha1
+kind: OpenShiftBuild
+metadata:
+  name: cluster
+spec:
+  sharedResource:
+    state: Enabled
+  shipwright:
+    build:
+      state: Enabled

@@ -1,0 +1,13 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: CatalogSource
+metadata:
+  name: catalog
+  namespace: system
+spec:
+  image: catalog:latest
+  displayName: Test Candidate Operators
+  publisher: Self
+  sourceType: grpc
+  updateStrategy:
+    registryPoll:
+      interval: 10m

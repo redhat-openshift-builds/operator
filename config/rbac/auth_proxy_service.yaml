@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: operator-metrics
+  namespace: system
+spec:
+  ports:
+  - name: https
+    port: 8443
+    protocol: TCP
+    targetPort: https
+  selector:
+    app: openshift-builds-operator
+    control-plane: controller-manager

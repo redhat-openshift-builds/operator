@@ -1,0 +1,26 @@
+apiVersion: shipwright.io/v1beta1
+kind: Build
+metadata:
+  name: buildah-rhel
+  namespace: builds-test
+spec:
+  source:
+    type: Git
+    git:
+      url: https://github.com/redhat-openshift-builds/samples.git
+    contextDir: buildah-build/entitled-builds
+  strategy:
+    name: buildah
+    kind: ClusterBuildStrategy
+  paramValues:
+  - name: dockerfile
+    value: Dockerfile
+  volumes:
+  - csi:
+      driver: csi.sharedresource.openshift.io
+      readOnly: true
+      volumeAttributes:
+        sharedSecret: etc-pki-entitlement
+    name: etc-pki-entitlement
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/builds-test/buildah-rhel:latest
