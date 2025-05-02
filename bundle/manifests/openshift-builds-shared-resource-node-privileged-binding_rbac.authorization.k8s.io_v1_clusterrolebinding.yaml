@@ -4,7 +4,7 @@ metadata:
   creationTimestamp: null
   labels:
     app.kubernetes.io/part-of: openshift-builds
-    app.kubernetes.io/version: v1.2.0
+    app.kubernetes.io/version: v1.4.0
   name: openshift-builds-shared-resource-node-privileged-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io

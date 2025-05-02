@@ -280,7 +280,7 @@ bundle: manifests kustomize operator-sdk ## Generate bundle manifests and metada
 
 .PHONY: bundle-build
 bundle-build: ## Build the bundle image.
-	$(CONTAINER_TOOL) build -f bundle.Dockerfile -t $(BUNDLE_IMG) .
+	$(CONTAINER_TOOL) build --platform linux/amd64 -f bundle.Dockerfile -t $(BUNDLE_IMG) .
 
 .PHONY: bundle-push
 bundle-push: ## Push the bundle image.
@@ -321,7 +321,7 @@ OPM_CONTAINER_TOOL ?= podman
 catalog-fbc-build: opm ## Build a file-based OLM catalog image.
 	rm -rf _output
 	mkdir -p _output/catalog
-	$(OPM) generate dockerfile _output/catalog
+	$(OPM) generate dockerfile --binary-image="quay.io/operator-framework/opm:master-amd64" _output/catalog
 	cp -r config/catalog _output/
 	$(OPM) render $(BUNDLE_IMG) --output yaml > _output/catalog/openshift-builds-latest.yaml
 	$(OPM) validate _output/catalog

@@ -13,5 +13,5 @@ resources:
 
 images:
 - name: catalog
-  newName: registry.redhat.io/openshift-builds/openshift-builds-operator-catalog
-  newTag: v1.1.0
+  newName: quay.io/rh-ee-anborah/rh-openshift-builds/operator-catalog
+  newTag: v1.4.0
