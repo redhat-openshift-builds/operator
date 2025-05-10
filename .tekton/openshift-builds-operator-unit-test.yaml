@@ -42,7 +42,7 @@ spec:
       - use
       - $(params.SOURCE_ARTIFACT)=/var/workdir/source
   - name: run-test
-    image: registry.access.redhat.com/ubi9/go-toolset@sha256:3403e282d00e6f667822a652fe6b17c0fc5fdb04cc28509eb515381fb8496b39
+    image: registry.access.redhat.com/ubi9/go-toolset@sha256:3a2c4a84e7991138c00c5e9835860c048c985bb2c2cdce64567014df470b695c
     env:
     - name: GOOS
       value: $(params.GOOS)
