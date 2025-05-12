@@ -33,6 +33,7 @@ spec:
             # non-privileged sidecar containers cannot access unix domain socket
             # created by privileged CSI driver container.
             privileged: true
+            readOnlyRootFilesystem: true
           env:
             - name: KUBE_NODE_NAME
               valueFrom:
@@ -74,6 +75,7 @@ spec:
                   fieldPath: spec.nodeName
           securityContext:
             privileged: true
+            readOnlyRootFilesystem: true
           ports:
             - containerPort: 9898
               name: healthz
