@@ -1,0 +1,15 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleCLIDownload
+metadata:
+  name: openshift-builds-shp-cli-download
+spec:
+  description: |
+    The Openshift Builds cli `shp` allows you to manage Openshift Builds resources.
+  displayName: shp - Openshift Builds Command Line Interface (CLI)
+  links:
+  - href: 'https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/openshift-builds/1.3.0-258/shp-linux-amd64.tar.gz'
+    text: Download shp for Linux x86_64
+  - href: 'https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/openshift-builds/1.3.0-258/shp-darwin-amd64.tar.gz'
+    text: Download shp for Mac x86_64
+  - href: 'https://developers.redhat.com/content-gateway/file/pub/openshift-v4/clients/openshift-builds/1.3.0-258/shp-windows-amd64.zip'
+    text: Download shp for Windows x86_64
