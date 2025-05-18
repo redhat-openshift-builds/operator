@@ -39,9 +39,20 @@ import (
 
 	openshiftv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
 	"github.com/redhat-openshift-builds/operator/internal/common"
-	shipwrightbuild "github.com/redhat-openshift-builds/operator/internal/shipwright/build"
+
+	// shipwrightbuild "github.com/redhat-openshift-builds/operator/internal/shipwright/build"
 	shipwrightv1alpha1 "github.com/shipwright-io/operator/api/v1alpha1"
 )
+
+// ShipwrightManager defines the interface for managing ShipwrightBuild resources that OpenShiftBuildReconciler depends on.
+type ShipwrightManager interface {
+	CreateOrUpdate(ctx context.Context, owner client.Object) (controllerutil.OperationResult, error)
+	Delete(ctx context.Context, owner client.Object) error
+}
+
+type SharedResourceManager interface {
+	Reconcile(ctx context.Context, owner *openshiftv1alpha1.OpenShiftBuild) error
+}
 
 // OpenShiftBuildReconciler reconciles a OpenShiftBuild object
 type OpenShiftBuildReconciler struct {
@@ -49,8 +60,8 @@ type OpenShiftBuildReconciler struct {
 	Client         client.Client
 	Scheme         *apiruntime.Scheme
 	Logger         logr.Logger
-	SharedResource *sharedresource.SharedResource
-	Shipwright     *shipwrightbuild.ShipwrightBuild
+	SharedResource SharedResourceManager
+	Shipwright     ShipwrightManager
 }
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
@@ -79,39 +90,51 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 			Reason:  "Initializing",
 			Message: "Initializing Openshift Builds Operator",
 		})
-		if err := r.Client.Status().Update(ctx, openShiftBuild); err != nil {
+
+		patch := client.MergeFrom(openShiftBuild.DeepCopy()) // Get base for patch
+		if err := r.Client.Status().Patch(ctx, openShiftBuild, patch); err != nil {
 			logger.Error(err, "Failed to initialize status")
 			return ctrl.Result{}, err
 		}
 	}
 
-	// TODO: Add any specific cleanup logic
+	// Handle Deletion
 	if !openShiftBuild.DeletionTimestamp.IsZero() {
 		return ctrl.Result{}, r.HandleDeletion(ctx, openShiftBuild)
 	}
 
 	// Reconcile Shipwright Build
-	if err := r.ReconcileShipwrightBuild(ctx, openShiftBuild); err != nil {
-		logger.Error(err, "Failed to reconcile ShipwrightBuild")
+	if componentErr := r.ReconcileShipwrightBuild(ctx, openShiftBuild); componentErr != nil {
+		logger.Error(componentErr, "Failed to reconcile ShipwrightBuild")
 		apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
 			Type:    openshiftv1alpha1.ConditionReady,
 			Status:  metav1.ConditionFalse,
-			Reason:  "Failed",
-			Message: fmt.Sprintf("Failed to reconcile OpenShiftBuild: %v", err),
+			Reason:  "ShipwrightReconcileFailed",
+			Message: fmt.Sprintf("Failed to reconcile ShipwrightBuild: %v", componentErr),
 		})
-		return ctrl.Result{}, r.Client.Status().Update(ctx, openShiftBuild)
+		// Status update using the patch
+		patch := client.MergeFrom(openShiftBuild.DeepCopy())
+		if statusUpdateErr := r.Client.Status().Patch(ctx, openShiftBuild, patch); statusUpdateErr != nil {
+			logger.Error(statusUpdateErr, "Failed to update status after ShipwrightBuild reconcile error")
+		}
+		return ctrl.Result{}, componentErr
 	}
 
 	// Reconcile Shared Resources
-	if err := r.ReconcileSharedResource(ctx, openShiftBuild); err != nil {
-		logger.Error(err, "Failed to reconcile SharedResource")
+	if componentErr := r.ReconcileSharedResource(ctx, openShiftBuild); componentErr != nil {
+		logger.Error(componentErr, "Failed to reconcile SharedResource")
 		apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
 			Type:    openshiftv1alpha1.ConditionReady,
 			Status:  metav1.ConditionFalse,
-			Reason:  "Failed",
-			Message: fmt.Sprintf("Failed to reconcile OpenShiftBuild: %v", err),
+			Reason:  "SharedResourceReconcileFailed",
+			Message: fmt.Sprintf("Failed to reconcile SharedResource: %v", componentErr),
 		})
-		return ctrl.Result{}, r.Client.Status().Update(ctx, openShiftBuild)
+		// Status update using the patch
+		patch := client.MergeFrom(openShiftBuild.DeepCopy())
+		if statusUpdateErr := r.Client.Status().Patch(ctx, openShiftBuild, patch); statusUpdateErr != nil {
+			logger.Error(statusUpdateErr, "Failed to update status after SharedResource reconcile error")
+		}
+		return ctrl.Result{}, componentErr
 	}
 
 	// Update status
@@ -121,8 +144,10 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		Reason:  "Success",
 		Message: "Successfully reconciled OpenShiftBuild",
 	})
-	if err := r.Client.Status().Update(ctx, openShiftBuild); err != nil {
-		logger.Error(err, "Failed to update status")
+
+	patch := client.MergeFrom(openShiftBuild.DeepCopy())
+	if err := r.Client.Status().Patch(ctx, openShiftBuild, patch); err != nil {
+		logger.Error(err, "Failed to update status to Ready")
 		return ctrl.Result{}, err
 	}
 
