@@ -51,26 +51,27 @@ spec:
     value: "true"
   - name: build-platforms
     value:
-      - linux/x86_64
-      - linux/arm64
+    - linux/x86_64
+    - linux/arm64
   - name: prefetch-input
     value: '{"packages": [{"type": "gomod"}]}'
   - name: run-unit-test
     value: "true"
   - name: unit-test-revision
-    value: "6392835dbcdc367e616d448af25f37cce1e403b9"
+    value: 6392835dbcdc367e616d448af25f37cce1e403b9
   - name: unit-test-command
-    value: "make test"
+    value: make test
   pipelineRef:
-    resolver: git
     params:
-      - name: url
-        value: https://github.com/redhat-openshift-builds/release.git
-      - name: revision
-        value: main
-      - name: pathInRepo
-        value: /pipelines/konflux-build-multi-platform.yaml
-  taskRunTemplate: {}
+    - name: url
+      value: https://github.com/redhat-openshift-builds/release.git
+    - name: revision
+      value: main
+    - name: pathInRepo
+      value: /pipelines/konflux-build-multi-platform.yaml
+    resolver: git
+  taskRunTemplate:
+    serviceAccountName: build-pipeline-openshift-builds-operator
   workspaces:
   - name: git-auth
     secret:
