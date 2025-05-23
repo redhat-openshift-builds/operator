@@ -1,0 +1,35 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleYAMLSample
+metadata:
+  name: buildah-build-external-push
+spec:
+  description: A sample Build using buildah BuildStrategy that pushes the built image
+    to an external registry
+  snippet: false
+  targetResource:
+    apiVersion: shipwright.io/v1beta1
+    kind: Build
+  title: Buildah Build External Push
+  yaml: |
+    apiVersion: shipwright.io/v1beta1
+    kind: Build
+    metadata:
+      name: buildah-golang-build-external-push
+    spec:
+      source:
+        type: Git
+        git:
+          url: https://github.com/redhat-openshift-builds/samples..git
+        contextDir: buildah
+      strategy:
+        name: buildah
+        kind: ClusterBuildStrategy
+      paramValues:
+      - name: dockerfile
+        value: Dockerfile
+      output:
+        # For a successful image push, a pushSecret with relevant credentials must be available in the same namespace as builds.
+        # Detailed steps are available at: https://docs.redhat.com/en/documentation/builds_for_red_hat_openshift/1.1/html-single/authentication/index?extIdCarryOver=true&sc_cid=701f2000001Css5AAC#ob-authentication-to-container-registries_understanding-authentication-at-runtime
+        pushSecret: secretName
+        # The "quayRepo" in the image needs to be replaced with a valid Quay.io organization or Quay username.
+        image: quay.io/quayRepo/sample-go-app

@@ -1,0 +1,35 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleYAMLSample
+metadata:
+  name: buildpack-quarkus-build
+spec:
+  description: A sample Quarkus application Build using Buildpack BuildStrategy with UBI stack
+  snippet: false
+  targetResource:
+    apiVersion: shipwright.io/v1beta1
+    kind: Build
+  title: Buildpack Nodejs Build
+  yaml: |
+    apiVersion: shipwright.io/v1beta1
+    kind: Build
+    metadata:
+      name: buildpack-quarkus-build
+    spec:
+      source:
+        type: Git
+        git:
+          url: https://github.com/redhat-openshift-builds/samples.git
+      strategy:
+        name: buildpacks
+        kind: ClusterBuildStrategy
+      retention:
+        atBuildDeletion: true
+      paramValues:
+        - name: run-image
+          value: paketobuildpacks/run-ubi8-base:latest
+        - name: cnb-builder-image
+          value: paketobuildpacks/builder-jammy-tiny:0.0.344
+        - name: source-subpath
+          value: "buildpack/quarkus"
+      output:
+        image: ttl.sh/buildpack-sample:6h
