@@ -1,0 +1,6 @@
+resources:
+- buildah-build.yaml
+- buildah-external-registry.yaml
+- s2i-nodejs-build.yaml
+- s2i-java-build.yaml
+- buildpack-nodejs-build.yaml
