@@ -73,7 +73,7 @@ require (
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/openshift-pipelines/pipelines-as-code v0.27.2 // indirect
-	github.com/openshift/api v0.0.0-20250411135543-10a8fa583797 // indirect
+	github.com/openshift/api 998cd533c060 // indirect
 	github.com/openshift/apiserver-library-go v0.0.0-20250127121756-dc9a973f14ce // indirect
 	github.com/openshift/client-go v0.0.0-20250125113824-8e1f0b8fa9a7 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
