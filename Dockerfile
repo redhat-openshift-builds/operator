@@ -1,16 +1,16 @@
-FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder:rhel_9_1.23 AS builder
+FROM registry.redhat.io/ubi9/go-toolset AS builder
 
 COPY . .
 
 ENV GOEXPERIMENT=strictfipsruntime
 
-RUN CGO_ENABLED=1 GO111MODULE=on go build -a -mod vendor -tags strictfipsruntime -o operator cmd/main.go
+RUN CGO_ENABLED=1 GO111MODULE=on go build -a -mod vendor -tags strictfipsruntime -o /tmp/operator cmd/main.go
 
 FROM registry.redhat.io/ubi9/ubi-minimal@sha256:ac61c96b93894b9169221e87718733354dd3765dd4a62b275893c7ff0d876869
 
 WORKDIR /
 
-COPY --from=builder /operator .
+COPY --from=builder /tmp/operator .
 COPY config/shipwright/ config/shipwright/
 COPY config/sharedresource/ config/sharedresource/
 COPY LICENSE /licenses/
