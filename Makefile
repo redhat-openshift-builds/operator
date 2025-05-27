@@ -60,7 +60,7 @@ OPERATOR_SDK_VERSION ?= v1.35.0
 #
 # Note: Konflux pushes tags that match the git commit sha for the operator image on merge.
 # OPERATOR_TAG should be updated to the corresponding image tag to ensure bundles are assembled with the correct image.
-OPERATOR_TAG ?= v$(VERSION)
+OPERATOR_TAG ?= $(VERSION)
 # Image URL to use all building/pushing image targets
 IMG ?= $(IMAGE_TAG_BASE):$(OPERATOR_TAG)
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
@@ -225,6 +225,7 @@ KUBECTL ?= kubectl
 KUSTOMIZE ?= $(LOCALBIN)/kustomize
 CONTROLLER_GEN ?= $(LOCALBIN)/controller-gen
 ENVTEST ?= $(LOCALBIN)/setup-envtest
+YQ ?= $(LOCALBIN)/yq
 
 ## Tool Versions
 #KUSTOMIZE_VERSION ?= v5.6
@@ -235,6 +236,12 @@ ENVTEST ?= $(LOCALBIN)/setup-envtest
 ## Upstream Sources
 SHIPWRIGHT_RELEASE ?= release-v0.15
 SHIPWRIGHT_SOURCE ?= https://raw.githubusercontent.com/shipwright-io/operator/$(SHIPWRIGHT_RELEASE)
+
+.PHONY: yq
+yq: $(YQ) ## Download yq locally if necessary.
+$(YQ): $(LOCALBIN)
+	test -s $(LOCALBIN)/yq || \
+	GOBIN=$(LOCALBIN) go install github.com/mikefarah/yq/v4@latest
 
 .PHONY: kustomize
 kustomize: $(KUSTOMIZE) ## Download kustomize locally if necessary. If wrong version is installed, it will be removed before downloading.
@@ -272,10 +279,14 @@ endif
 endif
 
 .PHONY: bundle
-bundle: manifests kustomize operator-sdk ## Generate bundle manifests and metadata, then validate generated files.
+bundle: manifests kustomize operator-sdk yq ## Generate bundle manifests and metadata, then validate generated files.
 	$(OPERATOR_SDK) generate kustomize manifests --interactive=false -q
 	cd config/manager && $(KUSTOMIZE) edit set image operator=$(IMG)
 	$(KUSTOMIZE) build config/manifests | $(OPERATOR_SDK) generate bundle $(BUNDLE_GEN_FLAGS)
+	$(YQ) -i eval-all \
+		'select(fileIndex==0).spec.relatedImages = select(fileIndex==1).spec.relatedImages | select(fileIndex==0)' \
+		bundle/manifests/openshift-builds-operator.clusterserviceversion.yaml \
+		config/manifests/bases/openshift-builds-operator.clusterserviceversion.yaml
 	$(OPERATOR_SDK) bundle validate ./bundle
 
 .PHONY: bundle-build
