@@ -41,9 +41,10 @@ spec:
   - name: build-platforms
     value:
     - linux/x86_64
-    - linux/arm64
-  - name: prefetch-input
-    value: '{"packages": [{"type": "gomod"}]}'
+  - name: build-image-index
+    value: "false"
+  - name: image-append-platform
+    value: "false"
   pipelineRef:
     params:
     - name: url
