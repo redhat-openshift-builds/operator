@@ -18,8 +18,8 @@ spec:
       source:
         type: Git
         git:
-          url: https://github.com/redhat-openshift-builds/samples/
-        contextDir: buildah-build
+          url: https://github.com/redhat-openshift-builds/samples..git
+        contextDir: buildah
       strategy:
         name: buildah
         kind: ClusterBuildStrategy
