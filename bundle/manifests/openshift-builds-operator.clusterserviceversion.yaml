@@ -36,7 +36,7 @@ metadata:
     categories: Developer Tools, Integration & Delivery
     certified: "true"
     containerImage: registry.redhat.io/openshift-builds/openshift-builds-operator-rhel9
-    createdAt: "2025-05-26T12:57:44Z"
+    createdAt: "2025-05-27T13:04:38Z"
     description: Builds for Red Hat OpenShift is a framework for building container images on Kubernetes.
     features.operators.openshift.io/cnf: "false"
     features.operators.openshift.io/cni: "false"
@@ -761,6 +761,7 @@ spec:
                       capabilities:
                         drop:
                           - ALL
+                      readOnlyRootFilesystem: true
                 securityContext:
                   runAsNonRoot: true
                 serviceAccountName: openshift-builds-operator
