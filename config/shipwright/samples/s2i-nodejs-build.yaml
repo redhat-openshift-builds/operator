@@ -18,8 +18,8 @@ spec:
       source:
         type: Git
         git:
-          url: https://github.com/redhat-openshift-builds/samples/
-        contextDir: s2i-build/nodejs
+          url: https://github.com/redhat-openshift-builds/samples.git
+        contextDir: s2i/nodejs
       strategy:
         name: source-to-image
         kind: ClusterBuildStrategy
