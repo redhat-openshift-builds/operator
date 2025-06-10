@@ -91,27 +91,37 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 	}
 
 	// Reconcile Shipwright Build
-	if err := r.ReconcileShipwrightBuild(ctx, openShiftBuild); err != nil {
-		logger.Error(err, "Failed to reconcile ShipwrightBuild")
+	if shipwrightErr := r.ReconcileShipwrightBuild(ctx, openShiftBuild); shipwrightErr != nil {
+		logger.Error(shipwrightErr, "Failed to reconcile ShipwrightBuild")
 		apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
 			Type:    openshiftv1alpha1.ConditionReady,
 			Status:  metav1.ConditionFalse,
-			Reason:  "Failed",
-			Message: fmt.Sprintf("Failed to reconcile OpenShiftBuild: %v", err),
+			Reason:  "ShipwrightReconcileFailed",
+			Message: fmt.Sprintf("Failed to reconcile ShipwrightBuild: %v", shipwrightErr),
 		})
-		return ctrl.Result{}, r.Client.Status().Update(ctx, openShiftBuild)
+
+		if statusUpdateErr := r.Client.Status().Update(ctx, openShiftBuild); statusUpdateErr != nil {
+			logger.Error(statusUpdateErr, "Failed to update status after ShipwrightReconcileFailed", shipwrightErr)
+		}
+
+		return ctrl.Result{}, fmt.Errorf("ShipwrightBuild reconciliation failed : %v", shipwrightErr)
 	}
 
 	// Reconcile Shared Resources
-	if err := r.ReconcileSharedResource(ctx, openShiftBuild); err != nil {
-		logger.Error(err, "Failed to reconcile SharedResource")
+	if sharedResourcesErr := r.ReconcileSharedResource(ctx, openShiftBuild); sharedResourcesErr != nil {
+		logger.Error(sharedResourcesErr, "Failed to reconcile SharedResource")
 		apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
 			Type:    openshiftv1alpha1.ConditionReady,
 			Status:  metav1.ConditionFalse,
-			Reason:  "Failed",
-			Message: fmt.Sprintf("Failed to reconcile OpenShiftBuild: %v", err),
+			Reason:  "SharedResourceReconcileFailed",
+			Message: fmt.Sprintf("Failed to reconcile SharedResource: %v", sharedResourcesErr),
 		})
-		return ctrl.Result{}, r.Client.Status().Update(ctx, openShiftBuild)
+
+		if statusUpdateErr := r.Client.Status().Update(ctx, openShiftBuild); statusUpdateErr != nil {
+			logger.Error(statusUpdateErr, "Failed to update status after SharedResourceReconcileFailed", sharedResourcesErr)
+		}
+
+		return ctrl.Result{}, fmt.Errorf("SharedResources reconciliation failed : %v", sharedResourcesErr)
 	}
 
 	// Update status
