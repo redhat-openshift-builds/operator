@@ -296,8 +296,8 @@ github.com/tektoncd/operator/pkg/client/clientset/versioned/scheme
 github.com/tektoncd/operator/pkg/client/clientset/versioned/typed/operator/v1alpha1
 github.com/tektoncd/operator/pkg/common
 github.com/tektoncd/operator/pkg/reconciler/openshift
-# github.com/tektoncd/pipeline v0.68.0
-## explicit; go 1.22.3
+# github.com/tektoncd/pipeline v0.70.0
+## explicit; go 1.22.7
 github.com/tektoncd/pipeline/pkg/apis/config
 github.com/tektoncd/pipeline/pkg/apis/pipeline/pod
 github.com/tektoncd/pipeline/pkg/spire/config
@@ -994,8 +994,8 @@ k8s.io/utils/net
 k8s.io/utils/pointer
 k8s.io/utils/ptr
 k8s.io/utils/trace
-# knative.dev/pkg v0.0.0-20240416145024-0f34a8815650
-## explicit; go 1.21
+# knative.dev/pkg v0.0.0-20250117084104-c43477f0052b
+## explicit; go 1.22.7
 knative.dev/pkg/apis
 knative.dev/pkg/apis/duck
 knative.dev/pkg/apis/duck/ducktypes
