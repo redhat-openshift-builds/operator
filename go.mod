@@ -1,8 +1,8 @@
 module github.com/redhat-openshift-builds/operator
 
-go 1.23.4
+go 1.24.0
 
-toolchain go1.23.7
+toolchain go1.24.4
 
 require (
 	github.com/go-logr/logr v1.4.2
@@ -14,12 +14,12 @@ require (
 	github.com/shipwright-io/build v0.15.0
 	github.com/shipwright-io/operator v0.15.2
 	github.com/tektoncd/operator v0.75.0
-	k8s.io/api v0.32.3
-	k8s.io/apiextensions-apiserver v0.32.3
-	k8s.io/apimachinery v0.32.3
+	k8s.io/api v0.33.0
+	k8s.io/apiextensions-apiserver v0.33.0
+	k8s.io/apimachinery v0.33.0
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20250321185631-1f6e0b77f77e
-	sigs.k8s.io/controller-runtime v0.20.4
+	sigs.k8s.io/controller-runtime v0.21.0
 	sigs.k8s.io/controller-runtime/tools/setup-envtest v0.0.0-20250324155034-0f7927c52ef4
 	sigs.k8s.io/controller-tools v0.17.3
 	sigs.k8s.io/kustomize/kustomize/v5 v5.6.0
@@ -54,7 +54,6 @@ require (
 	github.com/google/btree v1.1.3 // indirect
 	github.com/google/gnostic-models v0.6.9 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
-	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/pprof v0.0.0-20250403155104-27863c87afa6 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -64,7 +63,6 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0 // indirect
-	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -77,7 +75,7 @@ require (
 	github.com/openshift/apiserver-library-go v0.0.0-20250127121756-dc9a973f14ce // indirect
 	github.com/openshift/client-go v0.0.0-20250125113824-8e1f0b8fa9a7 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/prometheus/client_golang v1.21.0 // indirect
+	github.com/prometheus/client_golang v1.22.0 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.62.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
@@ -95,8 +93,8 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/mod v0.24.0 // indirect
-	golang.org/x/net v0.37.0 // indirect
-	golang.org/x/oauth2 v0.26.0 // indirect
+	golang.org/x/net v0.38.0 // indirect
+	golang.org/x/oauth2 v0.27.0 // indirect
 	golang.org/x/sync v0.12.0 // indirect
 	golang.org/x/sys v0.32.0 // indirect
 	golang.org/x/term v0.30.0 // indirect
@@ -126,4 +124,4 @@ require (
 
 replace k8s.io/client-go => k8s.io/client-go v0.32.3
 
-replace sigs.k8s.io/controller-runtime/pkg/envtest/printer => sigs.k8s.io/controller-runtime v0.13.2
+replace sigs.k8s.io/controller-runtime/pkg/envtest/printer => sigs.k8s.io/controller-runtime v0.21.0
