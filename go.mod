@@ -61,7 +61,7 @@ require (
 	github.com/openshift-pipelines/pipelines-as-code v0.27.2 // indirect
 	github.com/openshift/api v0.0.0-20240521185306-0314f31e7774 // indirect
 	github.com/openshift/apiserver-library-go v0.0.0-20230816171015-6bfafa975bfb // indirect
-	github.com/openshift/client-go v0.0.0-20240523113335-452272e0496d // indirect
+	github.com/openshift/client-go 7b2007868c76 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.20.2 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
