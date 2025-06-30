@@ -16,7 +16,7 @@ ENV GOEXPERIMENT=strictfipsruntime
 
 RUN CGO_ENABLED=1 GO111MODULE=on go build -a -mod vendor -tags strictfipsruntime -o operator cmd/main.go
 
-FROM registry.redhat.io/ubi9/ubi-minimal@sha256:ac61c96b93894b9169221e87718733354dd3765dd4a62b275893c7ff0d876869
+FROM registry.redhat.io/ubi9/ubi-minimal:9.6
 
 WORKDIR /
 
@@ -33,7 +33,7 @@ ENTRYPOINT ["/operator"]
 LABEL \
     com.redhat.component="openshift-builds-operator-container" \
     name="openshift-builds/operator" \
-    version="v1.3.0" \
+    version="v1.5.0" \
     summary="Red Hat OpenShift Builds Operator" \
     maintainer="openshift-builds@redhat.com" \
     description="Red Hat OpenShift Builds Operator" \
