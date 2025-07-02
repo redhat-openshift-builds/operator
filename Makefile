@@ -237,6 +237,10 @@ YQ ?= $(LOCALBIN)/yq
 SHIPWRIGHT_RELEASE ?= release-v0.15
 SHIPWRIGHT_SOURCE ?= https://raw.githubusercontent.com/shipwright-io/operator/$(SHIPWRIGHT_RELEASE)
 
+# ClusterBuildStrategy Sources
+STRATEGIES = buildah buildpacks buildpacks-extender source-to-image
+STRATEGY_SOURCE ?= https://raw.githubusercontent.com/redhat-openshift-builds/strategy-catalog/refs/heads/main/clusterBuildStrategy
+
 .PHONY: yq
 yq: $(YQ) ## Download yq locally if necessary.
 $(YQ): $(LOCALBIN)
@@ -279,7 +283,7 @@ endif
 endif
 
 .PHONY: bundle
-bundle: manifests kustomize operator-sdk yq ## Generate bundle manifests and metadata, then validate generated files.
+bundle: manifests kustomize operator-sdk yq strategy-catalog ## Generate bundle manifests and metadata, then validate generated files.
 	$(OPERATOR_SDK) generate kustomize manifests --interactive=false -q
 	cd config/manager && $(KUSTOMIZE) edit set image operator=$(IMG)
 	$(KUSTOMIZE) build config/manifests | $(OPERATOR_SDK) generate bundle $(BUNDLE_GEN_FLAGS)
@@ -355,3 +359,12 @@ catalog-push: ## Push a catalog image.
 catalog-deploy: kustomize ## Deploy the catalog image to the cluster.
 	cd config/olm && $(KUSTOMIZE) edit set image catalog=$(CATALOG_IMG)
 	$(KUSTOMIZE) build config/olm | $(KUBECTL) apply -f -
+
+# Fetch the latest ClusterBuildStrategy from github.com/redhat-openshift-builds/strategy-catalog
+.PHONY: strategy-catalog
+strategy-catalog:
+	@echo "Updating ClusterBuildStrategy from redhat-openshift-builds/strategy-catalog..."
+	@cd config/shipwright/build/strategy && \
+	$(foreach s, $(STRATEGIES), \
+		echo "Fetching $s.yaml..." && \
+		curl -sSLO $(STRATEGY_SOURCE)/$(s)/$(s).yaml;)
