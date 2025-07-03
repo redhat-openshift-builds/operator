@@ -1,0 +1,23 @@
+apiVersion: shipwright.io/v1beta1
+kind: Build
+metadata:
+  name: buildpack-nodejs-build
+spec:
+  source:
+    type: Git
+    git: 
+      url: https://github.com/redhat-openshift-builds/samples.git
+  strategy:
+    name: buildpacks-extender
+    kind: ClusterBuildStrategy
+  retention:
+    atBuildDeletion: true
+  paramValues:
+    - name: run-image
+      value: paketobuildpacks/run-ubi8-base:latest
+    - name: cnb-builder-image
+      value: paketobuildpacks/builder-jammy-tiny:0.0.344
+    - name: source-subpath
+      value: "buildpacks/nodejs"
+  output:
+    image: image-registry.openshift-image-registry.svc:5000/builds-test/taxi-app
