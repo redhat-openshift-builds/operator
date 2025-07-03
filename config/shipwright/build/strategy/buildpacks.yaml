@@ -1,0 +1,289 @@
+apiVersion: shipwright.io/v1beta1
+kind: ClusterBuildStrategy
+metadata:
+  name: buildpacks
+spec:
+  volumes:
+    - name: layers-dir
+      emptyDir: {}
+    - name: empty-dir
+      emptyDir: {}
+    - name: cache-dir
+      emptyDir: {}
+    - name: kaniko-work-dir
+      emptyDir: {}
+  parameters:
+    - name: cnb-platform-api
+      description: Platform API Version supported
+      default: "0.12"
+    - name: cnb-builder-image
+      description: Builder image containing the buildpacks. This is also the image the extender will use if kind=build.
+      default: ""
+    - name: cnb-lifecycle-image
+      description: The image to use when executing Lifecycle phases.
+      default: "buildpacksio/lifecycle:0.20.8"
+    - name: cnb-log-level
+      description: Logging level
+      default: "debug"
+    - name: run-image
+      description: Reference to a run image to use.
+      default: ""
+    - name: cache-image
+      description: The name of the persistent app cache image (if no cache workspace is provided).
+      default: ""
+    - name: process-type
+      description: The default process type to set on the image.
+      default: ""
+    - name: source-subpath
+      description: A subpath within the `source` input where the source to build is located.
+      default: ""
+    - name: env-vars
+      type: array
+      description: Environment variables to set during _build-time_.
+      defaults: []
+    - name: platform-dir
+      description: The name of the platform directory.
+      default: empty-dir
+    - # Update the user id to use new paketo builder image till we can use: https://github.com/shipwright-io/community/blob/main/ships/0036-runAs-for-supporting-steps.md
+      name: user-id
+      description: The user ID of the builder image user.
+      default: "1001"
+    - name: group-id
+      description: The group ID of the builder image user.
+      default: "1000"
+    - name: user-home
+      description: Absolute path to the user's home directory.
+      default: /tekton/home
+    - name: cache-pvc-name # Custom parameter for cache PVC name, for user reference
+      description: Name of the Persistent Volume Claim for cache
+      default: "ws-pvc"
+    - name: cnb-extender-kind
+      description: "The kind of image to extend ('build' or 'run'). Passed to the extender."
+      default: "build"
+    - name: cnb-extended-dir-exporter
+      description: "Directory of extended layers, passed as -extended flag to the exporter. Assumes extender outputs here."
+      default: "/layers/extended"
+  steps:
+    - name: prepare
+      image: registry.access.redhat.com/ubi9/ubi@sha256:2e4eebec441e8bbc3459fcc83ddee0f7d3cfd219097b4110a37d7ff4fe0ff2e9
+      args:
+        - -c
+        - |
+          set -e
+
+          # TODO: To be reviewed as shipwright don't support like Tekton workspaces
+          if [[ "$(workspaces.cache.bound)" == "true" ]]; then
+           echo "> Setting permissions on '$(workspaces.cache.path)'..."
+           chown -R "$(params.user-id):$(params.group-id)" "$(workspaces.cache.path)"
+          fi
+
+          # Ensure standard CNB directories have correct ownership
+          # Also ensure /kaniko directory has correct ownership if it's pre-created by volume mount
+          for path in "/tekton/home" "/layers" "$(workspaces.source.path)" "/cache" "/platform" "/kaniko"; do
+            if [ -d "$path" ]; then # Check if directory exists before chown
+              echo "> Setting permissions on '$path'..."
+              chown -R "$(params.user-id):$(params.group-id)" "$path"
+            else
+              echo "> Directory '$path' not found, skipping permissions."
+            fi
+          done
+
+          echo "> Parsing additional configuration..."
+          parsing_flag=""
+          envs=()
+          for arg in "$@"; do
+              if [[ "$arg" == "--env-vars" ]]; then
+                  echo "-> Parsing env variables..."
+                  parsing_flag="env-vars"
+              elif [[ "$parsing_flag" == "env-vars" ]]; then
+                  envs+=("$arg")
+              fi
+          done
+
+          echo "> Processing any environment variables..."
+          ENV_DIR="/platform/env" # [1]
+
+          echo "--> Creating 'env' directory: $ENV_DIR"
+          mkdir -p "$ENV_DIR"
+
+          for env in "${envs[@]}"; do
+              IFS='=' read -r key value string <<< "$env"
+              if [[ "$key" != "" && "$value" != "" ]]; then
+                  path="${ENV_DIR}/${key}"
+                  echo "--> Writing ${path}..."
+                  echo -n "$value" > "$path"
+              fi
+          done
+        # That's the separator between the shell script and its args
+        - --
+        - --env-vars
+        - $(params.env-vars[*])
+      volumeMounts:
+        - name: layers-dir
+          mountPath: /layers
+        - name: empty-dir # Corresponds to $(params.platform-dir)
+          mountPath: /platform
+        - name: cache-dir
+          mountPath: /cache # Standard CNB cache path
+        - name: empty-dir
+          mountPath: /tekton/home
+        - name: kaniko-work-dir # Mounting `/kaniko` in prepare step for permissions
+          mountPath: /kaniko
+    - name: analyze
+      image: $(params.cnb-lifecycle-image)
+      command: ["/cnb/lifecycle/analyzer"]
+      args:
+        - "-log-level"
+        - "$(params.cnb-log-level)"
+        - "-layers"
+        - "/layers"
+        - "-run-image"
+        - "$(params.run-image)"
+        - "-cache-image"
+        - "$(params.cache-image)"
+        - "-uid"
+        - "$(params.user-id)"
+        - "-gid"
+        - "$(params.group-id)"
+        - "$(params.shp-output-image)"
+      env:
+        - name: CNB_PLATFORM_API
+          value: $(params.cnb-platform-api)
+      volumeMounts:
+        - name: layers-dir
+          mountPath: /layers
+    - name: detect
+      image: $(params.cnb-builder-image)
+      command: [ "/cnb/lifecycle/detector" ]
+      args:
+        - "-log-level"
+        - "$(params.cnb-log-level)"
+        - "-app"
+        - "$(workspaces.source.path)/$(params.source-subpath)"
+        - "-group"
+        - "/layers/group.toml"
+        - "-plan"
+        - "/layers/plan.toml"
+        - "-platform"
+        - "/platform"
+        - "-run"
+        - "/platform/run.toml"
+      env:
+        - name: CNB_PLATFORM_API
+          value: $(params.cnb-platform-api)
+      volumeMounts:
+        - name: layers-dir
+          mountPath: /layers
+        - name: empty-dir
+          mountPath: /platform
+        - name: empty-dir
+          mountPath: /tekton/home
+    - name: restore
+      image: $(params.cnb-lifecycle-image)
+      command: ["/cnb/lifecycle/restorer"]
+      args:
+        - "-log-level"
+        - "$(params.cnb-log-level)"
+        - "-group"
+        - "/layers/group.toml"
+        - "-layers"
+        - "/layers"
+        - "-cache-dir"
+        - "/cache"
+        - "-cache-image"
+        - "$(params.cache-image)"
+        - "-uid"
+        - "$(params.user-id)"
+        - "-gid"
+        - "$(params.group-id)"
+        - "-build-image"
+        - "$(params.cnb-builder-image)"
+      env:
+        - name: CNB_PLATFORM_API
+          value: $(params.cnb-platform-api)
+      volumeMounts:
+        - name: layers-dir
+          mountPath: /layers
+        - name: cache-dir
+          mountPath: /cache
+        - name: kaniko-work-dir
+          mountPath: /kaniko
+    - name: build-and-push
+      image: $(params.cnb-builder-image)
+      securityContext:
+        runAsGroup: 1000
+      command: ["/cnb/lifecycle/builder"]
+      args:
+        - "-log-level"
+        - "$(params.cnb-log-level)"
+        - "-app"
+        - "$(workspaces.source.path)/$(params.source-subpath)"
+        - "-layers"
+        - "/layers"
+        - "-group"
+        - "/layers/group.toml"
+        - "-plan"
+        - "/layers/plan.toml"
+        - "-platform"
+        - "/platform"
+      env:
+        - name: CNB_PLATFORM_API
+          value: $(params.cnb-platform-api)
+      volumeMounts:
+        - name: layers-dir
+          mountPath: /layers
+        - name: empty-dir
+          mountPath: /platform
+        - name: empty-dir
+          mountPath: /tekton/home
+        - name: cache-dir
+          mountPath: /cache
+    - name: export
+      image: $(params.cnb-lifecycle-image)
+      command: ["/cnb/lifecycle/exporter"]
+      args:
+        - "-log-level"
+        - "$(params.cnb-log-level)"
+        - "-app"
+        - "$(workspaces.source.path)/$(params.source-subpath)"
+        - "-layers"
+        - "/layers"
+        - "-group"
+        - "/layers/group.toml"
+        - "-cache-dir"
+        - "/cache"
+        - "-cache-image"
+        - "$(params.cache-image)"
+        - "-report"
+        - "/layers/report.toml"
+        - "-project-metadata"
+        - "/platform/project-metadata.toml"
+        - "-process-type"
+        - "$(params.process-type)"
+        - "-uid"
+        - "$(params.user-id)"
+        - "-gid"
+        - "$(params.group-id)"
+        - "-extended"
+        - "$(params.cnb-extended-dir-exporter)"
+        - "$(params.shp-output-image)"
+      env:
+        - name: CNB_PLATFORM_API
+          value: $(params.cnb-platform-api)
+      volumeMounts:
+        - name: layers-dir
+          mountPath: /layers
+        - name: cache-dir
+          mountPath: /cache
+        - name: empty-dir
+          mountPath: /platform
+    - name: results
+      image: registry.access.redhat.com/ubi9/ubi@sha256:2e4eebec441e8bbc3459fcc83ddee0f7d3cfd219097b4110a37d7ff4fe0ff2e9
+      args:
+        - -c
+        - |
+          set -e
+          cat /layers/report.toml | grep "digest" | cut -d'"' -f2 | cut -d'"' -f2 | tr -d '\n' > $(results.shp-image-digest.path)
+      volumeMounts:
+        - name: layers-dir
+          mountPath: /layers
