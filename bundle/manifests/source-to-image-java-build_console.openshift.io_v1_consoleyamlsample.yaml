@@ -1,0 +1,20 @@
+apiVersion: console.openshift.io/v1
+kind: ConsoleYAMLSample
+metadata:
+  name: source-to-image-java-build
+spec:
+  description: A sample Build using source-to-image BuildStrategy with java builder
+    image
+  snippet: false
+  targetResource:
+    apiVersion: shipwright.io/v1beta1
+    kind: Build
+  title: Source-to-Image Java Build
+  yaml: "apiVersion: shipwright.io/v1beta1\nkind: Build\nmetadata:\n  name: s2i-java-build\nspec:\n
+    \ source: \n    type: Git\n    git:\n      url: https://github.com/redhat-openshift-builds/samples.git\n
+    \   contextDir: s2i/java\n  strategy: \n    name: source-to-image\n    kind: ClusterBuildStrategy\n
+    \ paramValues: \n  - name: builder-image\n    value: registry.access.redhat.com/ubi9/openjdk-11\n
+    \ output:\n    # The \"namespace\" in the image needs to be replaced with the
+    namespace name where related build exists.\n    # If the following image value
+    is passed as is, the pod will error out while pushing the image due to authentication
+    failures.\n    image: image-registry.openshift-image-registry.svc:5000/namespace/s2i-java-example\n"
