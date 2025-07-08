@@ -61,7 +61,7 @@ metadata:
     operatorframework.io/arch.arm64: supported
     operatorframework.io/arch.ppc64le: supported
     operatorframework.io/arch.s390x: supported
-  name: openshift-builds-operator.v1.4.0
+  name: openshift-builds-operator.v1.4.1
   namespace: openshift-builds
 spec:
   apiservicedefinitions: {}
@@ -984,9 +984,9 @@ spec:
       name: OPENSHIFT_BUILDS_WAITER
     - image: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:6251cb303774e29d137a37d6527875c371fe1d3f6a5fa0383e80f0e9ef5c02be
       name: OPENSHIFT_BUILDS_WEBHOOK
-    - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:cdd533ea5127d620d0961c59b06fd011f5dfda6e98a4562b85ab4bdda2cba349
+    - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:90443951a42826133fe588e62a9d7dc06914555e1ffc42ddf2facaf0970eeca0
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_WEBHOOK
-    - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:5fd253914db7137b5ab7f8ec9cf912e1f2d0899263d26effe55f24fa0ea18c51
+    - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:a1855744180bdc7d9f912f9694a2e96c2040882f1b242ab53c84ad0016f0d822
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE
     - image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar-rhel9@sha256:5e87ba403f9e9fff3002a8275aba0d6c36aed54fb4754d90fa0516ad989f187a
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_NODE_REGISTRAR
@@ -996,4 +996,4 @@ spec:
       name: OPENSHIFT_BUILDS_BUILDAH
     - image: registry.redhat.io/source-to-image/source-to-image-rhel8@sha256:ed3fdd1e85f5c5434de6ec0feaec8c7fe4e680ca6c64258287f18ec2886bb71f
       name: OPENSHIFT_BUILDS_SOURCE_TO_IMAGE
-  version: 1.4.0
+  version: 1.4.1
