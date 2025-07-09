@@ -152,6 +152,8 @@ spec:
     spec:
       securityContext:
         runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
       serviceAccountName: shipwright-build-controller
       containers:
         - name: shipwright-build
@@ -234,6 +236,8 @@ spec:
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
       serviceAccountName: shipwright-build-webhook
       containers:
         - name: shipwright-build-webhook
