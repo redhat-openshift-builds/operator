@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - name: operator
   newName: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator
-  newTag: 1.5.0
+  digest: sha256:b554eb5edc4466416b63e617c0218a568673afb47b9edffa96d8a353f1eba372
