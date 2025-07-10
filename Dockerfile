@@ -1,4 +1,4 @@
-FROM registry.redhat.io/ubi9/go-toolset:1.23 AS builder
+FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder:v1.24 AS builder
 
 USER 1001
 
@@ -7,7 +7,6 @@ WORKDIR /opt/app-root/src
 # Copy the Go Modules manifests
 COPY --chown=1001:0 go.mod go.mod
 COPY --chown=1001:0 go.sum go.sum
-
 
 # Copy the go source
 COPY --chown=1001:0 . .
