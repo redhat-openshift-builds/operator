@@ -61,7 +61,7 @@ metadata:
     operatorframework.io/arch.arm64: supported
     operatorframework.io/arch.ppc64le: supported
     operatorframework.io/arch.s390x: supported
-  name: openshift-builds-operator.v1.4.0
+  name: openshift-builds-operator.v1.5.0
   namespace: openshift-builds
 spec:
   apiservicedefinitions: {}
@@ -671,7 +671,7 @@ spec:
         - label:
             app: openshift-builds-operator
             app.kubernetes.io/part-of: openshift-builds
-            app.kubernetes.io/version: 1.4.0
+            app.kubernetes.io/version: 1.5.0
             control-plane: controller-manager
           name: openshift-builds-operator
           spec:
@@ -855,4 +855,4 @@ spec:
       name: OPENSHIFT_BUILDS_BUILDAH
     - image: registry.redhat.io/source-to-image/source-to-image-rhel8@sha256:d041c1bbe503d152d0759598f79802e257816d674b342670ef61c6f9e6d401c5
       name: OPENSHIFT_BUILDS_SOURCE_TO_IMAGE
-  version: 1.4.0
+  version: 1.5.0
