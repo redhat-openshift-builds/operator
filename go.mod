@@ -14,8 +14,8 @@ require (
 	github.com/shipwright-io/build v0.16.4
 	github.com/shipwright-io/operator v0.16.0
 	github.com/tektoncd/operator v0.76.0
-	k8s.io/api v0.32.5
-	k8s.io/apiextensions-apiserver v0.32.5
+	k8s.io/api v0.32.6
+	k8s.io/apiextensions-apiserver v0.32.6
 	k8s.io/apimachinery v0.33.0
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20250502105355-0f33e8f1c979
@@ -57,7 +57,7 @@ require (
 	github.com/google/pprof v0.0.0-20250403155104-27863c87afa6 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.1 // indirect
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
@@ -84,7 +84,7 @@ require (
 	github.com/spf13/afero v1.12.0 // indirect
 	github.com/spf13/cobra v1.9.1 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
-	github.com/tektoncd/pipeline v1.0.0 // indirect
+	github.com/tektoncd/pipeline v1.2.0 // indirect
 	github.com/tektoncd/triggers v0.32.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xlab/treeprint v1.2.0 // indirect
@@ -99,11 +99,11 @@ require (
 	golang.org/x/sys v0.34.0 // indirect
 	golang.org/x/term v0.32.0 // indirect
 	golang.org/x/text v0.27.0 // indirect
-	golang.org/x/time v0.11.0 // indirect
+	golang.org/x/time v0.12.0 // indirect
 	golang.org/x/tools v0.34.0 // indirect
 	gomodules.xyz/jsonpatch/v2 v2.5.0 // indirect
-	google.golang.org/api v0.231.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20250428153025-10db94c68c34 // indirect
+	google.golang.org/api v0.233.0 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20250603155806-513f23925822 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
 	google.golang.org/grpc v1.73.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect

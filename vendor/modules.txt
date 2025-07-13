@@ -112,7 +112,7 @@ github.com/google/shlex
 # github.com/google/uuid v1.6.0
 ## explicit
 github.com/google/uuid
-# github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3
+# github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.1
 ## explicit; go 1.23.0
 github.com/grpc-ecosystem/grpc-gateway/v2/internal/httprule
 github.com/grpc-ecosystem/grpc-gateway/v2/runtime
@@ -284,8 +284,8 @@ github.com/tektoncd/operator/pkg/client/clientset/versioned/scheme
 github.com/tektoncd/operator/pkg/client/clientset/versioned/typed/operator/v1alpha1
 github.com/tektoncd/operator/pkg/common
 github.com/tektoncd/operator/pkg/reconciler/openshift
-# github.com/tektoncd/pipeline v1.0.0
-## explicit; go 1.23.0
+# github.com/tektoncd/pipeline v1.2.0
+## explicit; go 1.24.0
 github.com/tektoncd/pipeline/pkg/apis/config
 github.com/tektoncd/pipeline/pkg/apis/pipeline/pod
 github.com/tektoncd/pipeline/pkg/spire/config
@@ -392,7 +392,7 @@ golang.org/x/text/secure/bidirule
 golang.org/x/text/transform
 golang.org/x/text/unicode/bidi
 golang.org/x/text/unicode/norm
-# golang.org/x/time v0.11.0
+# golang.org/x/time v0.12.0
 ## explicit; go 1.23.0
 golang.org/x/time/rate
 # golang.org/x/tools v0.34.0
@@ -420,10 +420,10 @@ golang.org/x/tools/internal/versions
 # gomodules.xyz/jsonpatch/v2 v2.5.0
 ## explicit; go 1.20
 gomodules.xyz/jsonpatch/v2
-# google.golang.org/api v0.231.0
+# google.golang.org/api v0.233.0
 ## explicit; go 1.23.0
 google.golang.org/api/support/bundler
-# google.golang.org/genproto/googleapis/api v0.0.0-20250428153025-10db94c68c34
+# google.golang.org/genproto/googleapis/api v0.0.0-20250603155806-513f23925822
 ## explicit; go 1.23.0
 google.golang.org/genproto/googleapis/api/httpbody
 # google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7
@@ -547,7 +547,7 @@ gopkg.in/yaml.v2
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
-# k8s.io/api v0.32.5
+# k8s.io/api v0.32.6
 ## explicit; go 1.23.0
 k8s.io/api/admission/v1
 k8s.io/api/admission/v1beta1
@@ -607,7 +607,7 @@ k8s.io/api/storage/v1
 k8s.io/api/storage/v1alpha1
 k8s.io/api/storage/v1beta1
 k8s.io/api/storagemigration/v1alpha1
-# k8s.io/apiextensions-apiserver v0.32.5
+# k8s.io/apiextensions-apiserver v0.32.6
 ## explicit; go 1.23.0
 k8s.io/apiextensions-apiserver/pkg/apis/apiextensions
 k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1
