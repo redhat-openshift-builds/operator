@@ -14,9 +14,9 @@ require (
 	github.com/shipwright-io/build v0.16.4
 	github.com/shipwright-io/operator v0.16.0
 	github.com/tektoncd/operator v0.76.0
-	k8s.io/api v0.32.5
-	k8s.io/apiextensions-apiserver v0.32.5
-	k8s.io/apimachinery v0.33.0
+	k8s.io/api v0.33.2
+	k8s.io/apiextensions-apiserver v0.33.2
+	k8s.io/apimachinery v0.33.2
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20250502105355-0f33e8f1c979
 	sigs.k8s.io/controller-runtime v0.20.4
@@ -122,6 +122,6 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.7.0 // indirect
 )
 
-replace k8s.io/client-go => k8s.io/client-go v0.32.3
+replace k8s.io/client-go => k8s.io/client-go v0.33.2
 
 replace sigs.k8s.io/controller-runtime/pkg/envtest/printer => sigs.k8s.io/controller-runtime v0.13.2
