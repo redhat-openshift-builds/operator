@@ -16,11 +16,11 @@ require (
 	github.com/tektoncd/operator v0.76.0
 	k8s.io/api v0.32.5
 	k8s.io/apiextensions-apiserver v0.32.5
-	k8s.io/apimachinery v0.33.0
+	k8s.io/apimachinery v0.34.0-alpha.2
 	k8s.io/client-go v1.5.2
-	k8s.io/utils v0.0.0-20250502105355-0f33e8f1c979
+	k8s.io/utils v0.0.0-20250604170112-4c0f3b243397
 	sigs.k8s.io/controller-runtime v0.20.4
-	sigs.k8s.io/controller-runtime/tools/setup-envtest v0.0.0-20250324155034-0f7927c52ef4
+	sigs.k8s.io/controller-runtime/tools/setup-envtest v0.0.0-20250708091927-252af6420feb
 	sigs.k8s.io/controller-tools v0.17.3
 	sigs.k8s.io/kustomize/kustomize/v5 v5.6.0
 	sigs.k8s.io/yaml v1.4.0
@@ -67,7 +67,7 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/openshift-pipelines/pipelines-as-code v0.36.0 // indirect
@@ -75,6 +75,7 @@ require (
 	github.com/openshift/apiserver-library-go v0.0.0-20250127121756-dc9a973f14ce // indirect
 	github.com/openshift/client-go v0.0.0-20250125113824-8e1f0b8fa9a7 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.22.0 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.63.0 // indirect
@@ -112,7 +113,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
-	k8s.io/kube-openapi v0.0.0-20250318190949-c8a335a9a2ff // indirect
+	k8s.io/kube-openapi v0.0.0-20250610211856-8b98d1ed966a // indirect
 	knative.dev/pkg v0.0.0-20250424013628-d5e74d29daa3 // indirect
 	sigs.k8s.io/json v0.0.0-20241014173422-cfa47c3a1cc8 // indirect
 	sigs.k8s.io/kustomize/api v0.19.0 // indirect
