@@ -104,7 +104,7 @@ spec:
     name: Red Hat
     url: https://www.redhat.com
   relatedImages:
-  - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:10e6f445071e25ae2bba88e539869874525456dcf9f3751de604b915e8b70333
+  - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:80b89c37fa242d22edf1b1eebe5ccdd41bbfc362fe779cb808464ba506ef73f2
     name: OPENSHIFT_BUILDS_OPERATOR
   - image: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:4a4c686c53ca2f13cb1cfd23579f900928c0683e80dccc0a506b3f879900f209
     name: OPENSHIFT_BUILDS_CONTROLLER
