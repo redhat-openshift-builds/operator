@@ -53,7 +53,7 @@ endif
 
 # Set the Operator SDK version to use. By default, what is installed on the system is used.
 # This is useful for CI or a project to utilize a specific version of the operator-sdk toolkit.
-OPERATOR_SDK_VERSION ?= v1.35.0
+OPERATOR_SDK_VERSION ?= v1.39.2
 
 # Use OPERATOR_TAG to use a different tag to build and push the operator image.
 # This defaults to semantic version of the operator above.
@@ -234,7 +234,7 @@ YQ ?= $(LOCALBIN)/yq
 #ENVTEST_VERSION ?= release-0.20
 
 ## Upstream Sources
-SHIPWRIGHT_RELEASE ?= release-v0.15
+SHIPWRIGHT_RELEASE ?= release-v0.16
 SHIPWRIGHT_SOURCE ?= https://raw.githubusercontent.com/shipwright-io/operator/$(SHIPWRIGHT_RELEASE)
 
 # ClusterBuildStrategy Sources
