@@ -43,9 +43,8 @@ spec:
       kind: ShipwrightBuild
       name: shipwrightbuilds.operator.shipwright.io
       version: v1alpha1
-    - description: |-
-        OpenShiftBuild describes the desired state of Builds for OpenShift, and the status of
-        all deployed components.
+    - description: OpenShiftBuild describes the desired state of Builds for OpenShift,
+        and the status of all deployed components.
       displayName: Open Shift Build
       kind: OpenShiftBuild
       name: openshiftbuilds.operator.openshift.io
@@ -58,13 +57,13 @@ spec:
     on the Shipwright project, \nwhich you can use to build container images on an
     OpenShift Container Platform cluster. \nYou can build container images from source
     code and Dockerfile by using image build tools, \nsuch as Source-to-Image (S2I),
-    Buildah, and Buildpacks. You can create and apply build resources, view logs of build runs,
-    \nand manage builds in your OpenShift Container Platform namespaces.\nRead more:
-    [https://shipwright.io](https://shipwright.io)\n\n## Features\n\n* Standard Kubernetes-native
-    API for building container images from source code and Dockerfile\n\n* Support
-    for Source-to-Image (S2I) and Buildah build strategies\n\n* Extensibility with
-    your own custom build strategies\n\n* Execution of builds from source code in
-    a local directory\n\n* Shipwright CLI for creating and viewing logs, and managing
+    Buildah, and Buildpacks. You can create and apply build resources, view logs of
+    build runs, \nand manage builds in your OpenShift Container Platform namespaces.\nRead
+    more: [https://shipwright.io](https://shipwright.io)\n\n## Features\n\n* Standard
+    Kubernetes-native API for building container images from source code and Dockerfile\n\n*
+    Support for Source-to-Image (S2I) and Buildah build strategies\n\n* Extensibility
+    with your own custom build strategies\n\n* Execution of builds from source code
+    in a local directory\n\n* Shipwright CLI for creating and viewing logs, and managing
     builds on the cluster\n\n* Integrated user experience with the Developer perspective
     of the OpenShift Container Platform web console\n"
   displayName: Builds for Red Hat OpenShift Operator
