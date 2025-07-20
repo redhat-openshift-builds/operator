@@ -426,7 +426,7 @@ google.golang.org/api/support/bundler
 # google.golang.org/genproto/googleapis/api v0.0.0-20250428153025-10db94c68c34
 ## explicit; go 1.23.0
 google.golang.org/genproto/googleapis/api/httpbody
-# google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7
+# google.golang.org/genproto/googleapis/rpc v0.0.0-20250715232539-7130f93afb79
 ## explicit; go 1.23.0
 google.golang.org/genproto/googleapis/rpc/status
 # google.golang.org/grpc v1.73.0
