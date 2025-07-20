@@ -68,7 +68,7 @@ require (
 	github.com/prometheus/common v0.55.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/prometheus/statsd_exporter v0.26.1 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/spf13/pflag v1.0.7 // indirect
 	github.com/tektoncd/pipeline v0.65.1 // indirect
 	github.com/tektoncd/triggers v0.30.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
