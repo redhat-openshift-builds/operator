@@ -53,7 +53,7 @@ endif
 
 # Set the Operator SDK version to use. By default, what is installed on the system is used.
 # This is useful for CI or a project to utilize a specific version of the operator-sdk toolkit.
-OPERATOR_SDK_VERSION ?= v1.39.2
+OPERATOR_SDK_VERSION ?= v1.35.0
 
 # Use OPERATOR_TAG to use a different tag to build and push the operator image.
 # This defaults to semantic version of the operator above.
@@ -107,13 +107,13 @@ help: ## Display this help.
 ##@ Development
 
 .PHONY: manifests
-manifests: shipwright controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
+manifests: upstream controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
 	$(CONTROLLER_GEN) rbac:roleName=operator crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
 
-.PHONY: shipwright
-shipwright: ## Copy shipwright CRD and release manifests
-	cd config/crd/bases && curl -sSLO $(SHIPWRIGHT_SOURCE)/config/crd/bases/operator.shipwright.io_shipwrightbuilds.yaml
-	cd config/shipwright/build/release && curl -sSLO $(SHIPWRIGHT_SOURCE)/kodata/release.yaml
+.PHONY: upstream
+upstream: ## Copy shipwright CRD and release manifests
+	cd config/crd/bases && curl -sSLO $(SHIPWRIGHT_OPERATOR_SOURCE)/config/crd/bases/operator.shipwright.io_shipwrightbuilds.yaml
+	cd config/shipwright/build/release && curl -sSLO $(SHIPWRIGHT_BUILD_SOURCE)/release.yaml
 
 .PHONY: generate
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
@@ -234,8 +234,10 @@ YQ ?= $(LOCALBIN)/yq
 #ENVTEST_VERSION ?= release-0.20
 
 ## Upstream Sources
-SHIPWRIGHT_RELEASE ?= release-v0.16
-SHIPWRIGHT_SOURCE ?= https://raw.githubusercontent.com/shipwright-io/operator/$(SHIPWRIGHT_RELEASE)
+SHIPWRIGHT_OPERATOR_RELEASE ?= release-v0.16
+SHIPWRIGHT_OPERATOR_SOURCE ?= https://raw.githubusercontent.com/shipwright-io/operator/$(SHIPWRIGHT_OPERATOR_RELEASE)
+SHIPWRIGHT_BUILD_RELEASE ?= v0.16.10
+SHIPWRIGHT_BUILD_SOURCE ?= https://github.com/shipwright-io/build/releases/download/$(SHIPWRIGHT_BUILD_RELEASE)
 
 # ClusterBuildStrategy Sources
 STRATEGIES = buildah buildpacks buildpacks-extender source-to-image
