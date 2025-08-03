@@ -8,7 +8,6 @@ WORKDIR /opt/app-root/src
 COPY --chown=1001:0 go.mod go.mod
 COPY --chown=1001:0 go.sum go.sum
 
-
 # Copy the go source
 COPY --chown=1001:0 . .
 
