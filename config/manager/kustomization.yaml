@@ -3,6 +3,6 @@ resources:
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-- digest: sha256:e2f1362790d6d2b87cc27e94d578bddeeb7d3fdb0628ca44b422e567f5bf238f
+- digest: sha256:1f61760763ad1a7c25925fc5b0867ac6bc0e5a1ce6f070432be38f3144c867a5
   name: operator
   newName: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator

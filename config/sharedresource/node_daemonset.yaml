@@ -23,7 +23,7 @@ spec:
       serviceAccountName: csi-driver-shared-resource
       containers:
         - name: node-driver-registrar
-          image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar-rhel9@sha256:8520421013d374cb94610941f0f4358817a8339fbdb6bc24a3acda0a52a2748f
+          image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar-rhel9@sha256:ce7050192d9850ed4c35cb3295ccdeec1aa593e27e3a3da6d6aca97cde782abe
           args:
             - --v=5
             - --csi-address=/csi/csi.sock
