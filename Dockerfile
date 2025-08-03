@@ -1,4 +1,4 @@
-FROM brew.registry.redhat.io/rh-osbs/openshift-golang-builder:v1.24 AS builder
+FROM registry.redhat.io/ubi9/go-toolset:1.24 AS builder
 
 USER 1001
 
