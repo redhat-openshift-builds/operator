@@ -20,9 +20,8 @@ spec:
         type: Git
         git:
           url: https://github.com/redhat-openshift-builds/samples.git
-        contextDir: buildpack/nodejs
       strategy:
-        name: buildpacks
+        name: buildpacks-extender
         kind: ClusterBuildStrategy
       retention:
         atBuildDeletion: true
@@ -31,5 +30,7 @@ spec:
           value: paketobuildpacks/run-ubi8-base:latest
         - name: cnb-builder-image
           value: paketobuildpacks/builder-jammy-tiny:0.0.344
+        - name: source-subpath
+          value: "buildpack/nodejs"
       output:
-        image: ttl.sh/buildpacks-testing:6h
+        image: ttl.sh/buildpack-sample:1h
