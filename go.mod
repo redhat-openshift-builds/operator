@@ -1,8 +1,6 @@
 module github.com/redhat-openshift-builds/operator
 
-go 1.24.0
-
-toolchain go1.24.4
+go 1.24.4
 
 require (
 	github.com/go-logr/logr v1.4.3
@@ -11,8 +9,8 @@ require (
 	github.com/onsi/ginkgo/v2 v2.23.4
 	github.com/onsi/gomega v1.37.0
 	github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3
-	github.com/shipwright-io/build v0.16.4
-	github.com/shipwright-io/operator v0.16.0
+	github.com/shipwright-io/build v0.16.12
+	github.com/shipwright-io/operator v0.16.1-0.20250812074711-5942f1fdc07b
 	github.com/tektoncd/operator v0.76.0
 	k8s.io/api v0.32.5
 	k8s.io/apiextensions-apiserver v0.32.5

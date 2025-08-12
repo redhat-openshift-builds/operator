@@ -252,14 +252,14 @@ github.com/prometheus/statsd_exporter/pkg/mapper/fsm
 # github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3
 ## explicit; go 1.13
 github.com/sergi/go-diff/diffmatchpatch
-# github.com/shipwright-io/build v0.16.4
+# github.com/shipwright-io/build v0.16.12
 ## explicit; go 1.23.0
 github.com/shipwright-io/build/pkg/apis/build/v1alpha1
 github.com/shipwright-io/build/pkg/apis/build/v1beta1
 github.com/shipwright-io/build/pkg/ctxlog
 github.com/shipwright-io/build/pkg/webhook
-# github.com/shipwright-io/operator v0.16.0
-## explicit; go 1.24.0
+# github.com/shipwright-io/operator v0.16.1-0.20250812074711-5942f1fdc07b
+## explicit; go 1.24.4
 github.com/shipwright-io/operator/api/v1alpha1
 github.com/shipwright-io/operator/controllers
 github.com/shipwright-io/operator/pkg/buildstrategy
