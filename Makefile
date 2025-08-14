@@ -3,7 +3,7 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 1.5.0
+VERSION ?= 1.5.1
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "candidate,fast,stable")
@@ -63,6 +63,13 @@ OPERATOR_SDK_VERSION ?= v1.35.0
 OPERATOR_TAG ?= $(VERSION)
 # Image URL to use all building/pushing image targets
 IMG ?= $(IMAGE_TAG_BASE):$(OPERATOR_TAG)
+ifeq ($(USE_IMAGE_DIGESTS), true)
+	ifeq ($(strip $(OPERATOR_DIGEST)),)
+	else
+		IMG = $(IMAGE_TAG_BASE)@$(OPERATOR_DIGEST)
+	endif
+endif
+
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.28.3
 
@@ -289,6 +296,13 @@ bundle: manifests kustomize operator-sdk yq strategy-catalog ## Generate bundle 
 	$(OPERATOR_SDK) generate kustomize manifests --interactive=false -q
 	cd config/manager && $(KUSTOMIZE) edit set image operator=$(IMG)
 	$(KUSTOMIZE) build config/manifests | $(OPERATOR_SDK) generate bundle $(BUNDLE_GEN_FLAGS)
+
+	# Update OPERATOR image in relatedImages section
+	$(YQ) -i \
+		'.spec.relatedImages[] |= select(.name == "OPENSHIFT_BUILDS_OPERATOR").image = "$(IMG)"' \
+		config/manifests/bases/openshift-builds-operator.clusterserviceversion.yaml
+
+	# Copy relatedImages from config/manifests/bases to bundle/manifests
 	$(YQ) -i eval-all \
 		'select(fileIndex==0).spec.relatedImages = select(fileIndex==1).spec.relatedImages | select(fileIndex==0)' \
 		bundle/manifests/openshift-builds-operator.clusterserviceversion.yaml \
