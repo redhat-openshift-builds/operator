@@ -3,7 +3,7 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 1.5.0
+VERSION ?= 1.5.1
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "candidate,fast,stable")
@@ -53,7 +53,7 @@ endif
 
 # Set the Operator SDK version to use. By default, what is installed on the system is used.
 # This is useful for CI or a project to utilize a specific version of the operator-sdk toolkit.
-OPERATOR_SDK_VERSION ?= v1.39.2
+OPERATOR_SDK_VERSION ?= v1.35.0
 
 # Use OPERATOR_TAG to use a different tag to build and push the operator image.
 # This defaults to semantic version of the operator above.
@@ -63,6 +63,13 @@ OPERATOR_SDK_VERSION ?= v1.39.2
 OPERATOR_TAG ?= $(VERSION)
 # Image URL to use all building/pushing image targets
 IMG ?= $(IMAGE_TAG_BASE):$(OPERATOR_TAG)
+ifeq ($(USE_IMAGE_DIGESTS), true)
+	ifeq ($(strip $(OPERATOR_DIGEST)),)
+	else
+		IMG = $(IMAGE_TAG_BASE)@$(OPERATOR_DIGEST)
+	endif
+endif
+
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.28.3
 
@@ -107,13 +114,13 @@ help: ## Display this help.
 ##@ Development
 
 .PHONY: manifests
-manifests: shipwright controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
+manifests: upstream controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
 	$(CONTROLLER_GEN) rbac:roleName=operator crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
 
-.PHONY: shipwright
-shipwright: ## Copy shipwright CRD and release manifests
-	cd config/crd/bases && curl -sSLO $(SHIPWRIGHT_SOURCE)/config/crd/bases/operator.shipwright.io_shipwrightbuilds.yaml
-	cd config/shipwright/build/release && curl -sSLO $(SHIPWRIGHT_SOURCE)/kodata/release.yaml
+.PHONY: upstream
+upstream: ## Copy shipwright CRD and release manifests
+	cd config/crd/bases && curl -sSLO $(SHIPWRIGHT_OPERATOR_SOURCE)/config/crd/bases/operator.shipwright.io_shipwrightbuilds.yaml
+	cd config/shipwright/build/release && curl -sSLO $(SHIPWRIGHT_BUILD_SOURCE)/release.yaml
 
 .PHONY: generate
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
@@ -234,8 +241,10 @@ YQ ?= $(LOCALBIN)/yq
 #ENVTEST_VERSION ?= release-0.20
 
 ## Upstream Sources
-SHIPWRIGHT_RELEASE ?= release-v0.16
-SHIPWRIGHT_SOURCE ?= https://raw.githubusercontent.com/shipwright-io/operator/$(SHIPWRIGHT_RELEASE)
+SHIPWRIGHT_OPERATOR_RELEASE ?= release-v0.16
+SHIPWRIGHT_OPERATOR_SOURCE ?= https://raw.githubusercontent.com/shipwright-io/operator/$(SHIPWRIGHT_OPERATOR_RELEASE)
+SHIPWRIGHT_BUILD_RELEASE ?= v0.16.10
+SHIPWRIGHT_BUILD_SOURCE ?= https://github.com/shipwright-io/build/releases/download/$(SHIPWRIGHT_BUILD_RELEASE)
 
 # ClusterBuildStrategy Sources
 STRATEGIES = buildah buildpacks buildpacks-extender source-to-image
@@ -287,6 +296,13 @@ bundle: manifests kustomize operator-sdk yq strategy-catalog ## Generate bundle 
 	$(OPERATOR_SDK) generate kustomize manifests --interactive=false -q
 	cd config/manager && $(KUSTOMIZE) edit set image operator=$(IMG)
 	$(KUSTOMIZE) build config/manifests | $(OPERATOR_SDK) generate bundle $(BUNDLE_GEN_FLAGS)
+
+	# Update OPERATOR image in relatedImages section
+	$(YQ) -i \
+		'.spec.relatedImages[] |= select(.name == "OPENSHIFT_BUILDS_OPERATOR").image = "$(IMG)"' \
+		config/manifests/bases/openshift-builds-operator.clusterserviceversion.yaml
+
+	# Copy relatedImages from config/manifests/bases to bundle/manifests
 	$(YQ) -i eval-all \
 		'select(fileIndex==0).spec.relatedImages = select(fileIndex==1).spec.relatedImages | select(fileIndex==0)' \
 		bundle/manifests/openshift-builds-operator.clusterserviceversion.yaml \

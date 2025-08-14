@@ -152,7 +152,7 @@ spec:
       serviceAccountName: shipwright-build-controller
       containers:
         - name: shipwright-build
-          image: ghcr.io/shipwright-io/build/shipwright-build-controller:v0.16.0@sha256:26d34f8a1ef756786a840f1619e94f2c031c7849f7992742ed909c4e44c1e004
+          image: ghcr.io/shipwright-io/build/shipwright-build-controller:v0.16.10@sha256:2cd7df62e0201b107d3e06c6af9cb8b91e5f268a76dad6faa63ab59a810d31bc
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
@@ -169,15 +169,15 @@ spec:
             - name: CONTROLLER_NAME
               value: "shipwright-build"
             - name: GIT_CONTAINER_IMAGE
-              value: ghcr.io/shipwright-io/build/git:v0.16.0@sha256:e8d9fdec3ef0dd146511b0eec5041a57782924d144422db97eab71a56f351da4
+              value: ghcr.io/shipwright-io/build/git:v0.16.10@sha256:eb8b521af51429bcc43378d2cbb0f8852a6e3301c0f4857d8f5110789aa8904c
             - name: GIT_ENABLE_REWRITE_RULE
               value: "false"
             - name: IMAGE_PROCESSING_CONTAINER_IMAGE
-              value: ghcr.io/shipwright-io/build/image-processing:v0.16.0@sha256:2b200bc7dfe815eca4d53073911e9c51dfd58906276821a2b22e4835e0dbd243
+              value: ghcr.io/shipwright-io/build/image-processing:v0.16.10@sha256:ed389a9543b6e3f0c06099f5a66b57c418c9c4fbfcdafc4bd9cf9aeb41bab79d
             - name: BUNDLE_CONTAINER_IMAGE
-              value: ghcr.io/shipwright-io/build/bundle:v0.16.0@sha256:a3005ce84548c797436803b01f6f5192faf4b83f137eb89f8080ea14cd34d83a
+              value: ghcr.io/shipwright-io/build/bundle:v0.16.10@sha256:706e37b598bcde7a79e8b764f149a44df5d970e972933a9afa9ceeec383107bb
             - name: WAITER_CONTAINER_IMAGE
-              value: ghcr.io/shipwright-io/build/waiter:v0.16.0@sha256:d7fa697b8174a20694d9ebdae175ead8da9f1f04121c3db3ddf8bd97353c0917
+              value: ghcr.io/shipwright-io/build/waiter:v0.16.10@sha256:da65e9241a9a730750eabb7a9262c5e92449ba231c8ffa3bb67a9f269c838a48
           ports:
             - containerPort: 8383
               name: metrics-port
@@ -234,7 +234,7 @@ spec:
       serviceAccountName: shipwright-build-webhook
       containers:
         - name: shipwright-build-webhook
-          image: ghcr.io/shipwright-io/build/shipwright-build-webhook:v0.16.0@sha256:d4e8eea692f490632c5ae643a299c5e88e02b2d1684fe533f2b75c6752120dfd
+          image: ghcr.io/shipwright-io/build/shipwright-build-webhook:v0.16.10@sha256:3cd9c7495e141a2ccfc11d8a2ee297143c118f3c909c9b62ff222e4bfbf8cec5
           volumeMounts:
             - name: webhook-certs
               mountPath: /etc/webhook/certs
@@ -2598,7 +2598,6 @@ spec:
                               - volumePath
                             type: object
                         required:
-                          - ""
                           - name
                         type: object
                       type: array
@@ -4622,7 +4621,6 @@ spec:
                           - volumePath
                         type: object
                     required:
-                      - ""
                       - name
                     type: object
                   type: array
@@ -6845,7 +6843,6 @@ spec:
                               - volumePath
                             type: object
                         required:
-                          - ""
                           - name
                         type: object
                       type: array
@@ -9255,7 +9252,6 @@ spec:
                                   - volumePath
                                 type: object
                             required:
-                              - ""
                               - name
                             type: object
                           type: array
@@ -11334,7 +11330,6 @@ spec:
                           - volumePath
                         type: object
                     required:
-                      - ""
                       - name
                     type: object
                   type: array
@@ -13561,7 +13556,6 @@ spec:
                               - volumePath
                             type: object
                         required:
-                          - ""
                           - name
                         type: object
                       type: array
@@ -15981,7 +15975,6 @@ spec:
                           - volumePath
                         type: object
                     required:
-                      - ""
                       - name
                     type: object
                   type: array
@@ -18273,7 +18266,6 @@ spec:
                           - volumePath
                         type: object
                     required:
-                      - ""
                       - name
                     type: object
                   type: array

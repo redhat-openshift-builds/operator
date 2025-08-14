@@ -622,10 +622,10 @@ github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQD
 github.com/sergi/go-diff v1.0.0/go.mod h1:0CfEIISq7TuYL3j771MWULgwwjU+GofnZX9QAmXWZgo=
 github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 h1:n661drycOFuPLCN3Uc8sB6B/s6Z4t2xvBgU1htSHuq8=
 github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3/go.mod h1:A0bzQcvG0E7Rwjx0REVgAGH58e96+X0MeOfepqsbeW4=
-github.com/shipwright-io/build v0.16.4 h1:QWfvINb6+gvIkqjDOA/I9+LE+5FRHw9gcl10dwEKmCE=
-github.com/shipwright-io/build v0.16.4/go.mod h1:lRtTFAZF75qwkq60rWaW2o+xxkoDA9Hj9Jbb45Z8I/E=
-github.com/shipwright-io/operator v0.16.0 h1:g9a6emIh2/CQzd71WN/5DEHi2DAH7DOIC8mT9Xt38Ik=
-github.com/shipwright-io/operator v0.16.0/go.mod h1:MYqmz5X22cGRrKVr7OyqXKez59utKtvbmH9s/MdbBDs=
+github.com/shipwright-io/build v0.16.12 h1:1nKORDTq2XF6CdLINX1/cy+p+dJSQt07inSsoVgij9I=
+github.com/shipwright-io/build v0.16.12/go.mod h1:lRtTFAZF75qwkq60rWaW2o+xxkoDA9Hj9Jbb45Z8I/E=
+github.com/shipwright-io/operator v0.16.1-0.20250812074711-5942f1fdc07b h1:2X5LTQpgpe6tJ0BrNNT+wtCF8B0+zkVRy7iLaPJeM3Q=
+github.com/shipwright-io/operator v0.16.1-0.20250812074711-5942f1fdc07b/go.mod h1:fS2HCIoho9rmTjYxe/c15G5kwrh45z5oedz1yoQNdi0=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
 github.com/sirupsen/logrus v1.4.2/go.mod h1:tLMulIdttU9McNUspp0xgXVQah82FyeX6MwdIuYE2rE=
