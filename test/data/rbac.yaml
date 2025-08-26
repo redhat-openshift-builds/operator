@@ -1,0 +1,97 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: use-e2e-shared-secret
+rules:
+- apiGroups: ["sharedresource.openshift.io"]
+  resources: ["sharedsecrets"]
+  resourceNames: ["e2e-shared-secret"]
+  verbs: ["use"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: use-e2e-shared-configmap
+rules:
+- apiGroups: ["sharedresource.openshift.io"]
+  resources: ["sharedconfigmaps"]
+  resourceNames: ["e2e-shared-configmap"]
+  verbs: ["use"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: share-original-e2e-test-secret
+  namespace: default
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["e2e-test-secret"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: share-original-e2e-test-configmap
+  namespace: default
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  resourceNames: ["e2e-test-configmap"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: share-original-e2e-test-secret-binding
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: share-original-e2e-test-secret
+subjects:
+- kind: ServiceAccount
+  name: csi-driver-shared-resource
+  namespace: openshift-builds
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: share-original-e2e-test-configmap-binding
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: share-original-e2e-test-configmap
+subjects:
+- kind: ServiceAccount
+  name: csi-driver-shared-resource
+  namespace: openshift-builds
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: my-app-uses-e2e-shared-secret
+  namespace: e2e-test-ns 
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: use-e2e-shared-secret
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: e2e-test-ns
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: my-app-uses-e2e-shared-configmap
+  namespace: e2e-test-ns 
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: use-e2e-shared-configmap
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: e2e-test-ns
