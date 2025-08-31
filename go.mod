@@ -59,7 +59,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/openshift-pipelines/pipelines-as-code v0.27.2 // indirect
-	github.com/openshift/api v0.0.0-20240521185306-0314f31e7774 // indirect
+	github.com/openshift/api 4a165b214722 // indirect
 	github.com/openshift/apiserver-library-go v0.0.0-20230816171015-6bfafa975bfb // indirect
 	github.com/openshift/client-go v0.0.0-20240523113335-452272e0496d // indirect
 	github.com/pkg/errors v0.9.1 // indirect
