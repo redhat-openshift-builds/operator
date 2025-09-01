@@ -17,6 +17,7 @@ OpenShift Builds operator deploys and manages the following components
 - docker version 17.03+.
 - kubectl version v1.11.3+.
 - Access to a Kubernetes v1.11.3+ cluster.
+- **OpenShift Pipelines operator must be installed before installing this operator**
 
 ### Deploy Operator (standalone)
 
