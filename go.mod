@@ -81,7 +81,7 @@ require (
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
 	github.com/spf13/afero v1.12.0 // indirect
 	github.com/spf13/cobra v1.9.1 // indirect
-	github.com/spf13/pflag v1.0.6 // indirect
+	github.com/spf13/pflag v1.0.10 // indirect
 	github.com/tektoncd/pipeline v1.0.0 // indirect
 	github.com/tektoncd/triggers v0.32.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
