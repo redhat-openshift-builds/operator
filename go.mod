@@ -2,7 +2,7 @@ module github.com/redhat-openshift-builds/operator
 
 go 1.23.4
 
-toolchain go1.23.7
+toolchain go1.25.1
 
 require (
 	github.com/go-logr/logr v1.4.2
