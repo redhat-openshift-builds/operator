@@ -1,10 +1,5 @@
-// This file contains changes that are only compatible with go 1.10 and onwards.
-
-//go:build go1.10
-// +build go1.10
-
 /*
-Copyright 2021 The Kubernetes Authors.
+Copyright 2025 The Tekton Authors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -19,13 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package yaml
+package config
 
-import "encoding/json"
+import "knative.dev/pkg/ptr"
 
-// DisallowUnknownFields configures the JSON decoder to error out if unknown
-// fields come along, instead of dropping them by default.
-func DisallowUnknownFields(d *json.Decoder) *json.Decoder {
-	d.DisallowUnknownFields()
-	return d
+func (pc *PrunerConfig) SetDefaults() {
+	if pc.HistoryLimit == nil {
+		pc.HistoryLimit = ptr.Int32(DefaultHistoryLimit)
+	}
+	if pc.EnforcedConfigLevel == nil {
+		v := EnforcedConfigLevelGlobal
+		pc.EnforcedConfigLevel = &v
+	}
 }
