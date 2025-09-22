@@ -152,7 +152,7 @@ spec:
       serviceAccountName: shipwright-build-controller
       containers:
         - name: shipwright-build
-          image: ghcr.io/shipwright-io/build/shipwright-build-controller:v0.16.10@sha256:2cd7df62e0201b107d3e06c6af9cb8b91e5f268a76dad6faa63ab59a810d31bc
+          image: ghcr.io/shipwright-io/build/shipwright-build-controller:v0.17.0@sha256:abe9fd38e03781c3091db7b6cc1ca013c2561ef32727e6c89a446044b748e387
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
@@ -169,15 +169,15 @@ spec:
             - name: CONTROLLER_NAME
               value: "shipwright-build"
             - name: GIT_CONTAINER_IMAGE
-              value: ghcr.io/shipwright-io/build/git:v0.16.10@sha256:eb8b521af51429bcc43378d2cbb0f8852a6e3301c0f4857d8f5110789aa8904c
+              value: ghcr.io/shipwright-io/build/git:v0.17.0@sha256:378e901a9f51ea767d2c134b597d8ed0cd7ae119c97cbd1a96a7baf11105f531
             - name: GIT_ENABLE_REWRITE_RULE
               value: "false"
             - name: IMAGE_PROCESSING_CONTAINER_IMAGE
-              value: ghcr.io/shipwright-io/build/image-processing:v0.16.10@sha256:ed389a9543b6e3f0c06099f5a66b57c418c9c4fbfcdafc4bd9cf9aeb41bab79d
+              value: ghcr.io/shipwright-io/build/image-processing:v0.17.0@sha256:fdd064a7344d22f0c394ec8b8a0912c93a86819318abe021ef97988e76cdfff1
             - name: BUNDLE_CONTAINER_IMAGE
-              value: ghcr.io/shipwright-io/build/bundle:v0.16.10@sha256:706e37b598bcde7a79e8b764f149a44df5d970e972933a9afa9ceeec383107bb
+              value: ghcr.io/shipwright-io/build/bundle:v0.17.0@sha256:105ca0140bcde3b0105d4334c832b7327c7bd8d8f5b6b817076c6d01eff569a5
             - name: WAITER_CONTAINER_IMAGE
-              value: ghcr.io/shipwright-io/build/waiter:v0.16.10@sha256:da65e9241a9a730750eabb7a9262c5e92449ba231c8ffa3bb67a9f269c838a48
+              value: ghcr.io/shipwright-io/build/waiter:v0.17.0@sha256:216cda508cac9ff84f628a27cad03da24b79bf6f78ff41aaad58eabafe9c8975
           ports:
             - containerPort: 8383
               name: metrics-port
@@ -234,7 +234,7 @@ spec:
       serviceAccountName: shipwright-build-webhook
       containers:
         - name: shipwright-build-webhook
-          image: ghcr.io/shipwright-io/build/shipwright-build-webhook:v0.16.10@sha256:3cd9c7495e141a2ccfc11d8a2ee297143c118f3c909c9b62ff222e4bfbf8cec5
+          image: ghcr.io/shipwright-io/build/shipwright-build-webhook:v0.17.0@sha256:33b74f8817cadd632fb612ea283930d03778ea46e41e22e893550223a67513f9
           volumeMounts:
             - name: webhook-certs
               mountPath: /etc/webhook/certs
@@ -305,7 +305,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.3
+    controller-gen.kubebuilder.io/version: v0.18.0
   name: buildruns.shipwright.io
 spec:
   conversion:
@@ -1786,7 +1786,7 @@ spec:
                               The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                               The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
                               The volume will be mounted read-only (ro) and non-executable files (noexec).
-                              Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+                              Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                               The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                             properties:
                               pullPolicy:
@@ -3809,7 +3809,7 @@ spec:
                           The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                           The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
                           The volume will be mounted read-only (ro) and non-executable files (noexec).
-                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                           The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                         properties:
                           pullPolicy:
@@ -6031,7 +6031,7 @@ spec:
                               The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                               The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
                               The volume will be mounted read-only (ro) and non-executable files (noexec).
-                              Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+                              Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                               The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                             properties:
                               pullPolicy:
@@ -8440,7 +8440,7 @@ spec:
                                   The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                                   The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
                                   The volume will be mounted read-only (ro) and non-executable files (noexec).
-                                  Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+                                  Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                                   The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                                 properties:
                                   pullPolicy:
@@ -10518,7 +10518,7 @@ spec:
                           The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                           The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
                           The volume will be mounted read-only (ro) and non-executable files (noexec).
-                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                           The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                         properties:
                           pullPolicy:
@@ -12744,7 +12744,7 @@ spec:
                               The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                               The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
                               The volume will be mounted read-only (ro) and non-executable files (noexec).
-                              Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+                              Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                               The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                             properties:
                               pullPolicy:
@@ -13598,6 +13598,19 @@ spec:
                       - type
                     type: object
                   type: array
+                executor:
+                  description: Executor is the name and kind of the resource responsible for executing this BuildRun.
+                  properties:
+                    kind:
+                      description: Kind is the kind of the object that was created to execute the BuildRun (e.g., "TaskRun", "PipelineRun")
+                      type: string
+                    name:
+                      description: Name is the name of the TaskRun or PipelineRun that was created to execute this BuildRun
+                      type: string
+                  required:
+                    - kind
+                    - name
+                  type: object
                 failureDetails:
                   description: FailureDetails contains error details that are collected and surfaced from TaskRun
                   properties:
@@ -13680,7 +13693,10 @@ spec:
                   format: date-time
                   type: string
                 taskRunName:
-                  description: TaskRunName is the name of the TaskRun responsible for executing this BuildRun.
+                  description: |-
+                    TaskRunName is the name of the TaskRun responsible for executing this BuildRun.
+
+                    Deprecated: Use Executor instead to describe the taskrun.
                   type: string
               type: object
           required:
@@ -13696,7 +13712,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.3
+    controller-gen.kubebuilder.io/version: v0.18.0
   name: builds.shipwright.io
 spec:
   conversion:
@@ -15163,7 +15179,7 @@ spec:
                           The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                           The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
                           The volume will be mounted read-only (ro) and non-executable files (noexec).
-                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                           The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                         properties:
                           pullPolicy:
@@ -17454,7 +17470,7 @@ spec:
                           The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                           The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
                           The volume will be mounted read-only (ro) and non-executable files (noexec).
-                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                           The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                         properties:
                           pullPolicy:
@@ -18302,7 +18318,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.3
+    controller-gen.kubebuilder.io/version: v0.18.0
   name: buildstrategies.shipwright.io
 spec:
   conversion:
@@ -18512,7 +18528,7 @@ spec:
                           Values defined by an Env with a duplicate key will take precedence.
                           Cannot be updated.
                         items:
-                          description: EnvFromSource represents the source of a set of ConfigMaps
+                          description: EnvFromSource represents the source of a set of ConfigMaps or Secrets
                           properties:
                             configMapRef:
                               description: The ConfigMap to select from
@@ -18532,7 +18548,7 @@ spec:
                               type: object
                               x-kubernetes-map-type: atomic
                             prefix:
-                              description: An optional identifier to prepend to each key in the ConfigMap. Must be a C_IDENTIFIER.
+                              description: Optional text to prepend to the name of each environment variable. Must be a C_IDENTIFIER.
                               type: string
                             secretRef:
                               description: The Secret to select from
@@ -18781,6 +18797,12 @@ spec:
                                   - port
                                 type: object
                             type: object
+                          stopSignal:
+                            description: |-
+                              StopSignal defines which signal will be sent to a container when it is being stopped.
+                              If not specified, the default is defined by the container runtime in use.
+                              StopSignal can only be set for Pods with a non-empty .spec.os.name
+                            type: string
                         type: object
                       livenessProbe:
                         description: |-
@@ -20662,7 +20684,7 @@ spec:
                           The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                           The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
                           The volume will be mounted read-only (ro) and non-executable files (noexec).
-                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                           The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                         properties:
                           pullPolicy:
@@ -22953,7 +22975,7 @@ spec:
                           The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                           The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
                           The volume will be mounted read-only (ro) and non-executable files (noexec).
-                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                           The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                         properties:
                           pullPolicy:
@@ -23790,7 +23812,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.17.3
+    controller-gen.kubebuilder.io/version: v0.18.0
   name: clusterbuildstrategies.shipwright.io
 spec:
   conversion:
@@ -24000,7 +24022,7 @@ spec:
                           Values defined by an Env with a duplicate key will take precedence.
                           Cannot be updated.
                         items:
-                          description: EnvFromSource represents the source of a set of ConfigMaps
+                          description: EnvFromSource represents the source of a set of ConfigMaps or Secrets
                           properties:
                             configMapRef:
                               description: The ConfigMap to select from
@@ -24020,7 +24042,7 @@ spec:
                               type: object
                               x-kubernetes-map-type: atomic
                             prefix:
-                              description: An optional identifier to prepend to each key in the ConfigMap. Must be a C_IDENTIFIER.
+                              description: Optional text to prepend to the name of each environment variable. Must be a C_IDENTIFIER.
                               type: string
                             secretRef:
                               description: The Secret to select from
@@ -24269,6 +24291,12 @@ spec:
                                   - port
                                 type: object
                             type: object
+                          stopSignal:
+                            description: |-
+                              StopSignal defines which signal will be sent to a container when it is being stopped.
+                              If not specified, the default is defined by the container runtime in use.
+                              StopSignal can only be set for Pods with a non-empty .spec.os.name
+                            type: string
                         type: object
                       livenessProbe:
                         description: |-
@@ -26150,7 +26178,7 @@ spec:
                           The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                           The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
                           The volume will be mounted read-only (ro) and non-executable files (noexec).
-                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                           The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                         properties:
                           pullPolicy:
@@ -28441,7 +28469,7 @@ spec:
                           The types of objects that may be mounted by this volume are defined by the container runtime implementation on a host machine and at minimum must include all valid types supported by the container image field.
                           The OCI object gets mounted in a single directory (spec.containers[*].volumeMounts.mountPath) by merging the manifest layers in the same way as for container images.
                           The volume will be mounted read-only (ro) and non-executable files (noexec).
-                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath).
+                          Sub path mounts for containers are not supported (spec.containers[*].volumeMounts.subpath) before 1.33.
                           The field spec.securityContext.fsGroupChangePolicy has no effect on this volume type.
                         properties:
                           pullPolicy:
