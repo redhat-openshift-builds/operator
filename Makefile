@@ -241,9 +241,9 @@ YQ ?= $(LOCALBIN)/yq
 #ENVTEST_VERSION ?= release-0.20
 
 ## Upstream Sources
-SHIPWRIGHT_OPERATOR_RELEASE ?= release-v0.16
-SHIPWRIGHT_OPERATOR_SOURCE ?= https://raw.githubusercontent.com/shipwright-io/operator/$(SHIPWRIGHT_OPERATOR_RELEASE)
-SHIPWRIGHT_BUILD_RELEASE ?= v0.16.10
+SHIPWRIGHT_OPERATOR_RELEASE ?= v0.17.0
+SHIPWRIGHT_OPERATOR_SOURCE ?= https://raw.githubusercontent.com/shipwright-io/operator/refs/tags/$(SHIPWRIGHT_OPERATOR_RELEASE)
+SHIPWRIGHT_BUILD_RELEASE ?= v0.17.0
 SHIPWRIGHT_BUILD_SOURCE ?= https://github.com/shipwright-io/build/releases/download/$(SHIPWRIGHT_BUILD_RELEASE)
 
 # ClusterBuildStrategy Sources
