@@ -8,7 +8,7 @@ metadata:
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-cel-expression: |
       event == "push" &&
-      target_branch == "main" &&
+      target_branch == "builds-1.6" &&
       (
         files.all.exists(x, x.matches('bundle/')) ||
         files.all.exists(x, x.matches('bundle.Dockerfile')) ||
@@ -16,45 +16,45 @@ metadata:
       )
   creationTimestamp: null
   labels:
-    appstudio.openshift.io/application: openshift-builds
-    appstudio.openshift.io/component: openshift-builds-operator-bundle
+    appstudio.openshift.io/application: openshift-builds-1-6
+    appstudio.openshift.io/component: openshift-builds-operator-bundle-1-6
     pipelines.appstudio.openshift.io/type: build
-  name: openshift-builds-operator-bundle-on-push
+  name: openshift-builds-operator-bundle-1-6-on-push
   namespace: rh-openshift-builds-tenant
 spec:
   params:
-  - name: git-url
-    value: '{{source_url}}'
-  - name: revision
-    value: '{{revision}}'
-  - name: output-image
-    value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds-operator-bundle:{{revision}}
-  - name: dockerfile
-    value: bundle.Dockerfile
-  - name: build-source-image
-    value: "true"
-  - name: hermetic
-    value: "true"
-  - name: build-platforms
-    value:
-      - linux/x86_64
-  - name: build-image-index
-    value: "false"
-  - name: image-append-platform
-    value: "false"
+    - name: git-url
+      value: '{{source_url}}'
+    - name: revision
+      value: '{{revision}}'
+    - name: output-image
+      value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds-operator-bundle-1-6:{{revision}}
+    - name: dockerfile
+      value: bundle.Dockerfile
+    - name: build-source-image
+      value: "true"
+    - name: hermetic
+      value: "true"
+    - name: build-platforms
+      value:
+        - linux/x86_64
+    - name: build-image-index
+      value: "false"
+    - name: image-append-platform
+      value: "false"
   pipelineRef:
     params:
-    - name: url
-      value: https://github.com/redhat-openshift-builds/release.git
-    - name: revision
-      value: main
-    - name: pathInRepo
-      value: /pipelines/konflux-build-multi-platform.yaml
+      - name: url
+        value: https://github.com/redhat-openshift-builds/release.git
+      - name: revision
+        value: main
+      - name: pathInRepo
+        value: /pipelines/konflux-build-multi-platform.yaml
     resolver: git
   taskRunTemplate:
-    serviceAccountName: build-pipeline-openshift-builds-operator-bundle
+    serviceAccountName: build-pipeline-openshift-builds-operator-bundle-1-6
   workspaces:
-  - name: git-auth
-    secret:
-      secretName: '{{ git_auth_secret }}'
+    - name: git-auth
+      secret:
+        secretName: '{{ git_auth_secret }}'
 status: {}
