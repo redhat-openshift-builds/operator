@@ -58,11 +58,11 @@ spec:
   - name: run-unit-test
     value: "true"
   - name: unit-test-revision
-    value: 6392835dbcdc367e616d448af25f37cce1e403b9
+    value: 7f7ef64581e70f594d6d3486dfaaa78d78021e73
   - name: unit-test-command
     value: make test
-  - name: unit-test-base-image
-    value: brew.registry.redhat.io/rh-osbs/openshift-golang-builder:v1.24
+  - name: enable-sealights
+    value: "false"
   pipelineRef:
     params:
     - name: url
