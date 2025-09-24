@@ -61,8 +61,6 @@ spec:
     value: 6392835dbcdc367e616d448af25f37cce1e403b9
   - name: unit-test-command
     value: make test
-  - name: unit-test-base-image
-    value: brew.registry.redhat.io/rh-osbs/openshift-golang-builder:v1.24
   pipelineRef:
     params:
     - name: url

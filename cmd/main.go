@@ -167,7 +167,7 @@ func main() {
 
 	setupLog.Info("starting manager")
 	if err := mgr.Start(ctxMain); err != nil {
-		setupLog.Error(err, "problem running manager")
+		setupLog.Error(err, "problem running the manager")
 		os.Exit(1)
 	}
 }
