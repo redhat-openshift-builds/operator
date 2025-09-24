@@ -12,9 +12,9 @@ require (
 	github.com/shipwright-io/build v0.16.12
 	github.com/shipwright-io/operator v0.16.1-0.20250812074711-5942f1fdc07b
 	github.com/tektoncd/operator v0.76.0
-	k8s.io/api v0.32.5
+	k8s.io/api v0.33.2
 	k8s.io/apiextensions-apiserver v0.32.5
-	k8s.io/apimachinery v0.33.0
+	k8s.io/apimachinery v0.33.2
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20250502105355-0f33e8f1c979
 	sigs.k8s.io/controller-runtime v0.20.4
@@ -69,9 +69,9 @@ require (
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/openshift-pipelines/pipelines-as-code v0.36.0 // indirect
-	github.com/openshift/api v0.0.0-20250411135543-10a8fa583797 // indirect
+	github.com/openshift/api v0.0.0-20250922161302-04f99ea228f5 // indirect
 	github.com/openshift/apiserver-library-go v0.0.0-20250127121756-dc9a973f14ce // indirect
-	github.com/openshift/client-go v0.0.0-20250125113824-8e1f0b8fa9a7 // indirect
+	github.com/openshift/client-go v0.0.0-20250922201106-dd37bfd2e597 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.22.0 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
