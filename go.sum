@@ -568,8 +568,8 @@ github.com/openshift-pipelines/pipelines-as-code v0.36.0 h1:/hv0Z0TjQbfQK5McYOZU
 github.com/openshift-pipelines/pipelines-as-code v0.36.0/go.mod h1:sWw55rgEurnYNKkpItE0iBrczF3Nv/XTUzWEiYSmrVY=
 github.com/openshift-pipelines/tektoncd-pruner v0.2.0 h1:7m4x8ChiWQ4IQkqD6OUBQTcg+32fMh8njbIk22mtOI8=
 github.com/openshift-pipelines/tektoncd-pruner v0.2.0/go.mod h1:weaxA8Ll8mW/w65OYEBeyDXEr2nk6h3QPr0aauYOeNI=
-github.com/openshift/api v0.0.0-20250919195347-bc748ef9703f h1:Pr1I+cFh0/Djo7WmlfBhmm/dFFoKiGTrvYX51x/n0sk=
-github.com/openshift/api v0.0.0-20250919195347-bc748ef9703f/go.mod h1:SPLf21TYPipzCO67BURkCfK6dcIIxx0oNRVWaOyRcXM=
+github.com/openshift/api v0.0.0-20250926020921-1517fca97fe3 h1:nZKf29Jdy1wFFED7qtOYPShx/krrbCozY6777MCMN/g=
+github.com/openshift/api v0.0.0-20250926020921-1517fca97fe3/go.mod h1:SPLf21TYPipzCO67BURkCfK6dcIIxx0oNRVWaOyRcXM=
 github.com/openshift/apiserver-library-go v0.0.0-20250917015549-a8019f39f670 h1:Sty9pdYN5ePElEHmUhifUbdB36ek7owP2hMYbmCxlQ0=
 github.com/openshift/apiserver-library-go v0.0.0-20250917015549-a8019f39f670/go.mod h1:8aHgQmkn0RbvMth8icv+itFvH+vF94VHBTjIUuPmkCU=
 github.com/openshift/client-go v0.0.0-20250915125341-81c9dc83a675 h1:FKrngDbpVX730LfBuPsN1KdD2BwtE+i1q2gwhKDMc80=

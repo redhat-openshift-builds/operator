@@ -244,7 +244,7 @@ github.com/openshift-pipelines/pipelines-as-code/pkg/params/settings
 ## explicit; go 1.24.0
 github.com/openshift-pipelines/tektoncd-pruner/pkg/config
 github.com/openshift-pipelines/tektoncd-pruner/pkg/metrics
-# github.com/openshift/api v0.0.0-20250919195347-bc748ef9703f
+# github.com/openshift/api v0.0.0-20250926020921-1517fca97fe3
 ## explicit; go 1.24.0
 github.com/openshift/api/security/v1
 # github.com/openshift/apiserver-library-go v0.0.0-20250917015549-a8019f39f670
