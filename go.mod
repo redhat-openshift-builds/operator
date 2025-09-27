@@ -14,11 +14,11 @@ require (
 	github.com/tektoncd/operator v0.77.0
 	k8s.io/api v0.33.4
 	k8s.io/apiextensions-apiserver v0.33.4
-	k8s.io/apimachinery v0.33.4
+	k8s.io/apimachinery v0.34.1
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20250820121507-0af2bda4dd1d
 	sigs.k8s.io/controller-runtime v0.21.0
-	sigs.k8s.io/controller-runtime/tools/setup-envtest v0.0.0-20250626154428-7fd020cb5fc3
+	sigs.k8s.io/controller-runtime/tools/setup-envtest v0.0.0-20250926234817-7c50567748ae
 	sigs.k8s.io/controller-tools v0.18.0
 	sigs.k8s.io/kustomize/kustomize/v5 v5.7.1
 	sigs.k8s.io/yaml v1.6.0
@@ -85,6 +85,7 @@ require (
 	github.com/openshift/api v0.0.0-20250919195347-bc748ef9703f // indirect
 	github.com/openshift/apiserver-library-go v0.0.0-20250917015549-a8019f39f670 // indirect
 	github.com/openshift/client-go v0.0.0-20250915125341-81c9dc83a675 // indirect
+	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.66.1 // indirect
@@ -131,7 +132,7 @@ require (
 	k8s.io/code-generator v0.33.4 // indirect
 	k8s.io/gengo/v2 v2.0.0-20250604051438-85fd79dbfd9f // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
-	k8s.io/kube-openapi v0.0.0-20250627150254-e9823e99808e // indirect
+	k8s.io/kube-openapi v0.0.0-20250710124328-f3f2b991d03b // indirect
 	knative.dev/pkg v0.0.0-20250811181739-e06d4c9af190 // indirect
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
 	sigs.k8s.io/kustomize/api v0.20.1 // indirect
@@ -139,6 +140,7 @@ require (
 	sigs.k8s.io/kustomize/kyaml v0.20.1 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.7.0 // indirect
+	sigs.k8s.io/structured-merge-diff/v6 v6.3.0 // indirect
 )
 
 replace k8s.io/client-go => k8s.io/client-go v0.33.4
