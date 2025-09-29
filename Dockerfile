@@ -21,11 +21,12 @@ ENTRYPOINT ["/operator"]
 
 LABEL \
     com.redhat.component="openshift-builds-operator-container" \
-    name="openshift-builds/operator" \
+    name="openshift-builds/openshift-builds-rhel9-operator" \
     version="v1.4.1" \
     summary="Red Hat OpenShift Builds Operator" \
     maintainer="openshift-builds@redhat.com" \
     description="Red Hat OpenShift Builds Operator" \
     io.k8s.description="Red Hat OpenShift Builds Operator" \
     io.k8s.display-name="Red Hat OpenShift Builds Operator" \
-    io.openshift.tags="builds,operator"
+    io.openshift.tags="builds,operator" \
+    cpe="cpe:/a:redhat:openshift_builds:1.4::el9"
