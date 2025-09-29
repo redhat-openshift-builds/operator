@@ -15,13 +15,14 @@ LABEL operators.operatorframework.io.test.config.v1=tests/scorecard/
 
 LABEL com.redhat.openshift.versions="v4.12-v4.17" \
     com.redhat.component="openshift-builds-operator-bundle-container" \
+    cpe="cpe:/a:redhat:openshift_builds:1.2::el9" \
     description="Red Hat OpenShift Builds Operator Bundle" \
     distribution-scope="public" \
     io.k8s.description="Red Hat OpenShift Builds Operator Bundle" \
     io.k8s.display-name="Red Hat OpenShift Builds Operator Bundle" \
     io.openshift.tags="builds,operator,bundle" \
     maintainer="openshift-builds@redhat.com" \
-    name="openshift-builds/operator-bundle" \
+    name="openshift-builds/openshift-builds-operator-bundle" \
     release="0" \
     summary="Red Hat OpenShift Builds Operator Bundle" \
     url="https://catalog.redhat.com/software/containers/openshift-builds/openshift-builds-operator-bundle" \
