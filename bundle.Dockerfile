@@ -21,12 +21,13 @@ LABEL com.redhat.openshift.versions="v4.16-v4.19" \
     io.k8s.display-name="Red Hat OpenShift Builds Operator Bundle" \
     io.openshift.tags="builds,operator,bundle" \
     maintainer="openshift-builds@redhat.com" \
-    name="openshift-builds/operator-bundle" \
+    name="openshift-builds/openshift-builds-operator-bundle" \
     summary="Red Hat OpenShift Builds Operator Bundle" \
     url="https://catalog.redhat.com/software/containers/openshift-builds/openshift-builds-operator-bundle" \
     vendor="Red Hat, Inc." \
     version="1.5.1" \
-    release="1.5.1"
+    release="1.5.1" \
+    cpe="cpe:/a:redhat:openshift_builds:1.5::el9"
 
 COPY bundle/ /
 COPY LICENSE /licenses/
