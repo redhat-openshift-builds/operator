@@ -206,9 +206,6 @@ github.com/openshift/client-go/security/clientset/versioned/typed/security/v1
 # github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3
 ## explicit; go 1.21
 github.com/openshift/service-ca-operator/pkg/controller/api
-# github.com/pkg/errors v0.9.1
-## explicit
-github.com/pkg/errors
 # github.com/prometheus/client_golang v1.21.0
 ## explicit; go 1.21
 github.com/prometheus/client_golang/internal/github.com/golang/gddo/httputil
@@ -475,7 +472,7 @@ google.golang.org/protobuf/types/known/fieldmaskpb
 google.golang.org/protobuf/types/known/structpb
 google.golang.org/protobuf/types/known/timestamppb
 google.golang.org/protobuf/types/known/wrapperspb
-# gopkg.in/evanphx/json-patch.v4 v4.12.0
+# gopkg.in/evanphx/json-patch.v4 v4.13.0
 ## explicit
 gopkg.in/evanphx/json-patch.v4
 # gopkg.in/inf.v0 v0.9.1
