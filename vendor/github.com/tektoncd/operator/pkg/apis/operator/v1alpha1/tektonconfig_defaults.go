@@ -28,11 +28,11 @@ func (tc *TektonConfig) SetDefaults(ctx context.Context) {
 	if tc.Spec.Profile == "" {
 		tc.Spec.Profile = ProfileBasic
 	}
-
 	tc.Spec.Pipeline.setDefaults()
 	tc.Spec.Trigger.setDefaults()
 	tc.Spec.Chain.setDefaults()
 	tc.Spec.Result.setDefaults()
+	tc.Spec.TektonPruner.SetDefaults()
 
 	if IsOpenShiftPlatform() {
 		if tc.Spec.Platforms.OpenShift.PipelinesAsCode == nil {
