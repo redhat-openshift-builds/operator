@@ -1,0 +1,17 @@
+apiVersion: sharedresource.openshift.io/v1alpha1
+kind: SharedSecret
+metadata:
+  name: e2e-shared-secret
+spec:
+  secretRef:
+    name: e2e-test-secret
+    namespace: default
+---
+apiVersion: sharedresource.openshift.io/v1alpha1
+kind: SharedConfigMap
+metadata:
+  name: e2e-shared-configmap
+spec:
+  configMapRef:
+    name: e2e-test-configmap
+    namespace: default
