@@ -23,11 +23,21 @@ import (
 	"os/exec"
 	"strings"
 
+	"k8s.io/client-go/rest"
+
 	. "github.com/onsi/ginkgo/v2" //nolint:golint,revive
+	"k8s.io/apimachinery/pkg/api/errors"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/yaml"
+
+	"bytes"
+
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/scheme"
+	"k8s.io/client-go/tools/remotecommand"
 )
 
 const (
@@ -152,17 +162,38 @@ func ApplyResourceFromFile(ctx context.Context, kubeClient client.Client, filePa
 		return fmt.Errorf("failed to read file %s: %w", filePath, err)
 	}
 
-	// Decode YAML into an unstructured object
-	obj := &unstructured.Unstructured{}
-	err = yaml.Unmarshal(data, obj)
-	if err != nil {
-		return fmt.Errorf("failed to decode YAML: %w", err)
-	}
+	yamlDocs := strings.Split(string(data), "\n---\n")
 
-	// Creaate the resource
-	if err := kubeClient.Create(ctx, obj); err != nil {
-		return fmt.Errorf("failed to delete resource %s/%s (%s): %w",
-			obj.GetNamespace(), obj.GetName(), obj.GetKind(), err)
+	for _, docString := range yamlDocs {
+		docString = strings.TrimSpace(docString)
+		if docString == "" {
+			continue
+		}
+
+		// Decode YAML into an unstructured object
+		obj := &unstructured.Unstructured{}
+		if err := yaml.Unmarshal([]byte(docString), obj); err != nil {
+			return fmt.Errorf("failed to decode YAML document from %s: %w", filePath, err)
+		}
+
+		// Apply the object. If creation fails because it already exists, try an update.
+		if err := kubeClient.Create(ctx, obj); err != nil {
+			if errors.IsAlreadyExists(err) {
+				// Get the existing object to retrieve its resourceVersion for the update.
+				existingObj := &unstructured.Unstructured{}
+				existingObj.SetGroupVersionKind(obj.GroupVersionKind())
+				if getErr := kubeClient.Get(ctx, client.ObjectKeyFromObject(obj), existingObj); getErr != nil {
+					return fmt.Errorf("failed to get existing resource for update from %s: %w", filePath, getErr)
+				}
+				obj.SetResourceVersion(existingObj.GetResourceVersion())
+
+				if updateErr := kubeClient.Update(ctx, obj); updateErr != nil {
+					return fmt.Errorf("failed to update resource from %s: %w", filePath, updateErr)
+				}
+			} else {
+				return fmt.Errorf("failed to create resource from %s: %w", filePath, err)
+			}
+		}
 	}
 	return nil
 }
@@ -188,4 +219,30 @@ func DeleteResourceFromFile(ctx context.Context, kubeClient client.Client, fileP
 	}
 
 	return nil
+}
+
+// ExecInPod runs a command inside a specific container and returns the output.
+func ExecInPod(clientset kubernetes.Interface, kubeConfig *rest.Config, podName, namespace string, command ...string) (string, error) {
+	req := clientset.CoreV1().RESTClient().Post().
+		Resource("pods").Name(podName).Namespace(namespace).SubResource("exec")
+	req.VersionedParams(&corev1.PodExecOptions{
+		Container: "test-container", Command: command,
+		Stdin: false, Stdout: true, Stderr: true,
+	}, scheme.ParameterCodec)
+
+	// Use the kubeConfig that was passed in
+	exec, err := remotecommand.NewSPDYExecutor(kubeConfig, "POST", req.URL())
+	if err != nil {
+		return "", err
+	}
+
+	var stdout, stderr bytes.Buffer
+	err = exec.StreamWithContext(context.TODO(), remotecommand.StreamOptions{
+		Stdout: &stdout,
+		Stderr: &stderr,
+	})
+	if err != nil {
+		return stderr.String(), err
+	}
+	return strings.TrimSpace(stdout.String()), nil
 }

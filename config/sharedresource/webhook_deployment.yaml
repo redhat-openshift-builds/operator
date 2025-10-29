@@ -35,6 +35,8 @@ spec:
             value: ""
           - name: RESERVED_SHARED_SECRET_NAMES
             value: "openshift-etc-pki-entitlement: openshift-config-managed:etc-pki-entitlement"
+        securityContext:
+          readOnlyRootFilesystem: true
         volumeMounts:
         - name: trusted-ca-bundle
           mountPath: /etc/pki/tls/certs/
