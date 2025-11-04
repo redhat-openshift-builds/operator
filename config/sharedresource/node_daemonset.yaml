@@ -33,6 +33,7 @@ spec:
             # non-privileged sidecar containers cannot access unix domain socket
             # created by privileged CSI driver container.
             privileged: true
+            readOnlyRootFilesystem: true
           env:
             - name: KUBE_NODE_NAME
               valueFrom:
@@ -55,6 +56,7 @@ spec:
           image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:504179e8ee9f88a23f1d4c28c7683ab7395f4c1c4868765bf3c1406669fd52fc
           # for development purposes; eventually switch to IfNotPresent
           imagePullPolicy: IfNotPresent
+          workingDir: /run/csi-data-dir 
           command:
             - /openshift-builds-shared-resource
           args:
@@ -74,6 +76,7 @@ spec:
                   fieldPath: spec.nodeName
           securityContext:
             privileged: true
+            readOnlyRootFilesystem: true
           ports:
             - containerPort: 9898
               name: healthz
