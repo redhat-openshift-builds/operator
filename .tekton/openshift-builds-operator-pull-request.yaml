@@ -13,7 +13,6 @@ metadata:
       (
         files.all.exists(x, x.matches('api/|internal/|test/|vendor/|config/sharedresource/|config/shipwright/')) ||
         files.all.exists(x, x.matches('main.go|go.mod|go.sum|Dockerfile')) ||
-        files.all.exists(x, x.matches('.tekton/openshift-builds-operator-unit-test.yaml')) ||
         files.all.exists(x, x.matches('.tekton/openshift-builds-operator-pull-request.yaml'))
       )
   creationTimestamp: null
@@ -57,12 +56,10 @@ spec:
     value: '{"packages": [{"type": "gomod"}]}'
   - name: run-unit-test
     value: "true"
-  - name: unit-test-revision
-    value: 6392835dbcdc367e616d448af25f37cce1e403b9
   - name: unit-test-command
     value: make test
-  - name: unit-test-base-image
-    value: brew.registry.redhat.io/rh-osbs/openshift-golang-builder:v1.24
+  - name: enable-sealights
+    value: "false"
   pipelineRef:
     params:
     - name: url
