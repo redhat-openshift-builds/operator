@@ -9,8 +9,8 @@ metadata:
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: operator
-subjects:
-- kind: ServiceAccount
   name: openshift-builds-operator
-  namespace: openshift-builds
+subjects:
+  - kind: ServiceAccount
+    name: openshift-builds-operator
+    namespace: openshift-builds
