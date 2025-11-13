@@ -94,8 +94,8 @@ require (
 	github.com/spf13/afero v1.15.0 // indirect
 	github.com/spf13/cobra v1.10.1 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
-	github.com/tektoncd/pipeline v1.4.0 // indirect
-	github.com/tektoncd/triggers v0.33.0 // indirect
+	github.com/tektoncd/pipeline v1.6.0 // indirect
+	github.com/tektoncd/triggers v0.34.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xlab/treeprint v1.2.0 // indirect
 	go.opencensus.io v0.24.0 // indirect
@@ -109,21 +109,20 @@ require (
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/mod v0.28.0 // indirect
-	golang.org/x/net v0.44.0 // indirect
-	golang.org/x/oauth2 v0.31.0 // indirect
+	golang.org/x/net v0.45.0 // indirect
+	golang.org/x/oauth2 v0.32.0 // indirect
 	golang.org/x/sync v0.17.0 // indirect
-	golang.org/x/sys v0.36.0 // indirect
-	golang.org/x/term v0.35.0 // indirect
-	golang.org/x/text v0.29.0 // indirect
+	golang.org/x/sys v0.37.0 // indirect
+	golang.org/x/term v0.36.0 // indirect
+	golang.org/x/text v0.30.0 // indirect
 	golang.org/x/time v0.13.0 // indirect
 	golang.org/x/tools v0.37.0 // indirect
-	golang.org/x/tools/go/expect v0.1.1-deprecated // indirect
 	gomodules.xyz/jsonpatch/v2 v2.5.0 // indirect
 	google.golang.org/api v0.249.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250908214217-97024824d090 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250908214217-97024824d090 // indirect
-	google.golang.org/grpc v1.75.1 // indirect
-	google.golang.org/protobuf v1.36.9 // indirect
+	google.golang.org/grpc v1.76.0 // indirect
+	google.golang.org/protobuf v1.36.10 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
