@@ -25,6 +25,7 @@ import (
 	"github.com/go-logr/logr"
 	manifestivalclient "github.com/manifestival/controller-runtime-client"
 	"github.com/manifestival/manifestival"
+	"github.com/redhat-openshift-builds/operator/internal/networkpolicy"
 	"github.com/redhat-openshift-builds/operator/internal/sharedresource"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
@@ -51,6 +52,7 @@ type OpenShiftBuildReconciler struct {
 	Logger         logr.Logger
 	SharedResource *sharedresource.SharedResource
 	Shipwright     *shipwrightbuild.ShipwrightBuild
+	NetworkPolicy  *networkpolicy.NetworkPolicy
 }
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
@@ -124,6 +126,23 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		return ctrl.Result{}, fmt.Errorf("SharedResources reconciliation failed : %v", sharedResourcesErr)
 	}
 
+	// Reconcile NetworkPolicies
+	if networkPolicyErr := r.ReconcileNetworkPolicy(ctx, openShiftBuild); networkPolicyErr != nil {
+		logger.Error(networkPolicyErr, "Failed to reconcile NetworkPolicy")
+		apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
+			Type:    openshiftv1alpha1.ConditionReady,
+			Status:  metav1.ConditionFalse,
+			Reason:  "NetworkPolicyReconcileFailed",
+			Message: fmt.Sprintf("Failed to reconcile NetworkPolicy: %v", networkPolicyErr),
+		})
+
+		if statusUpdateErr := r.Client.Status().Update(ctx, openShiftBuild); statusUpdateErr != nil {
+			logger.Error(statusUpdateErr, "Failed to update status after NetworkPolicyReconcileFailed", networkPolicyErr)
+		}
+
+		return ctrl.Result{}, fmt.Errorf("NetworkPolicy reconciliation failed : %v", networkPolicyErr)
+	}
+
 	// Update status
 	apimeta.SetStatusCondition(&openShiftBuild.Status.Conditions, metav1.Condition{
 		Type:    openshiftv1alpha1.ConditionReady,
@@ -194,6 +213,19 @@ func (r *OpenShiftBuildReconciler) ReconcileSharedResource(ctx context.Context, 
 	return nil
 }
 
+// ReconcileNetworkPolicy reconciles NetworkPolicy resources
+func (r *OpenShiftBuildReconciler) ReconcileNetworkPolicy(ctx context.Context, openshiftBuild *openshiftv1alpha1.OpenShiftBuild) error {
+	logger := log.FromContext(ctx).WithValues("name", openshiftBuild.ObjectMeta.Name)
+
+	logger.Info("Reconciling NetworkPolicy...")
+	if err := r.NetworkPolicy.Reconcile(ctx, openshiftBuild); err != nil {
+		logger.Error(err, "Failed reconciling NetworkPolicy...")
+		return err
+	}
+
+	return nil
+}
+
 // BootStrapSharedResource initializes the manifestival to apply Shared Resources
 func (r *OpenShiftBuildReconciler) setupSharedResource(mgr ctrl.Manager) error {
 	// Initialize Manifestival
@@ -217,6 +249,29 @@ func (r *OpenShiftBuildReconciler) setupSharedResource(mgr ctrl.Manager) error {
 	return nil
 }
 
+// setupNetworkPolicy initializes the manifestival to apply NetworkPolicy resources
+func (r *OpenShiftBuildReconciler) setupNetworkPolicy(mgr ctrl.Manager) error {
+	// Initialize Manifestival
+	manifestivalOptions := []manifestival.Option{
+		manifestival.UseLogger(r.Logger),
+		manifestival.UseClient(manifestivalclient.NewClient(mgr.GetClient())),
+	}
+
+	// NetworkPolicy manifests
+	networkPolicyManifestPath := common.NetworkPolicyManifestPath
+	if path, ok := os.LookupEnv("NETWORKPOLICY_MANIFEST_PATH"); ok {
+		networkPolicyManifestPath = path
+	}
+	networkPolicyManifest, err := manifestival.NewManifest(networkPolicyManifestPath, manifestivalOptions...)
+	if err != nil {
+		return err
+	}
+
+	// Initialize NetworkPolicy
+	r.NetworkPolicy = networkpolicy.New(mgr.GetClient(), networkPolicyManifest, r.Logger)
+	return nil
+}
+
 // HandleDeletion deletes objects created by the controller
 func (r *OpenShiftBuildReconciler) HandleDeletion(ctx context.Context, owner *openshiftv1alpha1.OpenShiftBuild) error {
 	logger := log.FromContext(ctx).WithValues("name", owner.Name)
@@ -226,6 +281,10 @@ func (r *OpenShiftBuildReconciler) HandleDeletion(ctx context.Context, owner *op
 	}
 	if err := r.SharedResource.Reconcile(ctx, owner); err != nil {
 		logger.Error(err, "Failed to delete SharedResource")
+		return err
+	}
+	if err := r.NetworkPolicy.Reconcile(ctx, owner); err != nil {
+		logger.Error(err, "Failed to delete NetworkPolicy")
 		return err
 	}
 	if controllerutil.ContainsFinalizer(owner, common.OpenShiftBuildFinalizerName) {
@@ -286,6 +345,11 @@ func (r *OpenShiftBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 	// bootstrap Shared Resources
 	if err := r.setupSharedResource(mgr); err != nil {
+		return err
+	}
+
+	// bootstrap NetworkPolicy
+	if err := r.setupNetworkPolicy(mgr); err != nil {
 		return err
 	}
 
