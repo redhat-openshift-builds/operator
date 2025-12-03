@@ -52,7 +52,7 @@ spec:
               memory: 20Mi
           terminationMessagePolicy: FallbackToLogsOnError
         - name: hostpath
-          image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:1a61d4a8f69fa845ee678dd96f934685821828e7575852f97b6e7b1dd79a8297
+          image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:9de22e4be7b9538414d651848d4bf6c61d6a1bf9e1d528d44666f728912a1ecc
           # for development purposes; eventually switch to IfNotPresent
           imagePullPolicy: IfNotPresent
           command:
