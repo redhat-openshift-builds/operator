@@ -38,4 +38,9 @@ LABEL \
     description="Red Hat OpenShift Builds Operator" \
     io.k8s.description="Red Hat OpenShift Builds Operator" \
     io.k8s.display-name="Red Hat OpenShift Builds Operator" \
-    io.openshift.tags="builds,operator"
+    io.openshift.tags="builds,operator" \
+    distribution-scope="public" \
+    url="https://catalog.redhat.com/en/software/containers/openshift-builds/openshift-builds-rhel9-operator" \
+    vendor="Red Hat, Inc." \
+    release="1.6.1" \
+    cpe="cpe:/a:redhat:openshift_builds:1.5::el9"
