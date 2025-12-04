@@ -14,7 +14,6 @@ metadata:
         files.all.exists(x, x.matches('bundle.Dockerfile')) ||
         files.all.exists(x, x.matches('.tekton/openshift-builds-operator-bundle-push.yaml'))
       )
-  creationTimestamp: null
   labels:
     appstudio.openshift.io/application: openshift-builds
     appstudio.openshift.io/component: openshift-builds-operator-bundle
