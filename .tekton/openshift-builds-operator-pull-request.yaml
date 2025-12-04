@@ -15,7 +15,6 @@ metadata:
         files.all.exists(x, x.matches('main.go|go.mod|go.sum|Dockerfile')) ||
         files.all.exists(x, x.matches('.tekton/openshift-builds-operator-pull-request.yaml'))
       )
-  creationTimestamp: null
   labels:
     appstudio.openshift.io/application: openshift-builds
     appstudio.openshift.io/component: openshift-builds-operator
