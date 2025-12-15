@@ -10,10 +10,10 @@ require (
 	github.com/onsi/gomega v1.38.2
 	github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3
 	github.com/shipwright-io/build v0.18.1
-	github.com/shipwright-io/operator v0.17.0
+	github.com/shipwright-io/operator v0.18.0
 	github.com/tektoncd/operator v0.77.0
 	k8s.io/api v0.33.6
-	k8s.io/apiextensions-apiserver v0.33.4
+	k8s.io/apiextensions-apiserver v0.33.6
 	k8s.io/apimachinery v0.33.6
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20250820121507-0af2bda4dd1d
@@ -63,7 +63,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/btree v1.1.3 // indirect
-	github.com/google/gnostic-models v0.7.0 // indirect
+	github.com/google/gnostic-models v0.7.1 // indirect
 	github.com/google/go-cmp v0.7.0 // indirect
 	github.com/google/pprof v0.0.0-20250919162441-8b542baf5bcf // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -107,7 +107,7 @@ require (
 	go.uber.org/zap v1.27.1 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/mod v0.29.0 // indirect
+	golang.org/x/mod v0.30.0 // indirect
 	golang.org/x/net v0.47.0 // indirect
 	golang.org/x/oauth2 v0.31.0 // indirect
 	golang.org/x/sync v0.18.0 // indirect
