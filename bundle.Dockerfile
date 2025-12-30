@@ -23,10 +23,10 @@ LABEL com.redhat.openshift.versions="v4.16-v4.19" \
     maintainer="openshift-builds@redhat.com" \
     name="openshift-builds/operator-bundle" \
     summary="Red Hat OpenShift Builds Operator Bundle" \
-    url="https://catalog.redhat.com/software/containers/openshift-builds/openshift-builds-operator-bundle" \
+    url="https://github.com/redhat-openshift-builds/operator" \
     vendor="Red Hat, Inc." \
-    version="1.6.1" \
-    release="1.6.1"
+    version="1.6.2" \
+    release="3"
 
 COPY bundle/ /
 COPY LICENSE /licenses/

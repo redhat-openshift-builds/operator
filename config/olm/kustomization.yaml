@@ -14,4 +14,4 @@ resources:
 images:
 - name: catalog
   newName: registry.redhat.io/openshift-builds/openshift-builds-operator-catalog
-  newTag: v1.1.0
+  newTag: v1.6.2
