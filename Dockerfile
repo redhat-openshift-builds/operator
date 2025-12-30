@@ -1,4 +1,4 @@
-FROM registry.redhat.io/ubi9/go-toolset:1.24 AS builder
+FROM registry.redhat.io/ubi9/go-toolset@sha256:2e8adc5be8eba060e919a6f7309a7b5ef09dd72d3ae9e747b9eb02e96f35a0f5 AS builder
 
 USER 1001
 
@@ -15,7 +15,7 @@ ENV GOEXPERIMENT=strictfipsruntime
 
 RUN CGO_ENABLED=1 GO111MODULE=on go build -a -mod vendor -tags strictfipsruntime -o operator cmd/main.go
 
-FROM registry.redhat.io/ubi9/ubi-minimal:9.6
+FROM registry.redhat.io/ubi9-minimal@sha256:6fc28bcb6776e387d7a35a2056d9d2b985dc4e26031e98a2bd35a7137cd6fd71
 
 WORKDIR /
 
@@ -31,15 +31,16 @@ ENTRYPOINT ["/operator"]
 
 LABEL \
     com.redhat.component="openshift-builds-operator-container" \
-    name="openshift-builds/operator" \
-    version="v1.6.1" \
-    summary="Red Hat OpenShift Builds Operator" \
-    distribution-scope="public" \
-    maintainer="openshift-builds@redhat.com" \
+    cpe="cpe:/a:redhat:openshift_builds:1.6::el9" \
     description="Red Hat OpenShift Builds Operator" \
-    url="https://catalog.redhat.com/en/software/containers/openshift-builds/openshift-builds-rhel9-operator" \
+    distribution-scope="public" \
     io.k8s.description="Red Hat OpenShift Builds Operator" \
     io.k8s.display-name="Red Hat OpenShift Builds Operator" \
     io.openshift.tags="builds,operator" \
+    maintainer="openshift-builds@redhat.com" \
+    name="openshift-builds/openshift-builds-operator-rhel9" \
+    release="2" \
+    summary="Red Hat OpenShift Builds Operator" \
+    url="https://github.com/redhat-openshift-builds/operator" \
     vendor="Red Hat, Inc." \
-    release="1.6.1"
+    version="v1.6.1"
