@@ -36,7 +36,7 @@ metadata:
     categories: Developer Tools, Integration & Delivery
     certified: "true"
     containerImage: registry.redhat.io/openshift-builds/openshift-builds-operator-rhel9
-    createdAt: "2025-12-03T09:39:59Z"
+    createdAt: "2025-12-30T13:44:07Z"
     description: Builds for Red Hat OpenShift is a framework for building container images on Kubernetes.
     features.operators.openshift.io/cnf: "false"
     features.operators.openshift.io/cni: "false"
@@ -61,7 +61,7 @@ metadata:
     operatorframework.io/arch.arm64: supported
     operatorframework.io/arch.ppc64le: supported
     operatorframework.io/arch.s390x: supported
-  name: openshift-builds-operator.v1.6.1
+  name: openshift-builds-operator.v1.6.2
   namespace: openshift-builds
 spec:
   apiservicedefinitions: {}
@@ -728,7 +728,7 @@ spec:
                         value: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:1e94ff2ffc0e7d8734889c7ab459d9a3a62245679b197d7ceceef7d3a25da901
                       - name: IMAGE_SHIPWRIGHT_SHIPWRIGHT_BUILD_WEBHOOK
                         value: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:975c8c146dee707b8f811f4f23ef9e44eadf0e0171908368a6b33eda808c4a45
-                    image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:3abf97dc3a1a3f931763a803bcc932f6654d69cadc8607cbd3e1f0bf544e71b6
+                    image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:fd0d0ff08501d0592a674cbb0fb95e09c32515547c145a56fadc8e2ed6d0df25
                     imagePullPolicy: Always
                     livenessProbe:
                       httpGet:
@@ -823,7 +823,7 @@ spec:
     name: Red Hat
     url: https://www.redhat.com
   relatedImages:
-    - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:3abf97dc3a1a3f931763a803bcc932f6654d69cadc8607cbd3e1f0bf544e71b6
+    - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:fd0d0ff08501d0592a674cbb0fb95e09c32515547c145a56fadc8e2ed6d0df25
       name: OPENSHIFT_BUILDS_OPERATOR
     - image: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:332238b8796ce5441d7ab7e0c99c016c5bd49923549b46b456222c3a763fda69
       name: OPENSHIFT_BUILDS_CONTROLLER
@@ -849,4 +849,4 @@ spec:
       name: OPENSHIFT_BUILDS_BUILDAH
     - image: registry.redhat.io/source-to-image/source-to-image-rhel9@sha256:70293cb8a80aa548933ff5f502bac89945a5cd08801c4ca3aac08a10dd01f62f
       name: OPENSHIFT_BUILDS_SOURCE_TO_IMAGE
-  version: 1.6.1
+  version: 1.6.2
