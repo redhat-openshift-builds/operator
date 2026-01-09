@@ -7,7 +7,7 @@ require (
 	github.com/manifestival/controller-runtime-client v0.4.0
 	github.com/manifestival/manifestival v0.7.2
 	github.com/onsi/ginkgo/v2 v2.27.2
-	github.com/onsi/gomega v1.38.2
+	github.com/onsi/gomega v1.39.0
 	github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3
 	github.com/shipwright-io/build v0.18.1
 	github.com/shipwright-io/operator v0.18.0
