@@ -37,5 +37,5 @@ spec:
         readOnly: true
         driver: csi.sharedresource.openshift.io
         volumeAttributes:
-          sharedSecret: etc-pki-entitlement
+          sharedSecret: entitlement-key
   restartPolicy: Never

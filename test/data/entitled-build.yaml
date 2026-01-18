@@ -15,12 +15,23 @@ spec:
   paramValues:
   - name: dockerfile
     value: Dockerfile
+  env:
+    - name: ORG_ID
+      valueFrom:
+        secretKeyRef:
+          name:
+          key:
+    - name: KEY_NAME
+      valueFrom:
+        secretKeyRef:
+          name:
+          key:
   volumes:
   - csi:
       driver: csi.sharedresource.openshift.io
       readOnly: true
       volumeAttributes:
-        sharedSecret: etc-pki-entitlement
-    name: etc-pki-entitlement
+        sharedSecret: entitlement-key
+    name: entitlement-key
   output:
     image: image-registry.openshift-image-registry.svc:5000/builds-test/buildah-rhel:latest
