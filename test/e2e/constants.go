@@ -1,37 +1,39 @@
 package e2e
 
 const (
-	testingNamespace             = "builds-test"
-	openshiftconfigNamespace     = "openshift-config-managed"
-	entitlementPod               = "etc-pki-entitlement-test"
-	buildRunCrName               = "entitled-br"
-	entitlementSecret            = "etc-pki-entitlement"
-	entitlementTestPodFile       = "/test/data/entitlement-test-pod.yaml"
-	entitledBuildRunFile         = "/test/data/entitled-buildrun.yaml"
-	entitledBuildFile            = "/test/data/entitled-build.yaml"
-	sharedSecretFile             = "/test/data/shared-secret.yaml"
-	sharedSecretClusterRoleFile  = "/test/data/shared-secret-cluster-role.yaml"
-	sharedSecretCSIRoleFile      = "/test/data/shared-secret-csi-role.yaml"
-	csiDriverRoleBindFile        = "/test/data/csi-driver-role-bind.yaml"
-	pipelineBuilderRoleBindFile  = "/test/data/pipeline-builder-role-bind.yaml"
-	imageStreamFile              = "/test/data/image-stream.yaml"
-	entitlementPodServiceAccount = "/test/data/entitlement-pod-sa-bind.yaml"
+	testingNamespace                = "builds-test"
+	openshiftBuildsNamespace        = "rh-openshift-builds-tenant"
+	entitlementPod                  = "etc-pki-entitlement-test"
+	buildRunCrName                  = "entitled-br"
+	buildCrName                     = "buildah-rhel"
+	entitlementSecret               = "entitlement-key"
+	entitlementTestPodFile          = "/test/data/entitlement-test-pod.yaml"
+	entitledBuildRunFile            = "/test/data/entitled-buildrun.yaml"
+	entitledBuildFile               = "/test/data/entitled-build.yaml"
+	sharedSecretFile                = "/test/data/shared-secret.yaml"
+	sharedSecretClusterRoleFile     = "/test/data/shared-secret-cluster-role.yaml"
+	sharedSecretClusterRoleBindFile = "/test/data/shared-secret-cluster-role-bind.yaml"
+	csiDriverSecretsRoleFile        = "/test/data/csi-driver-secrets-role.yaml"
+	csiDriverSecretsRoleBindFile    = "/test/data/csi-driver-secrets-role-bind.yaml"
+	pipelineBuilderRoleBindFile     = "/test/data/pipeline-builder-role-bind.yaml"
+	imageStreamFile                 = "/test/data/image-stream.yaml"
 )
 
 var entitledPodResources = []string{
 	sharedSecretFile,
 	sharedSecretClusterRoleFile,
-	sharedSecretCSIRoleFile,
-	csiDriverRoleBindFile,
-	entitlementPodServiceAccount,
+	sharedSecretClusterRoleBindFile,
+	csiDriverSecretsRoleFile,
+	csiDriverSecretsRoleBindFile,
 }
 
 var entitledBuildResources = []string{
 	imageStreamFile,
 	sharedSecretFile,
 	sharedSecretClusterRoleFile,
-	sharedSecretCSIRoleFile,
-	csiDriverRoleBindFile,
+	sharedSecretClusterRoleBindFile,
+	csiDriverSecretsRoleFile,
+	csiDriverSecretsRoleBindFile,
 	pipelineBuilderRoleBindFile,
 	entitledBuildFile,
 }
