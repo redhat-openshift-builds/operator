@@ -112,6 +112,7 @@ var _ = BeforeSuite(func(ctx SpecContext) {
 	// Override the global shared resource path to the correct location.
 	// TODO: Make manifest paths a field on the respective reconciler.
 	common.SharedResourceManifestPath = filepath.Join("..", "..", "config", "sharedresource")
+	common.NetworkPolicyManifestPath = filepath.Join("..", "..", "config", "networkpolicies")
 	Expect(opBuildReconciler.SetupWithManager(mgr)).To(Succeed())
 
 	// Create namespace where operands are deployed. Manifestival does a check for existence.
