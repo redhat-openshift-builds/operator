@@ -17,7 +17,7 @@ require (
 	k8s.io/apimachinery v0.33.6
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20250820121507-0af2bda4dd1d
-	sigs.k8s.io/controller-runtime v0.21.0
+	sigs.k8s.io/controller-runtime v0.23.1
 	sigs.k8s.io/controller-runtime/tools/setup-envtest v0.0.0-20250626154428-7fd020cb5fc3
 	sigs.k8s.io/controller-tools v0.18.0
 	sigs.k8s.io/kustomize/kustomize/v5 v5.7.1
@@ -142,4 +142,4 @@ require (
 
 replace k8s.io/client-go => k8s.io/client-go v0.33.4
 
-replace sigs.k8s.io/controller-runtime/pkg/envtest/printer => sigs.k8s.io/controller-runtime v0.13.2
+replace sigs.k8s.io/controller-runtime/pkg/envtest/printer => sigs.k8s.io/controller-runtime v0.23.1
