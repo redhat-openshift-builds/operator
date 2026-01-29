@@ -71,17 +71,17 @@ spec:
           - name: PLATFORM
             value: "openshift"
           - name: IMAGE_SHIPWRIGHT_SHIPWRIGHT_BUILD
-            value: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:332238b8796ce5441d7ab7e0c99c016c5bd49923549b46b456222c3a763fda69
+            value: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:c1770d23ca1bfabec29bd506d22ac29a4feb53250d2556910509a5587eef88b9
           - name: IMAGE_SHIPWRIGHT_GIT_CONTAINER_IMAGE
-            value: registry.redhat.io/openshift-builds/openshift-builds-git-cloner-rhel9@sha256:05c3e7cb8437bbfdbce0caa23eaf19a7fd88b7485cfac710ec05606776d4c426
+            value: registry.redhat.io/openshift-builds/openshift-builds-git-cloner-rhel9@sha256:56a728caafc0c6c52e5dbf5b1232eb37d537c2ace873a7a3ae4102a6844d1df5
           - name: IMAGE_SHIPWRIGHT_IMAGE_PROCESSING_CONTAINER_IMAGE
-            value: registry.redhat.io/openshift-builds/openshift-builds-image-processing-rhel9@sha256:9e003dfee29d6ac713034d50fbe82c13a23e2637759cdd36c62a25c9815c093c
+            value: registry.redhat.io/openshift-builds/openshift-builds-image-processing-rhel9@sha256:e38f31aaa7e6e702a36d3dbc2b6424250841709b4c4361d0c367401594c847d0
           - name: IMAGE_SHIPWRIGHT_BUNDLE_CONTAINER_IMAGE
-            value: registry.redhat.io/openshift-builds/openshift-builds-image-bundler-rhel9@sha256:58de712d39ab518e2ea41b165b2067bf057335fec58e4becc7c881d04f589b9f
+            value: registry.redhat.io/openshift-builds/openshift-builds-image-bundler-rhel9@sha256:0f61f7234ec4d53ff1f5cc6d8ef8cc747dda086bdb208e6483a8f836c7bb2c4a
           - name: IMAGE_SHIPWRIGHT_WAITER_CONTAINER_IMAGE
-            value: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:1e94ff2ffc0e7d8734889c7ab459d9a3a62245679b197d7ceceef7d3a25da901
+            value: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:0cce3e415de62c9e050fbb13626db3f87fe91b68a908daae473a41305d865207
           - name: IMAGE_SHIPWRIGHT_SHIPWRIGHT_BUILD_WEBHOOK
-            value: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:975c8c146dee707b8f811f4f23ef9e44eadf0e0171908368a6b33eda808c4a45
+            value: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:0f98cf1bf4dc6857b304d0a104d4c8b2fd28c021e970c26a8e7558a04973cd31
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
