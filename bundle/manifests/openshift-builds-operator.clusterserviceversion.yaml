@@ -61,7 +61,7 @@ metadata:
     operatorframework.io/arch.arm64: supported
     operatorframework.io/arch.ppc64le: supported
     operatorframework.io/arch.s390x: supported
-  name: openshift-builds-operator.v1.6.2
+  name: openshift-builds-operator.v1.6.3
   namespace: openshift-builds
 spec:
   apiservicedefinitions: {}
@@ -823,23 +823,23 @@ spec:
     name: Red Hat
     url: https://www.redhat.com
   relatedImages:
-    - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:fd0d0ff08501d0592a674cbb0fb95e09c32515547c145a56fadc8e2ed6d0df25
+    - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:40fb6b501f0396a3b1bf851d95fd12d32a63fe33ac1807b9d74c40234bc9956b
       name: OPENSHIFT_BUILDS_OPERATOR
-    - image: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:332238b8796ce5441d7ab7e0c99c016c5bd49923549b46b456222c3a763fda69
+    - image: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:c1770d23ca1bfabec29bd506d22ac29a4feb53250d2556910509a5587eef88b9
       name: OPENSHIFT_BUILDS_CONTROLLER
-    - image: registry.redhat.io/openshift-builds/openshift-builds-git-cloner-rhel9@sha256:05c3e7cb8437bbfdbce0caa23eaf19a7fd88b7485cfac710ec05606776d4c426
+    - image: registry.redhat.io/openshift-builds/openshift-builds-git-cloner-rhel9@sha256:56a728caafc0c6c52e5dbf5b1232eb37d537c2ace873a7a3ae4102a6844d1df5
       name: OPENSHIFT_BUILDS_GIT_CLONER
-    - image: registry.redhat.io/openshift-builds/openshift-builds-image-processing-rhel9@sha256:9e003dfee29d6ac713034d50fbe82c13a23e2637759cdd36c62a25c9815c093c
+    - image: registry.redhat.io/openshift-builds/openshift-builds-image-processing-rhel9@sha256:e38f31aaa7e6e702a36d3dbc2b6424250841709b4c4361d0c367401594c847d0
       name: OPENSHIFT_BUILDS_IMAGE_PROCESSING
-    - image: registry.redhat.io/openshift-builds/openshift-builds-image-bundler-rhel9@sha256:58de712d39ab518e2ea41b165b2067bf057335fec58e4becc7c881d04f589b9f
+    - image: registry.redhat.io/openshift-builds/openshift-builds-image-bundler-rhel9@sha256:0f61f7234ec4d53ff1f5cc6d8ef8cc747dda086bdb208e6483a8f836c7bb2c4a
       name: OPENSHIFT_BUILDS_IMAGE_BUNDLER
-    - image: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:1e94ff2ffc0e7d8734889c7ab459d9a3a62245679b197d7ceceef7d3a25da901
+    - image: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:0cce3e415de62c9e050fbb13626db3f87fe91b68a908daae473a41305d865207
       name: OPENSHIFT_BUILDS_WAITER
-    - image: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:975c8c146dee707b8f811f4f23ef9e44eadf0e0171908368a6b33eda808c4a45
+    - image: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:0f98cf1bf4dc6857b304d0a104d4c8b2fd28c021e970c26a8e7558a04973cd31
       name: OPENSHIFT_BUILDS_WEBHOOK
-    - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:dbdb7e1d3e27a615968dcbfc416eaad39f37397b25dfe579d1a24589df113f62
+    - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:7116cac7be70ef623f22f1b4572af7ae1a787f018c41a5508f444a4c76b04ceb
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_WEBHOOK
-    - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:ddedf46115f3dea9e7ef24ebf414e4f16d9fd69b39290d7e66dbb4482208d862
+    - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:f67cb1388616da3319b67275dab7a17df474d23038f7a69d46682983e8b1559c
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE
     - image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar-rhel9@sha256:ce7050192d9850ed4c35cb3295ccdeec1aa593e27e3a3da6d6aca97cde782abe
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_NODE_REGISTRAR
@@ -849,4 +849,4 @@ spec:
       name: OPENSHIFT_BUILDS_BUILDAH
     - image: registry.redhat.io/source-to-image/source-to-image-rhel9@sha256:70293cb8a80aa548933ff5f502bac89945a5cd08801c4ca3aac08a10dd01f62f
       name: OPENSHIFT_BUILDS_SOURCE_TO_IMAGE
-  version: 1.6.2
+  version: 1.6.3
