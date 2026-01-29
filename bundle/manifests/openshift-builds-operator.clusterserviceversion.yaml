@@ -683,7 +683,7 @@ spec:
       - label:
           app: openshift-builds-operator
           app.kubernetes.io/part-of: openshift-builds
-          app.kubernetes.io/version: 1.5.0
+          app.kubernetes.io/version: 1.7.0
           control-plane: controller-manager
         name: openshift-builds-operator
         spec:
