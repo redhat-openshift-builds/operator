@@ -364,14 +364,15 @@ function update_generic_k8s_resource_images {
         if [ -n "$current_digest" ]; then
             local image_path="${IMAGE_MAPPING[$internal_image_name]}"
             local full_image_path="$image_path"
-            # Always use the snapshot image name for these files if available
-            if [ -n "${SNAPSHOT_IMAGE_NAME[$internal_image_name]}" ]; then
+            # IMAGE_PREFIX takes priority over snapshot image names
+            if [ -n "$IMAGE_PREFIX" ]; then
+                full_image_path="${IMAGE_PREFIX}${image_path}"
+            elif [ "$USE_SNAPSHOT_NAMES" = true ] && [ -n "${SNAPSHOT_IMAGE_NAME[$internal_image_name]}" ]; then
                 full_image_path="${SNAPSHOT_IMAGE_NAME[$internal_image_name]}"
-            elif [ -n "$IMAGE_PREFIX" ]; then
-                full_image_path="${IMAGE_PREFIX}$(echo "$image_path" | sed 's#^[^/]*/##')"
             fi
-            # Always replace the entire image: line
-            sed "${SED_INPLACE[@]}" -E "s#(image: ).*#\\1${full_image_path}@${current_digest}#g" "$resource_file"
+            # Only replace image lines that contain the target image name pattern
+            # Match images ending with the image name (e.g., shared-resource-rhel9) before @sha256
+            sed "${SED_INPLACE[@]}" -E "s#(image: )[^@]*${image_path}@sha256:[a-f0-9]+#\\1${full_image_path}@${current_digest}#g" "$resource_file"
             echo "  - Updated ${internal_image_name} image and digest in $resource_file to ${full_image_path}@${current_digest}"
         else
             echo "  - Info: No digest found for ${internal_image_name}. Skipping update for this image in $resource_file."
