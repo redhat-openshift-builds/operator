@@ -1,4 +1,4 @@
-FROM registry.redhat.io/ubi9/go-toolset@sha256:20b655db80d929d3a3828947d718746f0aee3159c86620df330e58cbf954970e AS builder
+FROM registry.redhat.io/ubi9/go-toolset@sha256:359dd4c6c4255b3f7bce4dc15ffa5a9aa65a401f819048466fa91baa8244a793 AS builder
 
 USER 1001
 
@@ -32,7 +32,7 @@ ENTRYPOINT ["/operator"]
 LABEL \
     com.redhat.component="openshift-builds-operator-container" \
     name="openshift-builds/operator" \
-    version="v1.6.2" \
+    version="v1.6.3" \
     summary="Red Hat OpenShift Builds Operator" \
     maintainer="openshift-builds@redhat.com" \
     description="Red Hat OpenShift Builds Operator" \
@@ -42,5 +42,5 @@ LABEL \
     distribution-scope="public" \
     url="https://github.com/redhat-openshift-builds/operator" \
     vendor="Red Hat, Inc." \
-    release="3" \
-    cpe="cpe:/a:redhat:openshift_builds:1.5::el9"
+    release="4" \
+    cpe="cpe:/a:redhat:openshift_builds:1.6::el9"
