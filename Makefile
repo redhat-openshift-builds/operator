@@ -3,14 +3,14 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 1.6.1
+VERSION ?= 1.8.0
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "candidate,fast,stable")
 # To re-generate a bundle for other specific channels without changing the standard setup, you can:
 # - use the CHANNELS as arg of the bundle target (e.g make bundle CHANNELS=candidate,fast,stable)
 # - use environment variables to overwrite this value (e.g export CHANNELS="candidate,fast,stable")
-CHANNELS ?= "latest,openshift-builds-1.6"
+CHANNELS ?= "latest,openshift-builds-1.8"
 ifneq ($(origin CHANNELS), undefined)
 BUNDLE_CHANNELS := --channels=$(CHANNELS)
 endif
@@ -293,6 +293,10 @@ endif
 
 .PHONY: bundle
 bundle: manifests kustomize operator-sdk yq strategy-catalog ## Generate bundle manifests and metadata, then validate generated files.
+	# Update version in config manifests base to match bundle
+	$(YQ) -i '.spec.version = "$(VERSION)"' \
+		config/manifests/bases/openshift-builds-operator.clusterserviceversion.yaml
+
 	$(OPERATOR_SDK) generate kustomize manifests --interactive=false -q
 	cd config/manager && $(KUSTOMIZE) edit set image operator=$(IMG)
 	$(KUSTOMIZE) build config/manifests | $(OPERATOR_SDK) generate bundle $(BUNDLE_GEN_FLAGS)
@@ -307,6 +311,7 @@ bundle: manifests kustomize operator-sdk yq strategy-catalog ## Generate bundle 
 		'select(fileIndex==0).spec.relatedImages = select(fileIndex==1).spec.relatedImages | select(fileIndex==0)' \
 		bundle/manifests/openshift-builds-operator.clusterserviceversion.yaml \
 		config/manifests/bases/openshift-builds-operator.clusterserviceversion.yaml
+
 	$(OPERATOR_SDK) bundle validate ./bundle
 
 .PHONY: bundle-build
@@ -384,3 +389,21 @@ strategy-catalog:
 	$(foreach s, $(STRATEGIES), \
 		echo "Fetching $s.yaml..." && \
 		curl -sSLO $(STRATEGY_SOURCE)/$(s)/$(s).yaml;)
+
+##@ Release
+
+.PHONY: setup-release-branch
+setup-release-branch: ## Configure repository for a release branch. Use BRANCH=builds-x.y to specify branch, DRY_RUN=true to preview.
+ifdef BRANCH
+ifeq ($(DRY_RUN),true)
+	@./hack/setup-release-branch.sh --branch $(BRANCH) --dry-run
+else
+	@./hack/setup-release-branch.sh --branch $(BRANCH)
+endif
+else
+ifeq ($(DRY_RUN),true)
+	@./hack/setup-release-branch.sh --dry-run
+else
+	@./hack/setup-release-branch.sh
+endif
+endif
