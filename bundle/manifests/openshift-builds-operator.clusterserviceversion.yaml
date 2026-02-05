@@ -36,7 +36,7 @@ metadata:
     categories: Developer Tools, Integration & Delivery
     certified: "true"
     containerImage: registry.redhat.io/openshift-builds/openshift-builds-operator-rhel9
-    createdAt: "2026-02-04T13:19:52Z"
+    createdAt: "2026-02-05T11:41:15Z"
     description: Builds for Red Hat OpenShift is a framework for building container images on Kubernetes.
     features.operators.openshift.io/cnf: "false"
     features.operators.openshift.io/cni: "false"
@@ -193,6 +193,7 @@ spec:
                 - tekton.dev
               resources:
                 - taskruns
+                - pipelineruns
               verbs:
                 - get
                 - list
