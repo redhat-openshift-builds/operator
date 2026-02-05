@@ -53,7 +53,7 @@ replacements:
   targets:
   - select:
       kind: ClusterRoleBinding
-      name: operator
+      name: operator-binding
     fieldPaths:
     - roleRef.name
 - source:
@@ -63,7 +63,7 @@ replacements:
   targets:
   - select:
       kind: ClusterRoleBinding
-      name: operator
+      name: operator-binding
     fieldPaths:
     - subjects.0.name
 - source:
@@ -73,6 +73,6 @@ replacements:
   targets:
   - select:
       kind: ClusterRoleBinding
-      name: operator
+      name: operator-binding
     fieldPaths:
     - subjects.0.namespace
