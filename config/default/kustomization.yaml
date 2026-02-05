@@ -76,7 +76,6 @@ replacements:
       name: operator-binding
     fieldPaths:
     - subjects.0.namespace
-
 #replacements:
 #  - source: # Add cert-manager annotation to ValidatingWebhookConfiguration, MutatingWebhookConfiguration and CRDs
 #      kind: Certificate
