@@ -1,0 +1,55 @@
+[config]
+model = "gemini/gemini-3-flash"
+fallback_models = ["gemini/gemini-2.5-flash"]
+response_language = "en-US"
+
+[pr_reviewer]
+extra_instructions = """
+Review context: Go-based OpenShift operator (controller-runtime/kubebuilder)
+managing Shipwright Build and Shared Resource CSI Driver.
+
+Severity classification:
+  - CRITICAL: Security (RBAC escalation, credentials), data races, breaking CRD changes.
+  - HIGH: Error handling gaps, context leaks in Reconcile, missing finalizers.
+  - MEDIUM: Logging inconsistencies, Go style violations, missing unit tests.
+  - LOW: Documentation, minor refactors, naming.
+
+Focus areas:
+  - Error wrapping with fmt.Errorf("context: %w", err)
+  - Context propagation in Reconcile paths
+  - RBAC marker changes (//+kubebuilder:rbac)
+  - Manifestival transform idempotency
+  - FIPS compliance (GOEXPERIMENT=strictfipsruntime, CGO_ENABLED=1)
+  - SHA256 digest-based image references (no floating tags)
+  - No hardcoded registry URLs
+"""
+require_security_review = true
+require_tests_review = true
+require_estimate_effort_to_review = true
+num_max_findings = 15
+persistent_comment = true
+enable_review_labels_security = true
+enable_review_labels_effort = true
+enable_help_text = true
+
+[pr_code_suggestions]
+extra_instructions = """
+Go operator using controller-runtime, Go 1.24.
+Focus on: error wrapping (%w), context.Context threading,
+idempotent Reconcile logic, resource cleanup in finalizers,
+envtest/Ginkgo test patterns.
+"""
+focus_only_on_problems = true
+suggestions_score_threshold = 5
+
+[ignore]
+glob = [
+    "**/zz_generated.*",
+    "vendor/**",
+    "bundle/**",
+    "go.sum",
+    "config/crd/bases/**",
+    "hack/**",
+    "cover.out",
+    "*.json"
+]
