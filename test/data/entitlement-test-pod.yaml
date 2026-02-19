@@ -4,27 +4,35 @@ metadata:
   name: etc-pki-entitlement-test
   namespace: builds-test
 spec:
-  serviceAccount: default
+  serviceAccount: builder
   containers:
     - name: etc-pki-entitlement-test-container
-      image: registry.access.redhat.com/ubi8/ubi
+      image: registry.access.redhat.com/ubi9/ubi:latest
       command:
         - /bin/sh
         - -c
         - |
-          echo "Checking if baseos repo is enabled..."
-          output=$(subscription-manager repos --list-enabled 2>&1)
-          echo "$output" | grep -q -e '^Repo ID: .*baseos'
-          if [ $? -ne 0 ]; then
-             echo "baseos repo is not enabled..."
-             exit 1
-          fi
-          echo "Installing kernel-devel..."
-          output=$(dnf install -y kernel-devel 2>&1)
-          if echo "$output" | grep "Error"; then
-             echo "Error found during dnf install. Exiting with code 1"
-             exit 1
-          fi
+          set -eu
+          ORG_ID="$(echo -n "$(</etc/pki/entitlement/ORG_ID)")"
+          KEY_NAME="$(echo -n "$(</etc/pki/entitlement/KEY_NAME)")"
+          [ -n "${KEY_NAME}" ] || { echo "KEY_NAME is empty in the mounted secret"; exit 1; }
+
+
+          echo “running subscribe”
+          subscription-manager register \
+            --org="${ORG_ID}" \
+            --activationkey="${KEY_NAME}"
+
+
+          # Example workload requiring entitlements
+          dnf module enable -y nodejs:20
+          dnf install -y nodejs
+
+
+          subscription-manager unregister
+          dnf clean all
+
+
           echo "dnf install succeeded. Exiting with code 0."
           exit 0
       volumeMounts:
@@ -37,5 +45,5 @@ spec:
         readOnly: true
         driver: csi.sharedresource.openshift.io
         volumeAttributes:
-          sharedSecret: etc-pki-entitlement
+          sharedSecret: entitlement-key
   restartPolicy: Never
