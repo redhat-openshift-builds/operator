@@ -28,7 +28,7 @@ LABEL \
     summary="Red Hat OpenShift Builds Operator Bundle" \
     url="https://github.com/redhat-openshift-builds/operator" \
     vendor="Red Hat, Inc." \
-    version="v1.7.0"
+    version="v1.7.1"
 
 COPY bundle/ /
 COPY LICENSE /licenses/
