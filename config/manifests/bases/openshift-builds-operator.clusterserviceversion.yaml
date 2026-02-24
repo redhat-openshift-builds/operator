@@ -29,7 +29,7 @@ metadata:
     operatorframework.io/arch.arm64: supported
     operatorframework.io/arch.ppc64le: supported
     operatorframework.io/arch.s390x: supported
-  name: openshift-builds-operator.v0.0.0
+  name: openshift-builds-operator.v1.7.0
   namespace: openshift-builds
 spec:
   apiservicedefinitions: {}
