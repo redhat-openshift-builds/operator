@@ -15,7 +15,6 @@ const (
 	sharedSecretClusterRoleBindFile = "/test/data/shared-secret-cluster-role-bind.yaml"
 	csiDriverSecretsRoleFile        = "/test/data/csi-driver-secrets-role.yaml"
 	csiDriverSecretsRoleBindFile    = "/test/data/csi-driver-secrets-role-bind.yaml"
-	pipelineBuilderRoleBindFile     = "/test/data/pipeline-builder-role-bind.yaml"
 	imageStreamFile                 = "/test/data/image-stream.yaml"
 )
 
@@ -34,6 +33,5 @@ var entitledBuildResources = []string{
 	sharedSecretClusterRoleBindFile,
 	csiDriverSecretsRoleFile,
 	csiDriverSecretsRoleBindFile,
-	pipelineBuilderRoleBindFile,
 	entitledBuildFile,
 }
