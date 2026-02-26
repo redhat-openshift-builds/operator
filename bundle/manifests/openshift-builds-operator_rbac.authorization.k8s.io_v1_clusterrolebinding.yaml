@@ -5,7 +5,7 @@ metadata:
   labels:
     app.kubernetes.io/part-of: openshift-builds
     app.kubernetes.io/version: v1.1.0
-  name: openshift-builds-operator
+  name: openshift-builds-operator-binding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole

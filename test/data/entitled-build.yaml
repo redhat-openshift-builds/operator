@@ -15,12 +15,27 @@ spec:
   paramValues:
   - name: dockerfile
     value: Dockerfile
+  # Dockerfile ARGs (build-time) must be passed as strategy parameters, not as env.
+  # This pulls the values from the namespace-local Secret `entitlement-key` so they
+  # are not hardcoded in this Build.
+  - name: build-args
+    values:
+      - secretValue:
+          name: entitlement-key
+          key: ORG_ID
+          format: "ORG_ID=${SECRET_VALUE}"
+      - secretValue:
+          name: entitlement-key
+          key: KEY_NAME
+          format: "KEY_NAME=${SECRET_VALUE}"
   volumes:
   - csi:
       driver: csi.sharedresource.openshift.io
       readOnly: true
       volumeAttributes:
-        sharedSecret: etc-pki-entitlement
+        sharedSecret: entitlement-key
+    # Must match an allowed volume from the referenced ClusterBuildStrategy.
+    # The buildah strategy defines `etc-pki-entitlement` and mounts it at /etc/pki/entitlement.
     name: etc-pki-entitlement
   output:
     image: image-registry.openshift-image-registry.svc:5000/builds-test/buildah-rhel:latest
