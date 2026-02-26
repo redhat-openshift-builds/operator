@@ -36,10 +36,10 @@ var _ = Describe("Entitlements for OpenShift builds operator", Label("e2e"), Lab
 		})
 
 		It("Should access entitled RHEL content", func(ctx SpecContext) {
-			By("Ensuring etc-pki-entitlement secret exists")
+			By("Ensuring entitlement secret exists")
 			secretKey := client.ObjectKey{
 				Name:      entitlementSecret,
-				Namespace: openshiftconfigNamespace,
+				Namespace: openshiftBuildsNamespace,
 			}
 			Eventually(func() error {
 				return kubeClient.Get(ctx, secretKey, &corev1.Secret{})
@@ -89,6 +89,35 @@ var _ = Describe("Entitlements for OpenShift builds operator", Label("e2e"), Lab
 			for _, resource := range entitledBuildResources {
 				Expect(utils.ApplyResourceFromFile(ctx, kubeClient, projectDir+resource)).NotTo(HaveOccurred(), fmt.Sprintf("applying resource: %s", resource))
 			}
+
+			By("Waiting for Build to be registered")
+			Eventually(func() error {
+				build := &buildv1beta1.Build{}
+				if err := kubeClient.Get(ctx, client.ObjectKey{Namespace: testingNamespace, Name: buildCrName}, build); err != nil {
+					return fmt.Errorf("failed to get build %s: %w", buildCrName, err)
+				}
+
+				if build.Status.Registered == nil {
+					return fmt.Errorf("build %s is not yet registered (status.registered not set)", buildCrName)
+				}
+
+				switch *build.Status.Registered {
+				case corev1.ConditionTrue:
+					return nil
+				case corev1.ConditionFalse:
+					reason := ""
+					if build.Status.Reason != nil {
+						reason = string(*build.Status.Reason)
+					}
+					msg := ""
+					if build.Status.Message != nil {
+						msg = *build.Status.Message
+					}
+					return fmt.Errorf("build %s registration failed (reason=%s message=%s)", buildCrName, reason, msg)
+				default:
+					return fmt.Errorf("build %s registration pending (status.registered=%s)", buildCrName, *build.Status.Registered)
+				}
+			}, 2*time.Minute, 5*time.Second).Should(Succeed(), fmt.Sprintf("waiting for build %s to be registered", buildCrName))
 
 			By("Applying buildrun")
 			Expect(utils.ApplyResourceFromFile(ctx, kubeClient, projectDir+entitledBuildRunFile)).NotTo(HaveOccurred(), "applying entitled-buildrun.yaml")
