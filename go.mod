@@ -137,7 +137,7 @@ require (
 	sigs.k8s.io/kustomize/cmd/config v0.20.1 // indirect
 	sigs.k8s.io/kustomize/kyaml v0.20.1 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
-	sigs.k8s.io/structured-merge-diff/v4 v4.7.0 // indirect
+	sigs.k8s.io/structured-merge-diff/v6 v6.3.2 // indirect
 )
 
 replace k8s.io/client-go => k8s.io/client-go v0.33.4
