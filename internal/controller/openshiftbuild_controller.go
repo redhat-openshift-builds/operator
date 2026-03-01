@@ -20,6 +20,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	rbacv1 "k8s.io/api/rbac/v1"
 	"os"
 
 	"github.com/go-logr/logr"
@@ -301,4 +302,22 @@ func (r *OpenShiftBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 			},
 		}).
 		Complete(r)
+}
+
+// CleanupRoleBindings is a temporary method to clean up the redundant role binding created from incorrect configuration.
+// TODO: remove this from builds version 1.10
+func (r *OpenShiftBuildReconciler) CleanupRoleBindings(ctx context.Context, client client.Client) error {
+	bindings := []rbacv1.ClusterRoleBinding{
+		{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: "openshift-builds-operator",
+			},
+		},
+	}
+	for _, binding := range bindings {
+		if err := client.Delete(ctx, &binding); err != nil && !apierrors.IsNotFound(err) {
+			return err
+		}
+	}
+	return nil
 }
