@@ -57,6 +57,8 @@ spec:
     value: "true"
   - name: unit-test-command
     value: make test
+  - name: unit-test-revision
+    value: "62314daa6fddc49f2b92bbdc06864eaba4b36c69"
   - name: enable-sealights
     value: "false"
   pipelineRef:
