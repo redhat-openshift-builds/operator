@@ -1,6 +1,6 @@
 module github.com/redhat-openshift-builds/operator
 
-go 1.24.4
+go 1.25.0
 
 require (
 	github.com/go-logr/logr v1.4.3
@@ -109,7 +109,7 @@ require (
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/mod v0.30.0 // indirect
 	golang.org/x/net v0.47.0 // indirect
-	golang.org/x/oauth2 v0.31.0 // indirect
+	golang.org/x/oauth2 v0.36.0 // indirect
 	golang.org/x/sync v0.18.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
 	golang.org/x/term v0.37.0 // indirect
