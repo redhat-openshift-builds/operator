@@ -1,4 +1,4 @@
-FROM registry.redhat.io/ubi9/go-toolset@sha256:359dd4c6c4255b3f7bce4dc15ffa5a9aa65a401f819048466fa91baa8244a793 AS builder
+FROM registry.redhat.io/ubi9/go-toolset@sha256:3cdf0d1e8d8601c89fe3070d7aa63a54d1aaf049ba55fba314f6358b1d95a2f9 AS builder
 
 USER 1001
 
