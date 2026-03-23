@@ -13,7 +13,7 @@ LABEL operators.operatorframework.io.metrics.project_layout=go.kubebuilder.io/v4
 LABEL operators.operatorframework.io.test.mediatype.v1=scorecard+v1
 LABEL operators.operatorframework.io.test.config.v1=tests/scorecard/
 
-LABEL com.redhat.openshift.versions="v4.16-v4.19" \
+LABEL com.redhat.openshift.versions="v4.16-v4.20" \
     com.redhat.component="openshift-builds-operator-bundle-container" \
     description="Red Hat OpenShift Builds Operator Bundle" \
     distribution-scope="public" \
@@ -21,11 +21,11 @@ LABEL com.redhat.openshift.versions="v4.16-v4.19" \
     io.k8s.display-name="Red Hat OpenShift Builds Operator Bundle" \
     io.openshift.tags="builds,operator,bundle" \
     maintainer="openshift-builds@redhat.com" \
-    name="openshift-builds/operator-bundle" \
+    name="openshift-builds/openshift-builds-operator-bundle-rhel9" \
     summary="Red Hat OpenShift Builds Operator Bundle" \
     url="https://github.com/redhat-openshift-builds/operator" \
     vendor="Red Hat, Inc." \
-    version="1.6.3" \
+    version="1.6.4" \
     release="4"
 
 COPY bundle/ /
