@@ -31,7 +31,7 @@ ENTRYPOINT ["/operator"]
 
 LABEL \
     com.redhat.component="openshift-builds-operator-container" \
-    name="openshift-builds/openshift-builds-operator-rhel9" \
+    name="openshift-builds/openshift-builds-rhel9-operator" \
     version="v1.6.4" \
     summary="Red Hat OpenShift Builds Operator" \
     maintainer="openshift-builds@redhat.com" \
