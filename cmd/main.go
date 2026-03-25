@@ -165,6 +165,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	setupLog.Info("cleaning up redundant role bindings")
+	if err := buildReconciler.CleanupRoleBindings(ctxMain, boostrapClient); err != nil {
+		setupLog.Error(err, "unable to clean redundant role bindings")
+		os.Exit(1)
+	}
+
 	setupLog.Info("starting manager")
 	if err := mgr.Start(ctxMain); err != nil {
 		setupLog.Error(err, "problem running manager")
