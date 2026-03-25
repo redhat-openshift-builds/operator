@@ -30,7 +30,7 @@ USER 65532:65532
 ENTRYPOINT ["/operator"]
 
 LABEL \
-    com.redhat.component="openshift-builds-operator-container" \
+    com.redhat.component="openshift-builds-operator" \
     cpe="cpe:/a:redhat:openshift_builds:1.7::el9" \
     description="Red Hat OpenShift Builds Operator" \
     distribution-scope="public" \
@@ -38,7 +38,7 @@ LABEL \
     io.k8s.display-name="Red Hat OpenShift Builds Operator" \
     io.openshift.tags="builds,operator" \
     maintainer="openshift-builds@redhat.com" \
-    name="openshift-builds/openshift-builds-operator-rhel9" \
+    name="openshift-builds/openshift-builds-rhel9-operator" \
     release="1" \
     summary="Red Hat OpenShift Builds Operator" \
     url="https://github.com/redhat-openshift-builds/operator" \
