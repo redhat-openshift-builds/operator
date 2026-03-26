@@ -812,7 +812,7 @@ spec:
     - cicd
   links:
     - name: Documentation
-      url: https://docs.redhat.com/en/documentation/builds_for_red_hat_openshift/1.4
+      url: https://docs.redhat.com/en/documentation/builds_for_red_hat_openshift/1.7
     - name: Builds for Openshift
       url: https://github.com/redhat-openshift-builds/operator
   maintainers:
