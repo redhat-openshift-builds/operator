@@ -727,7 +727,7 @@ spec:
                       - name: IMAGE_SHIPWRIGHT_WAITER_CONTAINER_IMAGE
                         value: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:e00551b4c32a2138be549e0d8c239da1a99a7f9fe2764edba9f41a3866311c2c
                       - name: IMAGE_SHIPWRIGHT_SHIPWRIGHT_BUILD_WEBHOOK
-                        value: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:a37215e6c53861f55347d41995c34f602170d15fc76a46cb15f6979524794ff9
+                        value: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:de03b4e0839275bca80c5464def47c7383d3104ecfbc83c1ccd19508555a79fb
                     image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:e731e18cde9a2b7e0d1e07d35b8564e0de000b1d70e5d3f5c91a0a8509fd84f6
                     imagePullPolicy: Always
                     livenessProbe:
@@ -835,7 +835,7 @@ spec:
       name: OPENSHIFT_BUILDS_IMAGE_BUNDLER
     - image: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:e00551b4c32a2138be549e0d8c239da1a99a7f9fe2764edba9f41a3866311c2c
       name: OPENSHIFT_BUILDS_WAITER
-    - image: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:a37215e6c53861f55347d41995c34f602170d15fc76a46cb15f6979524794ff9
+    - image: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:de03b4e0839275bca80c5464def47c7383d3104ecfbc83c1ccd19508555a79fb
       name: OPENSHIFT_BUILDS_WEBHOOK
     - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:bee41e529f52fcdff757c9cc19d389c59792be221a59b866185565b877f81cc1
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_WEBHOOK
