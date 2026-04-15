@@ -81,7 +81,7 @@ spec:
           - name: IMAGE_SHIPWRIGHT_WAITER_CONTAINER_IMAGE
             value: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:ee094c08cc8fd2c8ecca1208cea40dc0362b46a6a5a5f84620a29c3e7fe15afc
           - name: IMAGE_SHIPWRIGHT_SHIPWRIGHT_BUILD_WEBHOOK
-            value: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:172d8990b238b0b27fd1ec38c6b41c5aef1aa2dbd69f7e39d74a8e0221ac9d11
+            value: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:728512632b3055f0fe2589eb1d4618cababc7e731abd4e848ff7b76fdb1f259b
         securityContext:
           allowPrivilegeEscalation: false
           readOnlyRootFilesystem: true
