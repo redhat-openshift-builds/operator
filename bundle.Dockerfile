@@ -25,8 +25,8 @@ LABEL com.redhat.openshift.versions="v4.16-v4." \
     summary="Red Hat OpenShift Builds Operator Bundle" \
     url="https://github.com/redhat-openshift-builds/operator" \
     vendor="Red Hat, Inc." \
-    version="1.6.4" \
-    release="4"
+    version="1.6.5" \
+    release="5"
 
 COPY bundle/ /
 COPY LICENSE /licenses/
