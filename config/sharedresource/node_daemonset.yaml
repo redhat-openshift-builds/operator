@@ -53,7 +53,7 @@ spec:
               memory: 20Mi
           terminationMessagePolicy: FallbackToLogsOnError
         - name: hostpath
-          image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:1d46332b94d2f46af97a93f6f6be92928f05c2dd9d343b2aa551aed627e3c254
+          image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:acf2d1a4f7dfc077fd5563d5ab480ff927807ff6b4d5db4eb760116bd52a4d4e
           # for development purposes; eventually switch to IfNotPresent
           imagePullPolicy: IfNotPresent
           workingDir: /run/csi-data-dir 
