@@ -10,7 +10,7 @@ require (
 	github.com/onsi/gomega v1.39.1
 	github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3
 	github.com/shipwright-io/build v0.18.1
-	github.com/shipwright-io/operator v0.18.0
+	github.com/shipwright-io/operator v0.19.0
 	github.com/tektoncd/operator v0.77.0
 	k8s.io/api v0.33.6
 	k8s.io/apiextensions-apiserver v0.33.6
