@@ -83,7 +83,7 @@ spec:
     name: Red Hat
     url: https://www.redhat.com
   relatedImages:
-    - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:1c49758610cfe99b37072dca97a79051992cf191875f45928d688f3f5691c18b
+    - image: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator@sha256:2f45dd946fd8fe76be14e9f998b588b9dd89718464e97ee44748edda9e74fccd
       name: OPENSHIFT_BUILDS_OPERATOR
     - image: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:475929d87df047d4d85b0f5fa0da61dccc8b76682f22dca0baded665f1ea1ed0
       name: OPENSHIFT_BUILDS_CONTROLLER
@@ -109,4 +109,4 @@ spec:
       name: OPENSHIFT_BUILDS_BUILDAH
     - image: registry.redhat.io/source-to-image/source-to-image-rhel9@sha256:70293cb8a80aa548933ff5f502bac89945a5cd08801c4ca3aac08a10dd01f62f
       name: OPENSHIFT_BUILDS_SOURCE_TO_IMAGE
-  version: 1.7.1
+  version: 1.7.2

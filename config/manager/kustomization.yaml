@@ -1,8 +1,8 @@
 resources:
-  - manager.yaml
+- manager.yaml
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 images:
-  - digest: sha256:1c49758610cfe99b37072dca97a79051992cf191875f45928d688f3f5691c18b
-    name: operator
-    newName: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator
+- digest: sha256:2f45dd946fd8fe76be14e9f998b588b9dd89718464e97ee44748edda9e74fccd
+  name: operator
+  newName: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator
