@@ -77,7 +77,7 @@ spec:
           - name: IMAGE_SHIPWRIGHT_IMAGE_PROCESSING_CONTAINER_IMAGE
             value: registry.redhat.io/openshift-builds/openshift-builds-image-processing-rhel9@sha256:42bc1e7887bba68ef24ce1f43d349ce23ad193c7f3de2785b4af73fb5343d328
           - name: IMAGE_SHIPWRIGHT_BUNDLE_CONTAINER_IMAGE
-            value: registry.redhat.io/openshift-builds/openshift-builds-image-bundler-rhel9@sha256:f8f215a0122fbb289bd401de4d46490d7d04ce0f8f132571bbd86918b9bdc687
+            value: registry.redhat.io/openshift-builds/openshift-builds-image-bundler-rhel9@sha256:cc021a401952b2330b8e144ef04253c1dd7d88b00609e1bfa024b84cd02827fb
           - name: IMAGE_SHIPWRIGHT_WAITER_CONTAINER_IMAGE
             value: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:494df8e13fd4292dba3b562e5062b01af78a1a47b5daa6ecc7b62caf6cd207b1
           - name: IMAGE_SHIPWRIGHT_SHIPWRIGHT_BUILD_WEBHOOK
