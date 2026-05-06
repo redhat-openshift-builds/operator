@@ -1,6 +1,6 @@
 module github.com/redhat-openshift-builds/operator
 
-go 1.25.0
+go 1.25.6
 
 require (
 	github.com/go-logr/logr v1.4.3
@@ -9,15 +9,15 @@ require (
 	github.com/onsi/ginkgo/v2 v2.28.3
 	github.com/onsi/gomega v1.40.0
 	github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3
-	github.com/shipwright-io/build v0.18.1
-	github.com/shipwright-io/operator v0.18.0
+	github.com/shipwright-io/build v0.19.3
+	github.com/shipwright-io/operator v0.19.0
 	github.com/tektoncd/operator v0.77.0
-	k8s.io/api v0.33.6
-	k8s.io/apiextensions-apiserver v0.33.6
-	k8s.io/apimachinery v0.33.6
+	k8s.io/api v0.35.1
+	k8s.io/apiextensions-apiserver v0.34.4
+	k8s.io/apimachinery v0.35.1
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20260319190234-28399d86e0b5
-	sigs.k8s.io/controller-runtime v0.21.0
+	sigs.k8s.io/controller-runtime v0.22.5
 	sigs.k8s.io/controller-runtime/tools/setup-envtest v0.0.0-20250626154428-7fd020cb5fc3
 	sigs.k8s.io/controller-tools v0.18.0
 	sigs.k8s.io/kustomize/kustomize/v5 v5.7.1
@@ -45,7 +45,7 @@ require (
 	github.com/go-logr/zapr v1.3.0 // indirect
 	github.com/go-openapi/jsonpointer v0.22.5 // indirect
 	github.com/go-openapi/jsonreference v0.21.5 // indirect
-	github.com/go-openapi/swag v0.24.1 // indirect
+	github.com/go-openapi/swag v0.25.4 // indirect
 	github.com/go-openapi/swag/cmdutils v0.25.5 // indirect
 	github.com/go-openapi/swag/conv v0.25.5 // indirect
 	github.com/go-openapi/swag/fileutils v0.25.5 // indirect
@@ -80,9 +80,10 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/openshift-pipelines/pipelines-as-code v0.36.0 // indirect
 	github.com/openshift-pipelines/tektoncd-pruner v0.2.0 // indirect
-	github.com/openshift/api v0.0.0-20250919195347-bc748ef9703f // indirect
+	github.com/openshift/api v0.0.0-20260302174620-dcac36b908db // indirect
 	github.com/openshift/apiserver-library-go v0.0.0-20250917015549-a8019f39f670 // indirect
-	github.com/openshift/client-go v0.0.0-20250915125341-81c9dc83a675 // indirect
+	github.com/openshift/client-go v0.0.0-20251015124057-db0dee36e235 // indirect
+	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.67.5 // indirect
@@ -90,9 +91,9 @@ require (
 	github.com/prometheus/statsd_exporter v0.29.0 // indirect
 	github.com/sergi/go-diff v1.4.0 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
-	github.com/spf13/cobra v1.10.1 // indirect
+	github.com/spf13/cobra v1.10.2 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
-	github.com/tektoncd/pipeline v1.6.1 // indirect
+	github.com/tektoncd/pipeline v1.9.2 // indirect
 	github.com/tektoncd/triggers v0.33.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/xlab/treeprint v1.2.0 // indirect
@@ -125,19 +126,24 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/code-generator v0.33.6 // indirect
+	k8s.io/code-generator v0.34.4 // indirect
 	k8s.io/gengo/v2 v2.0.0-20260408192533-25e2208e0dc3 // indirect
 	k8s.io/klog/v2 v2.140.0 // indirect
-	k8s.io/kube-openapi v0.0.0-20250627150254-e9823e99808e // indirect
+	k8s.io/kube-openapi v0.0.0-20250910181357-589584f1c912 // indirect
 	knative.dev/pkg v0.0.0-20250811181739-e06d4c9af190 // indirect
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
 	sigs.k8s.io/kustomize/api v0.20.1 // indirect
 	sigs.k8s.io/kustomize/cmd/config v0.20.1 // indirect
 	sigs.k8s.io/kustomize/kyaml v0.20.1 // indirect
 	sigs.k8s.io/randfill v1.0.0 // indirect
-	sigs.k8s.io/structured-merge-diff/v4 v4.7.0 // indirect
+	sigs.k8s.io/structured-merge-diff/v6 v6.3.0 // indirect
 )
 
-replace k8s.io/client-go => k8s.io/client-go v0.33.4
+replace (
+	k8s.io/api => k8s.io/api v0.34.4
+	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.34.4
+	k8s.io/apimachinery => k8s.io/apimachinery v0.34.4
+	k8s.io/client-go => k8s.io/client-go v0.34.4
+)
 
 replace sigs.k8s.io/controller-runtime/pkg/envtest/printer => sigs.k8s.io/controller-runtime v0.13.2
