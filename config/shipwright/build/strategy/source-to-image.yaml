@@ -12,7 +12,7 @@ spec:
       overridable: true
   buildSteps:
     - name: s2i-generate
-      image: registry.redhat.io/source-to-image/source-to-image-rhel9@sha256:70293cb8a80aa548933ff5f502bac89945a5cd08801c4ca3aac08a10dd01f62f
+      image: registry.redhat.io/source-to-image/source-to-image-rhel9@sha256:0e4e2bfcdc07ff0edfdba792acab8afeaf697c8d9048ea3fee0de63ba8678f69
       workingDir: $(params.shp-source-root)
       command: 
         - /usr/local/bin/s2i
@@ -28,7 +28,7 @@ spec:
         - name: etc-pki-entitlement
           mountPath: /etc/pki/entitlement
     - name: buildah
-      image: registry.redhat.io/ubi9/buildah@sha256:4a267751427aa3a4df3e66a789f034446b3fb274b882572f22ad99106f87fdb7
+      image: registry.redhat.io/ubi9/buildah@sha256:2b1f0c98e7527341df4b3caa7228c53228e5594e75ba38721f21719d84a24282
       workingDir: /s2i
       securityContext:
         capabilities:
