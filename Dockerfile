@@ -31,7 +31,7 @@ ENTRYPOINT ["/operator"]
 
 LABEL \
     com.redhat.component="openshift-builds-operator" \
-    cpe="cpe:/a:redhat:openshift_builds:1.7::el9" \
+    cpe="cpe:/a:redhat:openshift_builds:1.8::el9" \
     description="Red Hat OpenShift Builds Operator" \
     distribution-scope="public" \
     io.k8s.description="Red Hat OpenShift Builds Operator" \
@@ -43,4 +43,4 @@ LABEL \
     summary="Red Hat OpenShift Builds Operator" \
     url="https://github.com/redhat-openshift-builds/operator" \
     vendor="Red Hat, Inc." \
-    version="v1.7.1"
+    version="v1.8.0"
