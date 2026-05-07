@@ -87,7 +87,7 @@ spec:
       name: OPENSHIFT_BUILDS_OPERATOR
     - image: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:6a7c0f1443020bef4f4bdfde5e6ce46ea1f9e1ade99b5c6f57bd6299d2dc9a2f
       name: OPENSHIFT_BUILDS_CONTROLLER
-    - image: registry.redhat.io/openshift-builds/openshift-builds-git-cloner-rhel9@sha256:b38f845fd984c29ce715f0b5c624579e5fcfdb76f4727221d3503b8c85adc858
+    - image: registry.redhat.io/openshift-builds/openshift-builds-git-cloner-rhel9@sha256:6c6a3a6c4227eba76214e333a8740b7dbeda2ea76815ab0a3d4a1ebebb3815c7
       name: OPENSHIFT_BUILDS_GIT_CLONER
     - image: registry.redhat.io/openshift-builds/openshift-builds-image-processing-rhel9@sha256:7e9566bd00b2a6f02f87280feec21775dd8d0a9866bc1aa7d6f09c0de3ef7b9c
       name: OPENSHIFT_BUILDS_IMAGE_PROCESSING
