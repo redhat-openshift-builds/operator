@@ -240,14 +240,14 @@ github.com/openshift-pipelines/pipelines-as-code/pkg/params/settings
 ## explicit; go 1.24.0
 github.com/openshift-pipelines/tektoncd-pruner/pkg/config
 github.com/openshift-pipelines/tektoncd-pruner/pkg/metrics
-# github.com/openshift/api v0.0.0-20260302174620-dcac36b908db
+# github.com/openshift/api v0.0.0-20260507162658-047c8957c266
 ## explicit; go 1.25.0
 github.com/openshift/api/security/v1
 # github.com/openshift/apiserver-library-go v0.0.0-20250917015549-a8019f39f670
 ## explicit; go 1.24.0
 github.com/openshift/apiserver-library-go/pkg/securitycontextconstraints/util/sort
-# github.com/openshift/client-go v0.0.0-20251015124057-db0dee36e235
-## explicit; go 1.24.0
+# github.com/openshift/client-go v0.0.0-20260507170119-509fb07b72e4
+## explicit; go 1.25.0
 github.com/openshift/client-go/security/applyconfigurations/internal
 github.com/openshift/client-go/security/applyconfigurations/security/v1
 github.com/openshift/client-go/security/clientset/versioned
@@ -491,8 +491,6 @@ golang.org/x/tools/internal/stdlib
 golang.org/x/tools/internal/typeparams
 golang.org/x/tools/internal/typesinternal
 golang.org/x/tools/internal/versions
-# golang.org/x/tools/go/expect v0.1.1-deprecated
-## explicit; go 1.23.0
 # gomodules.xyz/jsonpatch/v2 v2.5.0
 ## explicit; go 1.20
 gomodules.xyz/jsonpatch/v2
@@ -1039,8 +1037,8 @@ k8s.io/client-go/util/homedir
 k8s.io/client-go/util/keyutil
 k8s.io/client-go/util/retry
 k8s.io/client-go/util/workqueue
-# k8s.io/code-generator v0.34.4
-## explicit; go 1.24.0
+# k8s.io/code-generator v0.35.1
+## explicit; go 1.25.0
 k8s.io/code-generator/cmd/applyconfiguration-gen/args
 k8s.io/code-generator/cmd/applyconfiguration-gen/generators
 k8s.io/code-generator/cmd/client-gen/generators/util
