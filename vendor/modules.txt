@@ -288,7 +288,7 @@ github.com/prometheus/statsd_exporter/pkg/mapper/fsm
 # github.com/sergi/go-diff v1.4.0
 ## explicit; go 1.13
 github.com/sergi/go-diff/diffmatchpatch
-# github.com/shipwright-io/build v0.19.3
+# github.com/shipwright-io/build v0.19.4
 ## explicit; go 1.25.6
 github.com/shipwright-io/build/pkg/apis/build/v1alpha1
 github.com/shipwright-io/build/pkg/apis/build/v1beta1
