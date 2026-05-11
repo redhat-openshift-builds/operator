@@ -866,7 +866,7 @@ spec:
                       - name: IMAGE_SHIPWRIGHT_GIT_CONTAINER_IMAGE
                         value: registry.redhat.io/openshift-builds/openshift-builds-git-cloner-rhel9@sha256:96573c2be1b5ef0fc80eaaaa7bd499e0f3a8458e10c72a2b30a03e03fd939a0b
                       - name: IMAGE_SHIPWRIGHT_IMAGE_PROCESSING_CONTAINER_IMAGE
-                        value: registry.redhat.io/openshift-builds/openshift-builds-image-processing-rhel9@sha256:6a27787981ced0f092ebeaa3ab5ee0fd35df07300fffdd241e4a1c51175736f7
+                        value: registry.redhat.io/openshift-builds/openshift-builds-image-processing-rhel9@sha256:5f5cc82ae3255f8d184cabd9fd84fae7ac2035563594a912ca8dd89b20a88b97
                       - name: IMAGE_SHIPWRIGHT_BUNDLE_CONTAINER_IMAGE
                         value: registry.redhat.io/openshift-builds/openshift-builds-image-bundler-rhel9@sha256:1dd64c2d932ee3b2ef685257714771a7a3eb97ffa88b1ed0095b48a4803cc8e7
                       - name: IMAGE_SHIPWRIGHT_WAITER_CONTAINER_IMAGE
@@ -974,7 +974,7 @@ spec:
       name: OPENSHIFT_BUILDS_CONTROLLER
     - image: registry.redhat.io/openshift-builds/openshift-builds-git-cloner-rhel9@sha256:96573c2be1b5ef0fc80eaaaa7bd499e0f3a8458e10c72a2b30a03e03fd939a0b
       name: OPENSHIFT_BUILDS_GIT_CLONER
-    - image: registry.redhat.io/openshift-builds/openshift-builds-image-processing-rhel9@sha256:6a27787981ced0f092ebeaa3ab5ee0fd35df07300fffdd241e4a1c51175736f7
+    - image: registry.redhat.io/openshift-builds/openshift-builds-image-processing-rhel9@sha256:5f5cc82ae3255f8d184cabd9fd84fae7ac2035563594a912ca8dd89b20a88b97
       name: OPENSHIFT_BUILDS_IMAGE_PROCESSING
     - image: registry.redhat.io/openshift-builds/openshift-builds-image-bundler-rhel9@sha256:1dd64c2d932ee3b2ef685257714771a7a3eb97ffa88b1ed0095b48a4803cc8e7
       name: OPENSHIFT_BUILDS_IMAGE_BUNDLER
