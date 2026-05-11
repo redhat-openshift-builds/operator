@@ -1061,13 +1061,18 @@ k8s.io/klog/v2/internal/dbg
 k8s.io/klog/v2/internal/serialize
 k8s.io/klog/v2/internal/severity
 k8s.io/klog/v2/internal/sloghandler
-# k8s.io/kube-openapi v0.0.0-20250910181357-589584f1c912
-## explicit; go 1.23.0
+# k8s.io/kube-openapi v0.0.0-20260509192518-b540ad9def2b
+## explicit; go 1.24.0
 k8s.io/kube-openapi/pkg/cached
 k8s.io/kube-openapi/pkg/common
 k8s.io/kube-openapi/pkg/handler3
 k8s.io/kube-openapi/pkg/internal
 k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json
+k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json/internal
+k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json/internal/jsonflags
+k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json/internal/jsonopts
+k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json/internal/jsonwire
+k8s.io/kube-openapi/pkg/internal/third_party/go-json-experiment/json/jsontext
 k8s.io/kube-openapi/pkg/schemaconv
 k8s.io/kube-openapi/pkg/spec3
 k8s.io/kube-openapi/pkg/util
@@ -1319,7 +1324,7 @@ sigs.k8s.io/kustomize/kyaml/yaml/walk
 ## explicit; go 1.18
 sigs.k8s.io/randfill
 sigs.k8s.io/randfill/bytesource
-# sigs.k8s.io/structured-merge-diff/v6 v6.3.0
+# sigs.k8s.io/structured-merge-diff/v6 v6.3.2
 ## explicit; go 1.23
 sigs.k8s.io/structured-merge-diff/v6/fieldpath
 sigs.k8s.io/structured-merge-diff/v6/merge
