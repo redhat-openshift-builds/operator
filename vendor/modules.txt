@@ -243,8 +243,8 @@ github.com/openshift-pipelines/tektoncd-pruner/pkg/metrics
 # github.com/openshift/api v0.0.0-20260507162658-047c8957c266
 ## explicit; go 1.25.0
 github.com/openshift/api/security/v1
-# github.com/openshift/apiserver-library-go v0.0.0-20250917015549-a8019f39f670
-## explicit; go 1.24.0
+# github.com/openshift/apiserver-library-go v0.0.0-20260422143241-5ac13825313c
+## explicit; go 1.25.0
 github.com/openshift/apiserver-library-go/pkg/securitycontextconstraints/util/sort
 # github.com/openshift/client-go v0.0.0-20260507170119-509fb07b72e4
 ## explicit; go 1.25.0
@@ -682,7 +682,7 @@ k8s.io/api/storage/v1
 k8s.io/api/storage/v1alpha1
 k8s.io/api/storage/v1beta1
 k8s.io/api/storagemigration/v1alpha1
-# k8s.io/apiextensions-apiserver v0.34.4 => k8s.io/apiextensions-apiserver v0.34.4
+# k8s.io/apiextensions-apiserver v0.35.1 => k8s.io/apiextensions-apiserver v0.34.4
 ## explicit; go 1.24.0
 k8s.io/apiextensions-apiserver/pkg/apis/apiextensions
 k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1
