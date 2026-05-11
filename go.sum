@@ -2012,12 +2012,12 @@ github.com/openshift-pipelines/pipelines-as-code v0.36.0 h1:/hv0Z0TjQbfQK5McYOZU
 github.com/openshift-pipelines/pipelines-as-code v0.36.0/go.mod h1:sWw55rgEurnYNKkpItE0iBrczF3Nv/XTUzWEiYSmrVY=
 github.com/openshift-pipelines/tektoncd-pruner v0.2.0 h1:7m4x8ChiWQ4IQkqD6OUBQTcg+32fMh8njbIk22mtOI8=
 github.com/openshift-pipelines/tektoncd-pruner v0.2.0/go.mod h1:weaxA8Ll8mW/w65OYEBeyDXEr2nk6h3QPr0aauYOeNI=
-github.com/openshift/api v0.0.0-20260302174620-dcac36b908db h1:MOQ5JSIlbP4apwTrEdNpApT6PsnB0/1S6y9aKODp5Ks=
-github.com/openshift/api v0.0.0-20260302174620-dcac36b908db/go.mod h1:pyVjK0nZ4sRs4fuQVQ4rubsJdahI1PB94LnQ8sGdvxo=
+github.com/openshift/api v0.0.0-20260507162658-047c8957c266 h1:WKG989mPfWiRt5hdblHLAtH5oAzyFT6Qe3vSUtaF5C0=
+github.com/openshift/api v0.0.0-20260507162658-047c8957c266/go.mod h1:pyVjK0nZ4sRs4fuQVQ4rubsJdahI1PB94LnQ8sGdvxo=
 github.com/openshift/apiserver-library-go v0.0.0-20250917015549-a8019f39f670 h1:Sty9pdYN5ePElEHmUhifUbdB36ek7owP2hMYbmCxlQ0=
 github.com/openshift/apiserver-library-go v0.0.0-20250917015549-a8019f39f670/go.mod h1:8aHgQmkn0RbvMth8icv+itFvH+vF94VHBTjIUuPmkCU=
-github.com/openshift/client-go v0.0.0-20251015124057-db0dee36e235 h1:9JBeIXmnHlpXTQPi7LPmu1jdxznBhAE7bb1K+3D8gxY=
-github.com/openshift/client-go v0.0.0-20251015124057-db0dee36e235/go.mod h1:L49W6pfrZkfOE5iC1PqEkuLkXG4W0BX4w8b+L2Bv7fM=
+github.com/openshift/client-go v0.0.0-20260507170119-509fb07b72e4 h1:NAaB2MvuQvrGeYCXwrcA3uMcr4Ob2CCJIoVsimuAANI=
+github.com/openshift/client-go v0.0.0-20260507170119-509fb07b72e4/go.mod h1:xRI265JXX8aZjGdHwgd6mepG6nqkzpl4dx3LYqzF1x4=
 github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3 h1:rvIns2reOYdlyHr79ckw0RN0SH2hxn1QQyMbg8pcCzk=
 github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3/go.mod h1:FMa8l31U/Vq3SYQ/L8MxogbVjUh/YjwkYplIrEUBQ/w=
 github.com/opentracing/opentracing-go v1.1.0/go.mod h1:UkNAQd3GIcIGf0SeVgPpRdFStlNbqXla1AfSYxPUl2o=
@@ -3456,8 +3456,9 @@ k8s.io/apimachinery v0.34.4/go.mod h1:/GwIlEcWuTX9zKIg2mbw0LRFIsXwrfoVxn+ef0X13l
 k8s.io/apiserver v0.34.4/go.mod h1:4dM2Pfd+VQQA/4pLVPorZJbIadaTLcvgQn2GYYcA6Ic=
 k8s.io/client-go v0.34.4 h1:IXhvzFdm0e897kXtLbeyMpAGzontcShJ/gi/XCCsOLc=
 k8s.io/client-go v0.34.4/go.mod h1:tXIVJTQabT5QRGlFdxZQFxrIhcGUPpKL5DAc4gSWTE8=
-k8s.io/code-generator v0.34.4 h1:ri/HSQ1eCQ40pqTQ4HeEiC8UR/SaftH/syav9RL4b+c=
 k8s.io/code-generator v0.34.4/go.mod h1:JbvI8dtG5KB5HJSFzExSbvigBSG8gCncyMtdwg/NVbw=
+k8s.io/code-generator v0.35.1 h1:yLKR2la7Z9cWT5qmk67ayx8xXLM4RRKQMnC8YPvTWRI=
+k8s.io/code-generator v0.35.1/go.mod h1:F2Fhm7aA69tC/VkMXLDokdovltXEF026Tb9yfQXQWKg=
 k8s.io/component-base v0.19.2/go.mod h1:g5LrsiTiabMLZ40AR6Hl45f088DevyGY+cCE2agEIVo=
 k8s.io/component-base v0.34.4/go.mod h1:uujRfLNOwNiFWz47eBjNZEj/Swn2cdhqI7lW2MeFdrU=
 k8s.io/gengo v0.0.0-20190128074634-0689ccc1d7d6/go.mod h1:ezvh/TsK7cY6rbqRK0oQQ8IAqLxYwwyPxAX1Pzy0ii0=
