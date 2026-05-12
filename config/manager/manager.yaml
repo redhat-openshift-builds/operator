@@ -71,7 +71,7 @@ spec:
           - name: PLATFORM
             value: "openshift"
           - name: IMAGE_SHIPWRIGHT_SHIPWRIGHT_BUILD
-            value: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:2f269bd77f11358b7e1e47eb873055f6c852913d474fa95e65852b74e5a9e2c6
+            value: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel9@sha256:9351f1b6b0058fe8ea872fa9480d6c8c3de439cd67847d96bba2a53b2b9f5ede
           - name: IMAGE_SHIPWRIGHT_GIT_CONTAINER_IMAGE
             value: registry.redhat.io/openshift-builds/openshift-builds-git-cloner-rhel9@sha256:7b904c790c44fa248da930d47e611738b58153de5a3c435155d6698cb7b191d2
           - name: IMAGE_SHIPWRIGHT_IMAGE_PROCESSING_CONTAINER_IMAGE
