@@ -13,7 +13,7 @@ require (
 	github.com/shipwright-io/operator v0.19.0
 	github.com/tektoncd/operator v0.77.0
 	k8s.io/api v0.35.1
-	k8s.io/apiextensions-apiserver v0.34.4
+	k8s.io/apiextensions-apiserver v0.35.1
 	k8s.io/apimachinery v0.35.1
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20260319190234-28399d86e0b5
@@ -81,7 +81,7 @@ require (
 	github.com/openshift-pipelines/pipelines-as-code v0.36.0 // indirect
 	github.com/openshift-pipelines/tektoncd-pruner v0.2.0 // indirect
 	github.com/openshift/api v0.0.0-20260507162658-047c8957c266 // indirect
-	github.com/openshift/apiserver-library-go v0.0.0-20250917015549-a8019f39f670 // indirect
+	github.com/openshift/apiserver-library-go v0.0.0-20260422143241-5ac13825313c // indirect
 	github.com/openshift/client-go v0.0.0-20260507170119-509fb07b72e4 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect
