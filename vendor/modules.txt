@@ -497,7 +497,7 @@ gomodules.xyz/jsonpatch/v2
 # google.golang.org/api v0.277.0
 ## explicit; go 1.25.0
 google.golang.org/api/support/bundler
-# google.golang.org/genproto/googleapis/api v0.0.0-20260420184626-e10c466a9529
+# google.golang.org/genproto/googleapis/api v0.0.0-20260511170946-3700d4141b60
 ## explicit; go 1.25.0
 google.golang.org/genproto/googleapis/api/httpbody
 # google.golang.org/genproto/googleapis/rpc v0.0.0-20260504160031-60b97b32f348
