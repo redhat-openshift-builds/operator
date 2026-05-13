@@ -494,7 +494,7 @@ golang.org/x/tools/internal/versions
 # gomodules.xyz/jsonpatch/v2 v2.5.0
 ## explicit; go 1.20
 gomodules.xyz/jsonpatch/v2
-# google.golang.org/api v0.277.0
+# google.golang.org/api v0.279.0
 ## explicit; go 1.25.0
 google.golang.org/api/support/bundler
 # google.golang.org/genproto/googleapis/api v0.0.0-20260511170946-3700d4141b60
