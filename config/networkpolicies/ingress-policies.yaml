@@ -1,0 +1,82 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: csidriver-webhook-ingress
+  namespace: openshift-builds
+spec:
+  podSelector:
+    matchLabels:
+      name: shared-resource-csi-driver-webhook
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: openshift-kube-apiserver
+    ports:
+    - protocol: TCP
+      port: 8443
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: shipwright-webhook-ingress
+  namespace: openshift-builds
+spec:
+  podSelector:
+    matchLabels:
+      name: shp-build-webhook
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: openshift-kube-apiserver
+    ports:
+    - protocol: TCP
+      port: 8443
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: monitoring-metrics-ingress-csi
+  namespace: openshift-builds
+spec:
+  podSelector:
+    matchLabels:
+      app: shared-resource-csi-driver-node
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          network.openshift.io/policy-group: monitoring
+    ports:
+    - protocol: TCP
+      port: 6000  # provisioner-m metrics port
+    - protocol: TCP
+      port: 9898  # healthz port
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: monitoring-metrics-ingress-shipwright
+  namespace: openshift-builds
+spec:
+  podSelector:
+    matchLabels:
+      name: shipwright-build
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          network.openshift.io/policy-group: monitoring
+    ports:
+    - protocol: TCP
+      port: 8383
