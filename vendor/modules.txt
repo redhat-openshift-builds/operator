@@ -246,7 +246,7 @@ github.com/openshift/api/security/v1
 # github.com/openshift/apiserver-library-go v0.0.0-20260422143241-5ac13825313c
 ## explicit; go 1.25.0
 github.com/openshift/apiserver-library-go/pkg/securitycontextconstraints/util/sort
-# github.com/openshift/client-go v0.0.0-20260507170119-509fb07b72e4
+# github.com/openshift/client-go v0.0.0-20260512113608-deb4dc54551a
 ## explicit; go 1.25.0
 github.com/openshift/client-go/security/applyconfigurations/internal
 github.com/openshift/client-go/security/applyconfigurations/security/v1
