@@ -2114,8 +2114,8 @@ github.com/ruudk/golang-pdf417 v0.0.0-20181029194003-1af4ab5afa58/go.mod h1:6lfF
 github.com/ruudk/golang-pdf417 v0.0.0-20201230142125-a7e3863a1245/go.mod h1:pQAZKsJ8yyVxGRWYNEm9oFB8ieLgKFnamEyDmSA0BRk=
 github.com/sergi/go-diff v1.4.0 h1:n/SP9D5ad1fORl+llWyN+D6qoUETXNZARKjyY2/KVCw=
 github.com/sergi/go-diff v1.4.0/go.mod h1:A0bzQcvG0E7Rwjx0REVgAGH58e96+X0MeOfepqsbeW4=
-github.com/shipwright-io/build v0.19.3 h1:htQN2iBMbMh3yR3jhXUZ7nEqCG6RzGX/U2XWdcHTXD4=
-github.com/shipwright-io/build v0.19.3/go.mod h1:b09EqQw/B1Zzlt3FQoegr0ldy3WiV7AzUkLXdSwq5J4=
+github.com/shipwright-io/build v0.19.4 h1:cmkuCZEvi98F0O2AynzEvlMwAp7SfqDF3ftcDlkzvew=
+github.com/shipwright-io/build v0.19.4/go.mod h1:uOTxgiUx6RAm/+b/AhnuDZR/QcMu8cC9zU0EhojS8jA=
 github.com/shipwright-io/operator v0.19.0 h1:iR6p8MYn8vtNQ4NT/U9SXQUyYlIB2OrdME0cad0+ZHc=
 github.com/shipwright-io/operator v0.19.0/go.mod h1:IDwlW3y2lsJh1s0iN9i9UIS3A/Q/XVsQqWwdZMYNp4M=
 github.com/sirupsen/logrus v1.2.0/go.mod h1:LxeOpSwHxABJmUn/MG1IvRgCAasNZTLOkJPxbbu5VWo=
