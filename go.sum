@@ -2013,8 +2013,8 @@ github.com/openshift-pipelines/pipelines-as-code v0.36.0 h1:/hv0Z0TjQbfQK5McYOZU
 github.com/openshift-pipelines/pipelines-as-code v0.36.0/go.mod h1:sWw55rgEurnYNKkpItE0iBrczF3Nv/XTUzWEiYSmrVY=
 github.com/openshift-pipelines/tektoncd-pruner v0.2.0 h1:7m4x8ChiWQ4IQkqD6OUBQTcg+32fMh8njbIk22mtOI8=
 github.com/openshift-pipelines/tektoncd-pruner v0.2.0/go.mod h1:weaxA8Ll8mW/w65OYEBeyDXEr2nk6h3QPr0aauYOeNI=
-github.com/openshift/api v0.0.0-20260511191110-9b69e5fa27e9 h1:yb8ul1HPFYhO04yp0D8T/qSySZnKv210f4nE//i/Bdg=
-github.com/openshift/api v0.0.0-20260511191110-9b69e5fa27e9/go.mod h1:pyVjK0nZ4sRs4fuQVQ4rubsJdahI1PB94LnQ8sGdvxo=
+github.com/openshift/api v0.0.0-20260520123312-30525d574efa h1:Igi4WlU/HbrLCN9J5TLe6t3Gdb+iOCu0YW6Kxr0Q9rM=
+github.com/openshift/api v0.0.0-20260520123312-30525d574efa/go.mod h1:pyVjK0nZ4sRs4fuQVQ4rubsJdahI1PB94LnQ8sGdvxo=
 github.com/openshift/apiserver-library-go v0.0.0-20260422143241-5ac13825313c h1:kz0ybnGVuw4TEQWCfz0BOV/rWTu77KOHdZNjDNbU93Y=
 github.com/openshift/apiserver-library-go v0.0.0-20260422143241-5ac13825313c/go.mod h1:mnTsMMTtXSPBQzqBp5HXBjLvliveKenRADFQy9m5jc0=
 github.com/openshift/client-go v0.0.0-20260512113608-deb4dc54551a h1:EKx2XhOKehd1C5ptY7IrLl4WV35E8kP0pRPnG5BUZXk=
