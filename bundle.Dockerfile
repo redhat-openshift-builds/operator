@@ -24,11 +24,11 @@ LABEL \
     io.openshift.tags="builds,operator-bundle" \
     maintainer="openshift-builds@redhat.com" \
     name="openshift-builds/openshift-builds-operator-bundle-rhel9" \
-    release="2" \
+    release="3" \
     summary="Red Hat OpenShift Builds Operator Bundle" \
     url="https://github.com/redhat-openshift-builds/operator" \
     vendor="Red Hat, Inc." \
-    version="1.7.2"
+    version="1.7.3"
 
 COPY bundle/ /
 COPY LICENSE /licenses/
