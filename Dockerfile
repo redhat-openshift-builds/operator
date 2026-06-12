@@ -23,6 +23,7 @@ COPY --from=builder /opt/app-root/src /opt/app-root/src
 COPY --from=builder /opt/app-root/src/operator .
 COPY config/shipwright/ config/shipwright/
 COPY config/sharedresource/ config/sharedresource/
+COPY config/networkpolicies/ config/networkpolicies/
 COPY LICENSE /licenses/
 
 USER 65532:65532
