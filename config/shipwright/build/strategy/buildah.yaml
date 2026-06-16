@@ -6,7 +6,7 @@ metadata:
 spec:
   steps:
     - name: build-and-push
-      image: registry.redhat.io/ubi9/buildah@sha256:2b1f0c98e7527341df4b3caa7228c53228e5594e75ba38721f21719d84a24282
+      image: registry.redhat.io/ubi10/buildah@sha256:1ce328d7ffda0eebfc64537146b46e6a5b01b5516ada6820a30621f333bfa350
       imagePullPolicy: Always
       workingDir: $(params.shp-source-root)
       securityContext:

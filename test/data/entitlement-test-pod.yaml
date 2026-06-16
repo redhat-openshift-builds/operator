@@ -7,7 +7,7 @@ spec:
   serviceAccount: builder
   containers:
     - name: etc-pki-entitlement-test-container
-      image: registry.access.redhat.com/ubi9/ubi:latest
+      image: registry.access.redhat.com/ubi10/ubi:latest
       command:
         - /bin/sh
         - -c
