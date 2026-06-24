@@ -15,7 +15,7 @@ ENV GOEXPERIMENT=strictfipsruntime
 
 RUN CGO_ENABLED=1 GO111MODULE=on go build -a -mod vendor -tags strictfipsruntime -o operator cmd/main.go
 
-FROM registry.redhat.io/ubi10-minimal@sha256:2c20ac20ca1ecbbbd583603feabd9cc51e7e8ea5a82e5088e20a9494794b2574
+FROM registry.redhat.io/ubi10-minimal@sha256:5bc43c1af14ccc8bf73bb0306db13edcae1a30589569e9cdf7db5d4668b3ed24
 
 WORKDIR /
 
