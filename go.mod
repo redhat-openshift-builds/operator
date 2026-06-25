@@ -80,9 +80,9 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/openshift-pipelines/pipelines-as-code v0.36.0 // indirect
 	github.com/openshift-pipelines/tektoncd-pruner v0.2.0 // indirect
-	github.com/openshift/api v0.0.0-20260511191110-9b69e5fa27e9 // indirect
+	github.com/openshift/api v0.0.0-20260619095050-5346161d1bf2 // indirect
 	github.com/openshift/apiserver-library-go v0.0.0-20260422143241-5ac13825313c // indirect
-	github.com/openshift/client-go v0.0.0-20260512113608-deb4dc54551a // indirect
+	github.com/openshift/client-go v0.0.0-20260622130833-df412d4d283e // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
@@ -128,7 +128,7 @@ require (
 	k8s.io/code-generator v0.35.1 // indirect
 	k8s.io/gengo/v2 v2.0.0-20260408192533-25e2208e0dc3 // indirect
 	k8s.io/klog/v2 v2.140.0 // indirect
-	k8s.io/kube-openapi v0.0.0-20260512234627-ef417d054102 // indirect
+	k8s.io/kube-openapi v0.0.0-20260519202549-bbf5c5577288 // indirect
 	knative.dev/pkg v0.0.0-20250811181739-e06d4c9af190 // indirect
 	sigs.k8s.io/json v0.0.0-20250730193827-2d320260d730 // indirect
 	sigs.k8s.io/kustomize/api v0.20.1 // indirect
