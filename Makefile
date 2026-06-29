@@ -293,6 +293,10 @@ endif
 
 .PHONY: bundle
 bundle: manifests kustomize operator-sdk yq strategy-catalog ## Generate bundle manifests and metadata, then validate generated files.
+	# Update version in config manifests base to match bundle
+	$(YQ) -i '.spec.version = "$(VERSION)"' \
+		config/manifests/bases/openshift-builds-operator.clusterserviceversion.yaml
+
 	$(OPERATOR_SDK) generate kustomize manifests --interactive=false -q
 	cd config/manager && $(KUSTOMIZE) edit set image operator=$(IMG)
 	$(KUSTOMIZE) build config/manifests | $(OPERATOR_SDK) generate bundle $(BUNDLE_GEN_FLAGS)
@@ -307,6 +311,7 @@ bundle: manifests kustomize operator-sdk yq strategy-catalog ## Generate bundle 
 		'select(fileIndex==0).spec.relatedImages = select(fileIndex==1).spec.relatedImages | select(fileIndex==0)' \
 		bundle/manifests/openshift-builds-operator.clusterserviceversion.yaml \
 		config/manifests/bases/openshift-builds-operator.clusterserviceversion.yaml
+
 	$(OPERATOR_SDK) bundle validate ./bundle
 
 .PHONY: bundle-build
@@ -384,3 +389,21 @@ strategy-catalog:
 	$(foreach s, $(STRATEGIES), \
 		echo "Fetching $s.yaml..." && \
 		curl -sSLO $(STRATEGY_SOURCE)/$(s)/$(s).yaml;)
+
+##@ Release
+
+.PHONY: setup-release-branch
+setup-release-branch: ## Configure repository for a release branch. Use BRANCH=builds-x.y to specify branch, DRY_RUN=true to preview.
+ifdef BRANCH
+ifeq ($(DRY_RUN),true)
+	@./hack/setup-release-branch.sh --branch $(BRANCH) --dry-run
+else
+	@./hack/setup-release-branch.sh --branch $(BRANCH)
+endif
+else
+ifeq ($(DRY_RUN),true)
+	@./hack/setup-release-branch.sh --dry-run
+else
+	@./hack/setup-release-branch.sh
+endif
+endif
