@@ -27,7 +27,7 @@ spec:
           runtimeStageFrom=
           budArgs=()
           inBuildArgs=false
-          noCache=false
+          noCache="false"
           registriesBlock=""
           inRegistriesBlock=false
           registriesInsecure=""
