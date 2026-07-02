@@ -93,7 +93,7 @@ spec:
       name: OPENSHIFT_BUILDS_IMAGE_PROCESSING
     - image: registry.redhat.io/openshift-builds/openshift-builds-image-bundler-rhel9@sha256:140a7462991dcb6a9896b977e009784b7764acfff3d985b4863895f9854f7234
       name: OPENSHIFT_BUILDS_IMAGE_BUNDLER
-    - image: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:595f3b528b2792938f6d8d05bd5b2d86f145fa86bbcbe83d60791b5bb1ec3dc5
+    - image: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:b348437902212dc9f6b49ee51d8cefd787e06ea73b7c926b8aebb64772b122be
       name: OPENSHIFT_BUILDS_WAITER
     - image: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:5e1247fa8c852af9fb0298741b92f7626a787c0f01ff75a8930e410c489e528f
       name: OPENSHIFT_BUILDS_WEBHOOK
