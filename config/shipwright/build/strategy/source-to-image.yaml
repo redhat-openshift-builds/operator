@@ -22,6 +22,7 @@ spec:
         - $(build.builder.image)
         - $(params.shp-output-image)
         - --as-dockerfile=/s2i/Dockerfile
+        - --pull-policy=$(params.pull-policy)
       volumeMounts:
         - name: s2i
           mountPath: /s2i
@@ -156,6 +157,10 @@ spec:
       defaults:
         - registry.redhat.io
         - quay.io
+    - name: pull-policy
+      description: "Pull policy for the builder image. Valid values: always, never, if-not-present."
+      type: string
+      default: "if-not-present"
     - name: storage-driver
       description: "The storage driver to use, such as 'overlay' or 'vfs'."
       type: string
