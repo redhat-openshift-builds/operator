@@ -27,6 +27,12 @@ import (
 // +genreconciler:krshapedlogic=false
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +genclient:nonNamespaced
+// +kubebuilder:object:root=true
+// +kubebuilder:resource:scope=Cluster
+// +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="Version",type=string,JSONPath=`.status.version`
+// +kubebuilder:printcolumn:name="Ready",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].status`
+// +kubebuilder:printcolumn:name="Reason",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].message`
 type TektonPipeline struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -69,6 +75,7 @@ type TektonPipelineStatus struct {
 }
 
 // TektonPipelineList contains a list of TektonPipeline
+// +kubebuilder:object:root=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type TektonPipelineList struct {
 	metav1.TypeMeta `json:",inline"`
@@ -88,7 +95,6 @@ type Pipeline struct {
 
 // PipelineProperties defines customizable flags for Pipeline Component.
 type PipelineProperties struct {
-	DisableAffinityAssistant                 *bool  `json:"disable-affinity-assistant,omitempty"`
 	DisableCredsInit                         *bool  `json:"disable-creds-init,omitempty"`
 	AwaitSidecarReadiness                    *bool  `json:"await-sidecar-readiness,omitempty"`
 	RunningInEnvironmentWithInjectedSidecars *bool  `json:"running-in-environment-with-injected-sidecars,omitempty"`
@@ -96,7 +102,13 @@ type PipelineProperties struct {
 	EnableCustomTasks                        *bool  `json:"enable-custom-tasks,omitempty"`
 	EnableApiFields                          string `json:"enable-api-fields,omitempty"`
 	EmbeddedStatus                           string `json:"embedded-status,omitempty"`
-	SendCloudEventsForRuns                   *bool  `json:"send-cloudevents-for-runs,omitempty"`
+	// Deprecated: send-cloudevents-for-runs is deprecated in tektoncd/pipeline v1.12.0
+	// (https://github.com/tektoncd/pipeline/pull/9774) and will be removed in a future release.
+	// CloudEvents for CustomRuns are now enabled by default when a sink is configured in
+	// the config-events ConfigMap. This field only affects CustomRun objects; it has no
+	// effect on TaskRuns or PipelineRuns. Set to false only to suppress duplicate events
+	// when a custom task controller already sends its own CloudEvents.
+	SendCloudEventsForRuns *bool `json:"send-cloudevents-for-runs,omitempty"`
 	// "verification-mode" is deprecated and never used.
 	// This field will be removed, see https://github.com/tektoncd/operator/issues/1497
 	// originally this field was removed in https://github.com/tektoncd/operator/pull/1481
@@ -114,6 +126,12 @@ type PipelineProperties struct {
 	// ScopeWhenExpressionsToTask is deprecated and never used.
 	ScopeWhenExpressionsToTask *bool `json:"scope-when-expressions-to-task,omitempty"`
 
+	// Deprecated: DisableAffinityAssistant is deprecated and no longer used.
+	// This field is removed from pipeline component.
+	// Keeping here to maintain API compatibility during upgrades.
+	// TODO: Remove this field in release-v0.80.x
+	DisableAffinityAssistant *bool `json:"disable-affinity-assistant,omitempty"`
+
 	EnforceNonfalsifiability  string `json:"enforce-nonfalsifiability,omitempty"`
 	EnableKeepPodOnCancel     *bool  `json:"keep-pod-on-cancel,omitempty"`
 	ResultExtractionMethod    string `json:"results-from,omitempty"`
@@ -126,6 +144,8 @@ type PipelineProperties struct {
 	DisableInlineSpec         string `json:"disable-inline-spec,omitempty"`
 
 	PipelineMetricsProperties `json:",inline"`
+	// +optional
+	TracingProperties `json:",inline"`
 	// +optional
 	OptionalPipelineProperties `json:",inline"`
 	// +optional
@@ -164,6 +184,19 @@ type PipelineMetricsProperties struct {
 	MetricsPipelinerunLevel        string `json:"metrics.pipelinerun.level,omitempty"`
 	MetricsPipelinerunDurationType string `json:"metrics.pipelinerun.duration-type,omitempty"`
 	CountWithReason                *bool  `json:"metrics.count.enable-reason,omitempty"`
+}
+
+// TracingProperties defines the fields which are configurable for tracing
+type TracingProperties struct {
+	// Enabled controls whether tracing is enabled or not
+	// +optional
+	Enabled *bool `json:"traces.enabled,omitempty"`
+	// Endpoint is the URL for the OpenTelemetry trace collector
+	// +optional
+	Endpoint string `json:"traces.endpoint,omitempty"`
+	// CredentialsSecret is the name of the secret containing credentials for the tracing endpoint
+	// +optional
+	CredentialsSecret string `json:"traces.credentialsSecret,omitempty"`
 }
 
 // Resolvers defines the fields to configure resolvers

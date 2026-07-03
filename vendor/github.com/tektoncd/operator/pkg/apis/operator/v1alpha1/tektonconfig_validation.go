@@ -56,9 +56,29 @@ func (tc *TektonConfig) Validate(ctx context.Context) (errs *apis.FieldError) {
 		}
 	}
 
+	// One platform subtree per operator build (PLATFORM=openshift vs unset/other). Reject before PAC
+	// validation so clients get a single admission error (e.g. oc patch / oc edit), not stacked messages.
+	if !IsOpenShiftPlatform() && isOpenShiftPlatformsSectionSet(tc.Spec.Platforms.OpenShift) {
+		return errs.Also(apis.ErrGeneric(
+			"this cluster runs the Kubernetes Tekton Operator; configure Pipelines as Code and SCC-related settings only under spec.platforms.kubernetes. "+
+				"Remove spec.platforms.openshift (including pipelinesAsCode and scc). "+
+				"Do not set both spec.platforms.openshift.pipelinesAsCode and spec.platforms.kubernetes.pipelinesAsCode.",
+			"spec.platforms",
+		))
+	}
+	if IsOpenShiftPlatform() && isKubernetesPlatformsSectionSet(tc.Spec.Platforms.Kubernetes) {
+		return errs.Also(apis.ErrGeneric(
+			"this cluster runs the OpenShift Tekton Operator; configure Pipelines as Code only under spec.platforms.openshift. "+
+				"Remove spec.platforms.kubernetes.pipelinesAsCode.",
+			"spec.platforms",
+		))
+	}
+
+	logger := logging.FromContext(ctx)
 	if IsOpenShiftPlatform() && tc.Spec.Platforms.OpenShift.PipelinesAsCode != nil {
-		logger := logging.FromContext(ctx)
 		errs = errs.Also(tc.Spec.Platforms.OpenShift.PipelinesAsCode.PACSettings.validate(logger, "spec.platforms.openshift.pipelinesAsCode"))
+	} else if !IsOpenShiftPlatform() && tc.Spec.Platforms.Kubernetes.PipelinesAsCode != nil {
+		errs = errs.Also(tc.Spec.Platforms.Kubernetes.PipelinesAsCode.PACSettings.validate(logger, "spec.platforms.kubernetes.pipelinesAsCode"))
 	}
 
 	// validate SCC config
@@ -102,8 +122,13 @@ func (tc *TektonConfig) Validate(ctx context.Context) (errs *apis.FieldError) {
 		}
 	}
 
-	// validate pruner specifications
+	// validate pruner specifications (legacy job-based pruner)
 	errs = errs.Also(tc.Spec.Pruner.validate())
+
+	// validate TektonPruner (event-based) configuration using tektoncd/pruner webhook validation
+	// This ensures that the pruner config in TektonConfig is validated using the same
+	// comprehensive validation logic as the standalone TektonPruner resource
+	errs = errs.Also(tc.Spec.TektonPruner.validate("spec.tektonpruner"))
 
 	if !tc.Spec.Addon.IsEmpty() {
 		errs = errs.Also(validateAddonParams(tc.Spec.Addon.Params, "spec.addon.params"))
@@ -121,6 +146,7 @@ func (tc *TektonConfig) Validate(ctx context.Context) (errs *apis.FieldError) {
 	errs = errs.Also(tc.Spec.Chain.Options.validate("spec.chain.options"))
 	errs = errs.Also(tc.Spec.Trigger.Options.validate("spec.trigger.options"))
 	errs = errs.Also(tc.Spec.Result.Options.validate("spec.result.options"))
+	errs = errs.Also(tc.Spec.MulticlusterProxyAAE.Options.validate("spec.multiclusterProxyAAE.options"))
 
 	return errs.Also(tc.Spec.Trigger.TriggersProperties.validate("spec.trigger"))
 }
@@ -171,6 +197,14 @@ func isValueInArray(arr []string, key string) bool {
 		}
 	}
 	return false
+}
+
+func isOpenShiftPlatformsSectionSet(o OpenShift) bool {
+	return o.PipelinesAsCode != nil || o.SCC != nil
+}
+
+func isKubernetesPlatformsSectionSet(k Kubernetes) bool {
+	return k.PipelinesAsCode != nil
 }
 
 func verifySCCExists(ctx context.Context, sccName string) error {
