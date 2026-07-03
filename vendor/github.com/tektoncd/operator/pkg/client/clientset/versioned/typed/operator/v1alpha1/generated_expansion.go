@@ -22,6 +22,8 @@ type ManualApprovalGateExpansion interface{}
 
 type OpenShiftPipelinesAsCodeExpansion interface{}
 
+type SyncerServiceExpansion interface{}
+
 type TektonAddonExpansion interface{}
 
 type TektonChainExpansion interface{}
@@ -34,10 +36,14 @@ type TektonHubExpansion interface{}
 
 type TektonInstallerSetExpansion interface{}
 
+type TektonMulticlusterProxyAAEExpansion interface{}
+
 type TektonPipelineExpansion interface{}
 
 type TektonPrunerExpansion interface{}
 
 type TektonResultExpansion interface{}
+
+type TektonSchedulerExpansion interface{}
 
 type TektonTriggerExpansion interface{}
