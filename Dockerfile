@@ -31,14 +31,14 @@ ENTRYPOINT ["/operator"]
 
 LABEL \
     com.redhat.component="openshift-builds-operator" \
-    cpe="cpe:/a:redhat:openshift_builds:1.8::el9" \
+    cpe="cpe:/a:redhat:openshift_builds:1.8::el10" \
     description="Red Hat OpenShift Builds Operator" \
     distribution-scope="public" \
     io.k8s.description="Red Hat OpenShift Builds Operator" \
     io.k8s.display-name="Red Hat OpenShift Builds Operator" \
     io.openshift.tags="builds,operator" \
     maintainer="openshift-builds@redhat.com" \
-    name="openshift-builds/openshift-builds-rhel9-operator" \
+    name="openshift-builds/openshift-builds-rhel10-operator" \
     release="1" \
     summary="Red Hat OpenShift Builds Operator" \
     url="https://github.com/redhat-openshift-builds/operator" \
