@@ -24,7 +24,6 @@ spec:
           context=
           dockerfile=
           image=
-          runtimeStageFrom=
           budArgs=()
           inBuildArgs=false
           noCache="false"
@@ -68,13 +67,6 @@ spec:
               if [ "$1" != "" ]; then
                 budArgs+=(--target "$1")
               fi
-              shift
-            elif [ "${arg}" == "--runtime-stage-from" ]; then
-              inBuildArgs=false
-              inRegistriesBlock=false
-              inRegistriesInsecure=false
-              inRegistriesSearch=false
-              runtimeStageFrom="$1"
               shift
             elif [ "${arg}" == "--no-cache" ]; then
               inBuildArgs=false
@@ -162,14 +154,6 @@ spec:
           EOF
           fi
 
-          if [ -n "${runtimeStageFrom}" ]; then
-            lastFromImage=$(tac "${dockerfile}" | grep -m1 -i -E '^[ ]*FROM' | \
-              sed -n '0,/p/s/^[ ]*from[ ]\+\([^ ]*\)[ ]*\(as.*$\)\{0,1\}$/\1/Ip')
-            if [ -n "${lastFromImage}" ]; then
-              budArgs+=("--build-context" "${lastFromImage}=docker-image://${runtimeStageFrom}")
-            fi
-          fi
-
           if [ "${noCache}" == "true" ]; then
             budArgs+=("--no-cache")
           fi
@@ -208,8 +192,6 @@ spec:
         - $(params.registries-search[*])
         - --target
         - $(params.target)
-        - --runtime-stage-from
-        - $(params.runtime-stage-from)
         - --no-cache
         - $(params.no-cache)
       volumeMounts:
@@ -252,10 +234,6 @@ spec:
       # For details see the "--storage-driver" section of https://github.com/containers/buildah/blob/main/docs/buildah.1.md#options
     - name: target
       description: "Sets the target stage to be built."
-      type: string
-      default: ""
-    - name: runtime-stage-from
-      description: "Image name used to replace the value in the last FROM instruction in the Dockerfile."
       type: string
       default: ""
     - name: no-cache
