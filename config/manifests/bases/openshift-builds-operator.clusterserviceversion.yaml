@@ -95,7 +95,7 @@ spec:
       name: OPENSHIFT_BUILDS_IMAGE_BUNDLER
     - image: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel9@sha256:0a373a255b00b2a088c17bc0176f469b67167e80fa7333f1cfd190267ce58278
       name: OPENSHIFT_BUILDS_WAITER
-    - image: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:29f85fb98703435aefef3a80e9b8cf5d9ca41ba8e501887158a3e6ebf9526ebb
+    - image: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:53d9cbab97655899441f62533a09a5f10fb8bf06fba830c8e458124e607f8153
       name: OPENSHIFT_BUILDS_WEBHOOK
     - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:aa31afb3cf5c7bef162402ac8121283a172132490a92ca74b003055583548a32
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_WEBHOOK
