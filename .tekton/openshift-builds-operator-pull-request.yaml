@@ -58,9 +58,15 @@ spec:
   - name: unit-test-command
     value: make test
   - name: unit-test-revision
-    value: "62314daa6fddc49f2b92bbdc06864eaba4b36c69"
+    value: "101e48ca34e5d0d2353735b6261da82236af1e92"
   - name: enable-sealights
     value: "false"
+  - name: upload-codecov
+    value: "true"
+  - name: codecov-token-secret
+    value: codecov-token
+  - name: codecov-flags
+    value: unit-tests
   pipelineRef:
     params:
     - name: url

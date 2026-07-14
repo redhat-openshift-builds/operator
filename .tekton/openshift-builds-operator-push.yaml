@@ -42,6 +42,18 @@ spec:
     - linux/s390x
   - name: prefetch-input
     value: '{"packages": [{"type": "gomod"}]}'
+  - name: run-unit-test
+    value: "true"
+  - name: unit-test-command
+    value: make test
+  - name: unit-test-revision
+    value: "101e48ca34e5d0d2353735b6261da82236af1e92"
+  - name: upload-codecov
+    value: "true"
+  - name: codecov-token-secret
+    value: codecov-token
+  - name: codecov-flags
+    value: unit-tests
   pipelineRef:
     params:
     - name: url
