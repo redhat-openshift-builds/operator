@@ -26,6 +26,7 @@ spec:
           image=
           budArgs=()
           inBuildArgs=false
+          noCache="false"
           registriesBlock=""
           inRegistriesBlock=false
           registriesInsecure=""
@@ -66,6 +67,13 @@ spec:
               if [ "$1" != "" ]; then
                 budArgs+=(--target "$1")
               fi
+              shift
+            elif [ "${arg}" == "--no-cache" ]; then
+              inBuildArgs=false
+              inRegistriesBlock=false
+              inRegistriesInsecure=false
+              inRegistriesSearch=false
+              noCache="$1"
               shift
             elif [ "${arg}" == "--build-args" ]; then
               inBuildArgs=true
@@ -146,6 +154,10 @@ spec:
           EOF
           fi
 
+          if [ "${noCache}" == "true" ]; then
+            budArgs+=("--no-cache")
+          fi
+
           # Building the image
           echo "[INFO] Building image ${image}"
           buildah --storage-driver=$(params.storage-driver) \
@@ -180,6 +192,8 @@ spec:
         - $(params.registries-search[*])
         - --target
         - $(params.target)
+        - --no-cache
+        - $(params.no-cache)
       volumeMounts:
         - mountPath: /etc/pki/entitlement
           name: etc-pki-entitlement
@@ -222,6 +236,10 @@ spec:
       description: "Sets the target stage to be built."
       type: string
       default: ""
+    - name: no-cache
+      description: "Do not use existing cached images for the container build. Build from the start with a new set of cached layers."
+      type: string
+      default: "false"
   volumes:
     - name: etc-pki-entitlement
       emptyDir: {}
