@@ -28,6 +28,7 @@ spec:
           budArgs=()
           inBuildArgs=false
           noCache="false"
+          squash="false"
           registriesBlock=""
           inRegistriesBlock=false
           registriesInsecure=""
@@ -75,6 +76,13 @@ spec:
               inRegistriesInsecure=false
               inRegistriesSearch=false
               noCache="$1"
+              shift
+            elif [ "${arg}" == "--squash" ]; then
+              inBuildArgs=false
+              inRegistriesBlock=false
+              inRegistriesInsecure=false
+              inRegistriesSearch=false
+              squash="$1"
               shift
             elif [ "${arg}" == "--runtime-stage-from" ]; then
               inBuildArgs=false
@@ -166,6 +174,10 @@ spec:
             budArgs+=("--no-cache")
           fi
 
+          if [ "${squash}" == "true" ]; then
+            budArgs+=("--squash")
+          fi
+
           if [ -n "${runtimeStageFrom}" ]; then
             lastFromImage=$(tac "${dockerfile}" | grep -m1 -i -E '^[ ]*FROM' | \
               sed -n '0,/p/s/^[ ]*from[ ]\+\([^ ]*\)[ ]*\(as.*$\)\{0,1\}$/\1/Ip')
@@ -210,6 +222,8 @@ spec:
         - $(params.target)
         - --no-cache
         - $(params.no-cache)
+        - --squash
+        - $(params.squash)
         - --runtime-stage-from
         - $(params.runtime-stage-from)
       volumeMounts:
@@ -260,6 +274,10 @@ spec:
       default: ""
     - name: no-cache
       description: "Do not use existing cached images for the container build. Build from the start with a new set of cached layers."
+      type: string
+      default: "false"
+    - name: squash
+      description: "Squash all new layers into a single new layer. The value of --squash passed to buildah bud."
       type: string
       default: "false"
   volumes:
