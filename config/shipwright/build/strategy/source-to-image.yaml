@@ -22,6 +22,7 @@ spec:
         - $(build.builder.image)
         - $(params.shp-output-image)
         - --as-dockerfile=/s2i/Dockerfile
+        - --incremental=$(params.incremental)
       volumeMounts:
         - name: s2i
           mountPath: /s2i
@@ -156,6 +157,11 @@ spec:
       defaults:
         - registry.redhat.io
         - quay.io
+    - name: incremental
+      description: "Perform an incremental build by reusing artifacts from a previously built image. Set to 'true' to enable. Maps to BuildConfig spec.strategy.sourceStrategy.incremental."
+      type: string
+      default: "false"
+      # For details see the "--incremental" section of https://github.com/openshift/source-to-image/blob/master/docs/cli.md
     - name: storage-driver
       description: "The storage driver to use, such as 'overlay' or 'vfs'."
       type: string
