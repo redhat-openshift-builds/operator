@@ -25,6 +25,7 @@ spec:
           dockerfile=
           image=
           runtimeStageFrom=
+          pull="missing"
           budArgs=()
           inBuildArgs=false
           noCache="false"
@@ -83,6 +84,13 @@ spec:
               inRegistriesInsecure=false
               inRegistriesSearch=false
               squash="$1"
+              shift
+            elif [ "${arg}" == "--pull" ]; then
+              inBuildArgs=false
+              inRegistriesBlock=false
+              inRegistriesInsecure=false
+              inRegistriesSearch=false
+              pull="$1"
               shift
             elif [ "${arg}" == "--runtime-stage-from" ]; then
               inBuildArgs=false
@@ -178,6 +186,10 @@ spec:
             budArgs+=("--squash")
           fi
 
+          if [ "${pull}" != "missing" ]; then
+            budArgs+=("--pull=${pull}")
+          fi
+
           if [ -n "${runtimeStageFrom}" ]; then
             lastFromImage=$(tac "${dockerfile}" | grep -m1 -i -E '^[ ]*FROM' | \
               sed -n '0,/p/s/^[ ]*from[ ]\+\([^ ]*\)[ ]*\(as.*$\)\{0,1\}$/\1/Ip')
@@ -224,6 +236,8 @@ spec:
         - $(params.no-cache)
         - --squash
         - $(params.squash)
+        - --pull
+        - $(params.pull)
         - --runtime-stage-from
         - $(params.runtime-stage-from)
       volumeMounts:
@@ -280,6 +294,10 @@ spec:
       description: "Squash all new layers into a single new layer. The value of --squash passed to buildah bud."
       type: string
       default: "false"
+    - name: pull
+      description: "Pull image policy. The value of --pull passed to buildah bud. Valid values: always, missing, never, newer."
+      type: string
+      default: "missing"
   volumes:
     - name: etc-pki-entitlement
       emptyDir: {}
