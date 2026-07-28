@@ -22,6 +22,7 @@ spec:
         - $(build.builder.image)
         - $(params.shp-output-image)
         - --as-dockerfile=/s2i/Dockerfile
+        - --scripts-url=$(params.scripts-url)
       volumeMounts:
         - name: s2i
           mountPath: /s2i
@@ -156,6 +157,11 @@ spec:
       defaults:
         - registry.redhat.io
         - quay.io
+    - name: scripts-url
+      description: "URL of custom S2I scripts, overriding the builder image's default scripts. Empty means use the builder image defaults. Maps to BuildConfig spec.strategy.sourceStrategy.scripts."
+      type: string
+      default: ""
+      # For details see the "--scripts-url" section of https://github.com/openshift/source-to-image/blob/master/docs/cli.md
     - name: storage-driver
       description: "The storage driver to use, such as 'overlay' or 'vfs'."
       type: string
