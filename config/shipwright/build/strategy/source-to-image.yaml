@@ -1,5 +1,5 @@
 ---
-apiVersion: shipwright.io/v1alpha1
+apiVersion: shipwright.io/v1beta1
 kind: ClusterBuildStrategy
 metadata:
   name: source-to-image
@@ -10,25 +10,45 @@ spec:
     - name: etc-pki-entitlement
       emptyDir: {}
       overridable: true
-  buildSteps:
+  steps:
     - name: s2i-generate
       image: registry.redhat.io/source-to-image/source-to-image-rhel9@sha256:0e4e2bfcdc07ff0edfdba792acab8afeaf697c8d9048ea3fee0de63ba8678f69
       workingDir: $(params.shp-source-root)
-      command: 
-        - /usr/local/bin/s2i
+      command:
+        - /bin/bash
       args:
-        - build
-        - $(params.shp-source-context)
-        - $(build.builder.image)
-        - $(params.shp-output-image)
-        - --as-dockerfile=/s2i/Dockerfile
+        - -c
+        - |
+          set -euo pipefail
+
+          envArgs=()
+          inEnvArgs=false
+          while [[ $# -gt 0 ]]; do
+            arg="$1"
+            shift
+            if [ "${arg}" == "--env" ]; then
+              inEnvArgs=true
+            elif [ "${inEnvArgs}" == "true" ]; then
+              envArgs+=("-e" "${arg}")
+            fi
+          done
+
+          /usr/local/bin/s2i build \
+            "${envArgs[@]}" \
+            $(params.shp-source-context) \
+            $(params.builder-image) \
+            $(params.shp-output-image) \
+            --as-dockerfile=/s2i/Dockerfile
+        - --
+        - --env
+        - $(params.build-env[*])
       volumeMounts:
         - name: s2i
           mountPath: /s2i
         - name: etc-pki-entitlement
           mountPath: /etc/pki/entitlement
     - name: buildah
-      image: registry.redhat.io/ubi10/buildah@sha256:1ce328d7ffda0eebfc64537146b46e6a5b01b5516ada6820a30621f333bfa350
+      image: registry.redhat.io/ubi9/buildah@sha256:2b1f0c98e7527341df4b3caa7228c53228e5594e75ba38721f21719d84a24282
       workingDir: /s2i
       securityContext:
         capabilities:
@@ -61,7 +81,6 @@ spec:
               image="$1"
               shift
             elif [ "${arg}" == "--target" ]; then
-              inBuildArgs=false
               inRegistriesBlock=false
               inRegistriesInsecure=false
               inRegistriesSearch=false
@@ -142,6 +161,10 @@ spec:
         - name: etc-pki-entitlement
           mountPath: /etc/pki/entitlement
   parameters:
+    - name: build-env
+      description: "Environment variables to set during the build and in the output image. Values must be in the format KEY=VALUE."
+      type: array
+      defaults: []
     - name: registries-block
       description: The registries that need to block pull access.
       type: array
@@ -156,11 +179,13 @@ spec:
       defaults:
         - registry.redhat.io
         - quay.io
+    - name: builder-image
+      description: The builder image.
+      type: string
     - name: storage-driver
       description: "The storage driver to use, such as 'overlay' or 'vfs'."
       type: string
       default: "vfs"
-      # For details see the "--storage-driver" section of https://github.com/containers/buildah/blob/main/docs/buildah.1.md#options
   securityContext:
     runAsUser: 0
     runAsGroup: 0

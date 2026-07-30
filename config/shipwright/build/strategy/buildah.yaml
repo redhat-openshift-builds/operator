@@ -6,7 +6,7 @@ metadata:
 spec:
   steps:
     - name: build-and-push
-      image: registry.redhat.io/ubi10/buildah@sha256:1ce328d7ffda0eebfc64537146b46e6a5b01b5516ada6820a30621f333bfa350
+      image: registry.redhat.io/ubi9/buildah@sha256:2b1f0c98e7527341df4b3caa7228c53228e5594e75ba38721f21719d84a24282
       imagePullPolicy: Always
       workingDir: $(params.shp-source-root)
       securityContext:
@@ -24,12 +24,8 @@ spec:
           context=
           dockerfile=
           image=
-          runtimeStageFrom=
-          pull="missing"
           budArgs=()
           inBuildArgs=false
-          noCache="false"
-          squash="false"
           registriesBlock=""
           inRegistriesBlock=false
           registriesInsecure=""
@@ -70,34 +66,6 @@ spec:
               if [ "$1" != "" ]; then
                 budArgs+=(--target "$1")
               fi
-              shift
-            elif [ "${arg}" == "--no-cache" ]; then
-              inBuildArgs=false
-              inRegistriesBlock=false
-              inRegistriesInsecure=false
-              inRegistriesSearch=false
-              noCache="$1"
-              shift
-            elif [ "${arg}" == "--squash" ]; then
-              inBuildArgs=false
-              inRegistriesBlock=false
-              inRegistriesInsecure=false
-              inRegistriesSearch=false
-              squash="$1"
-              shift
-            elif [ "${arg}" == "--pull" ]; then
-              inBuildArgs=false
-              inRegistriesBlock=false
-              inRegistriesInsecure=false
-              inRegistriesSearch=false
-              pull="$1"
-              shift
-            elif [ "${arg}" == "--runtime-stage-from" ]; then
-              inBuildArgs=false
-              inRegistriesBlock=false
-              inRegistriesInsecure=false
-              inRegistriesSearch=false
-              runtimeStageFrom="$1"
               shift
             elif [ "${arg}" == "--build-args" ]; then
               inBuildArgs=true
@@ -178,26 +146,6 @@ spec:
           EOF
           fi
 
-          if [ "${noCache}" == "true" ]; then
-            budArgs+=("--no-cache")
-          fi
-
-          if [ "${squash}" == "true" ]; then
-            budArgs+=("--squash")
-          fi
-
-          if [ "${pull}" != "missing" ]; then
-            budArgs+=("--pull=${pull}")
-          fi
-
-          if [ -n "${runtimeStageFrom}" ]; then
-            lastFromImage=$(tac "${dockerfile}" | grep -m1 -i -E '^[ ]*FROM' | \
-              sed -n '0,/p/s/^[ ]*from[ ]\+\([^ ]*\)[ ]*\(as.*$\)\{0,1\}$/\1/Ip')
-            if [ -n "${lastFromImage}" ]; then
-              budArgs+=("--build-context" "${lastFromImage}=docker-image://${runtimeStageFrom}")
-            fi
-          fi
-
           # Building the image
           echo "[INFO] Building image ${image}"
           buildah --storage-driver=$(params.storage-driver) \
@@ -232,14 +180,6 @@ spec:
         - $(params.registries-search[*])
         - --target
         - $(params.target)
-        - --no-cache
-        - $(params.no-cache)
-        - --squash
-        - $(params.squash)
-        - --pull
-        - $(params.pull)
-        - --runtime-stage-from
-        - $(params.runtime-stage-from)
       volumeMounts:
         - mountPath: /etc/pki/entitlement
           name: etc-pki-entitlement
@@ -269,10 +209,6 @@ spec:
       defaults:
         - registry.redhat.io
         - quay.io
-    - name: runtime-stage-from
-      description: "Image name used to replace the value in the last FROM instruction in the Dockerfile."
-      type: string
-      default: ""
     - name: dockerfile
       description: The path to the Dockerfile to be used for building the image.
       type: string
@@ -286,18 +222,6 @@ spec:
       description: "Sets the target stage to be built."
       type: string
       default: ""
-    - name: no-cache
-      description: "Do not use existing cached images for the container build. Build from the start with a new set of cached layers."
-      type: string
-      default: "false"
-    - name: squash
-      description: "Squash all new layers into a single new layer. The value of --squash passed to buildah bud."
-      type: string
-      default: "false"
-    - name: pull
-      description: "Pull image policy. The value of --pull passed to buildah bud. Valid values: always, missing, never, newer."
-      type: string
-      default: "missing"
   volumes:
     - name: etc-pki-entitlement
       emptyDir: {}
