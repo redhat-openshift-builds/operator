@@ -33,5 +33,9 @@ var (
 )
 
 var (
+	NetworkPolicyManifestPath = filepath.Join("config", "networkpolicies")
+)
+
+var (
 	CurrentNamespaceName string
 )
