@@ -11,7 +11,7 @@ spec:
       containers:
       - name: kube-rbac-proxy
         securityContext:
-          rootOnlyRootFilesystem: true
+          readOnlyRootFilesystem: true
           allowPrivilegeEscalation: false
           capabilities:
             drop:

@@ -1,8 +1,12 @@
-FROM registry.redhat.io/ubi10/go-toolset@sha256:eb73c7559576087bbebd76ecea4ff98bc6be1b4790489d7f9d798e0cba790815 AS builder
+FROM registry.access.redhat.com/hi/go@sha256:5fc103bed56527348adfac3c035f3402d28546c9818d8340dc5dd5f0e3d486fe AS builder
 
 USER 1001
 
 WORKDIR /opt/app-root/src
+
+ENV HOME=/opt/app-root/src
+ENV GOCACHE=/opt/app-root/src/.cache/go-build
+ENV GOMODCACHE=/opt/app-root/src/.cache/go-mod
 
 # Copy the Go Modules manifests
 COPY --chown=1001:0 go.mod go.mod
@@ -11,13 +15,13 @@ COPY --chown=1001:0 go.sum go.sum
 # Copy the go source
 COPY --chown=1001:0 . .
 
-ENV GOEXPERIMENT=strictfipsruntime
-
 RUN CGO_ENABLED=1 GO111MODULE=on go build -a -mod vendor -tags strictfipsruntime -o operator cmd/main.go
 
-FROM registry.redhat.io/ubi10-minimal@sha256:ceaad73890ea88685eeb1b40a502b7983f2cfac6f1aa10915d1176d51eb90124
+FROM registry.access.redhat.com/hi/core-runtime@sha256:8e597a23a81b65132b7d64d827eb723b035324ec4565ab7aed442540ffbc0841
 
 WORKDIR /
+
+ENV GODEBUG=fips140=on
 
 COPY --from=builder /opt/app-root/src /opt/app-root/src
 COPY --from=builder /opt/app-root/src/operator .
@@ -32,14 +36,14 @@ ENTRYPOINT ["/operator"]
 
 LABEL \
     com.redhat.component="openshift-builds-operator" \
-    cpe="cpe:/a:redhat:openshift_builds:1.8::el9" \
+    cpe="cpe:/a:redhat:openshift_builds:1.8::el10" \
     description="Red Hat OpenShift Builds Operator" \
     distribution-scope="public" \
     io.k8s.description="Red Hat OpenShift Builds Operator" \
     io.k8s.display-name="Red Hat OpenShift Builds Operator" \
     io.openshift.tags="builds,operator" \
     maintainer="openshift-builds@redhat.com" \
-    name="openshift-builds/openshift-builds-rhel9-operator" \
+    name="openshift-builds/openshift-builds-rhel10-operator" \
     release="1" \
     summary="Red Hat OpenShift Builds Operator" \
     url="https://github.com/redhat-openshift-builds/operator" \

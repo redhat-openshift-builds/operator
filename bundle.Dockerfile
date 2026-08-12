@@ -16,7 +16,7 @@ LABEL operators.operatorframework.io.test.config.v1=tests/scorecard/
 LABEL \
     com.redhat.openshift.versions="v4.16-v4.21" \
     com.redhat.component="openshift-builds-operator-bundle" \
-    cpe="cpe:/a:redhat:openshift_builds:1.8::el9" \
+    cpe="cpe:/a:redhat:openshift_builds:1.8::el10" \
     description="Red Hat OpenShift Builds Operator Bundle" \
     distribution-scope="public" \
     io.k8s.description="Red Hat OpenShift Builds Operator Bundle" \
