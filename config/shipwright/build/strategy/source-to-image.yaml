@@ -12,7 +12,7 @@ spec:
       overridable: true
   steps:
     - name: s2i-generate
-      image: registry.redhat.io/source-to-image/source-to-image-rhel9@sha256:0e4e2bfcdc07ff0edfdba792acab8afeaf697c8d9048ea3fee0de63ba8678f69
+      image: registry.redhat.io/source-to-image/source-to-image-rhel9@sha256:798e0e860df8e3ca1ff5f8aa796940d6dbd4b739ccfc35c6f4c9bc046d5f0c12
       workingDir: $(params.shp-source-root)
       command:
         - /bin/bash
@@ -23,18 +23,31 @@ spec:
 
           envArgs=()
           inEnvArgs=false
+          scriptsUrl=
           while [[ $# -gt 0 ]]; do
             arg="$1"
             shift
             if [ "${arg}" == "--env" ]; then
               inEnvArgs=true
+            elif [ "${arg}" == "--scripts-url" ]; then
+              inEnvArgs=false
+              scriptsUrl="$1"
+              shift
             elif [ "${inEnvArgs}" == "true" ]; then
               envArgs+=("-e" "${arg}")
             fi
           done
 
+          s2iArgs=()
+          if [ -n "${scriptsUrl}" ]; then
+            s2iArgs+=("--scripts-url=${scriptsUrl}")
+          fi
+
           /usr/local/bin/s2i build \
             "${envArgs[@]}" \
+            "${s2iArgs[@]}" \
+            --pull-policy=$(params.pull-policy) \
+            --incremental=$(params.incremental) \
             $(params.shp-source-context) \
             $(params.builder-image) \
             $(params.shp-output-image) \
@@ -42,13 +55,15 @@ spec:
         - --
         - --env
         - $(params.build-env[*])
+        - --scripts-url
+        - $(params.scripts-url)
       volumeMounts:
         - name: s2i
           mountPath: /s2i
         - name: etc-pki-entitlement
           mountPath: /etc/pki/entitlement
     - name: buildah
-      image: registry.redhat.io/ubi9/buildah@sha256:2b1f0c98e7527341df4b3caa7228c53228e5594e75ba38721f21719d84a24282
+      image: registry.redhat.io/ubi10/buildah@sha256:48c76ef9635739ad0c33645c2885ab6aa3036dca5883f475b820ac456d6817b6
       workingDir: /s2i
       securityContext:
         capabilities:
@@ -182,6 +197,20 @@ spec:
     - name: builder-image
       description: The builder image.
       type: string
+    - name: scripts-url
+      description: "URL of custom S2I scripts, overriding the builder image's default scripts. Empty means use the builder image defaults. Maps to BuildConfig spec.strategy.sourceStrategy.scripts."
+      type: string
+      default: ""
+      # For details see the "--scripts-url" section of https://github.com/openshift/source-to-image/blob/master/docs/cli.md
+    - name: pull-policy
+      description: "Pull policy for the builder image. Valid values: always, never, if-not-present."
+      type: string
+      default: "if-not-present"
+    - name: incremental
+      description: "Perform an incremental build by reusing artifacts from a previously built image. Set to 'true' to enable. Maps to BuildConfig spec.strategy.sourceStrategy.incremental."
+      type: string
+      default: "false"
+      # For details see the "--incremental" section of https://github.com/openshift/source-to-image/blob/master/docs/cli.md
     - name: storage-driver
       description: "The storage driver to use, such as 'overlay' or 'vfs'."
       type: string

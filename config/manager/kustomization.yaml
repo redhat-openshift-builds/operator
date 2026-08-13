@@ -5,4 +5,4 @@ kind: Kustomization
 images:
 - digest: sha256:e731e18cde9a2b7e0d1e07d35b8564e0de000b1d70e5d3f5c91a0a8509fd84f6
   name: operator
-  newName: registry.redhat.io/openshift-builds/openshift-builds-rhel9-operator
+  newName: registry.redhat.io/openshift-builds/openshift-builds-rhel10-operator

@@ -31,15 +31,15 @@ declare -A SNAPSHOT_IMAGE_NAME=()
 
 # Environment variables for image names (with defaults matching current CSV at this time)
 # These can be overridden if image names change in the future
-IMAGE_OPERATOR="${IMAGE_OPERATOR:-openshift-builds-rhel9-operator}"
-IMAGE_CONTROLLER="${IMAGE_CONTROLLER:-openshift-builds-controller-rhel9}"
-IMAGE_GIT_CLONER="${IMAGE_GIT_CLONER:-openshift-builds-git-cloner-rhel9}"
-IMAGE_PROCESSING="${IMAGE_PROCESSING:-openshift-builds-image-processing-rhel9}"
-IMAGE_BUNDLER="${IMAGE_BUNDLER:-openshift-builds-image-bundler-rhel9}"
-IMAGE_WAITERS="${IMAGE_WAITERS:-openshift-builds-waiters-rhel9}"
-IMAGE_WEBHOOK="${IMAGE_WEBHOOK:-openshift-builds-webhook-rhel9}"
-IMAGE_SHARED_RESOURCE_WEBHOOK="${IMAGE_SHARED_RESOURCE_WEBHOOK:-openshift-builds-shared-resource-webhook-rhel9}"
-IMAGE_SHARED_RESOURCE="${IMAGE_SHARED_RESOURCE:-openshift-builds-shared-resource-rhel9}"
+IMAGE_OPERATOR="${IMAGE_OPERATOR:-openshift-builds-rhel10-operator}"
+IMAGE_CONTROLLER="${IMAGE_CONTROLLER:-openshift-builds-controller-rhel10}"
+IMAGE_GIT_CLONER="${IMAGE_GIT_CLONER:-openshift-builds-git-cloner-rhel10}"
+IMAGE_PROCESSING="${IMAGE_PROCESSING:-openshift-builds-image-processing-rhel10}"
+IMAGE_BUNDLER="${IMAGE_BUNDLER:-openshift-builds-image-bundler-rhel10}"
+IMAGE_WAITERS="${IMAGE_WAITERS:-openshift-builds-waiters-rhel10}"
+IMAGE_WEBHOOK="${IMAGE_WEBHOOK:-openshift-builds-webhook-rhel10}"
+IMAGE_SHARED_RESOURCE_WEBHOOK="${IMAGE_SHARED_RESOURCE_WEBHOOK:-openshift-builds-shared-resource-webhook-rhel10}"
+IMAGE_SHARED_RESOURCE="${IMAGE_SHARED_RESOURCE:-openshift-builds-shared-resource-rhel10}"
 
 # Define a mapping from internal names to manager.yaml environment variable names
 # This is used to ensure correct updates regardless of how digests are fetched
@@ -62,7 +62,7 @@ done
 OPTIND=1
 
 # Define the mapping between internal names
-# These names must match the actual image names in the CSV file (with -rhel9 suffix)
+# These names must match the actual image names in the CSV file (with -rhel10 suffix)
 declare -A IMAGE_MAPPING=(
     ["operator"]="$IMAGE_OPERATOR"
     ["controller"]="$IMAGE_CONTROLLER"
@@ -235,11 +235,11 @@ function fetch_digests_from_json_snapshot {
             local current_digest=$(echo "$full_container_image" | awk -F'@' '{print $2}')
             # Save the image name (without digest)
             local image_name_no_digest=$(echo "$full_container_image" | awk -F'@' '{print $1}')
-            
+
             if [ -n "$image_name_no_digest" ]; then
                 SNAPSHOT_IMAGE_NAME[$internal_name]="$image_name_no_digest"
             fi
-            
+
             if [ -n "$current_digest" ]; then
                 local digest_var_name=$(echo "$internal_name" | tr '[:lower:]-' '[:upper:]_')_DIGEST
                 eval "${digest_var_name}='${current_digest}'"
@@ -255,7 +255,7 @@ function fetch_digests_from_json_snapshot {
             echo "    -> Warning: Could not find component for '$internal_name' (normalized: $component_name_in_snapshot) in the JSON. Skipping."
         fi
     done
-    
+
     echo "Digest fetching from SNAPSHOT JSON complete."
     if ! $found_any_digest; then
         echo "Error: No digests could be fetched from the SNAPSHOT JSON. Please check the content and component names."
@@ -371,7 +371,7 @@ function update_generic_k8s_resource_images {
                 full_image_path="${SNAPSHOT_IMAGE_NAME[$internal_image_name]}"
             fi
             # Only replace image lines that contain the target image name pattern
-            # Match images ending with the image name (e.g., shared-resource-rhel9) before @sha256
+            # Match images ending with the image name (e.g., shared-resource-rhel10) before @sha256
             sed "${SED_INPLACE[@]}" -E "s#(image: )[^@]*${image_path}@sha256:[a-f0-9]+#\\1${full_image_path}@${current_digest}#g" "$resource_file"
             echo "  - Updated ${internal_image_name} image and digest in $resource_file to ${full_image_path}@${current_digest}"
         else

@@ -23,7 +23,7 @@ spec:
       serviceAccountName: csi-driver-shared-resource
       containers:
         - name: node-driver-registrar
-          image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar-rhel9@sha256:8bed04198de197162eaf332890e40100c5a7061bf9f728be09f2004671f9632c
+          image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar-rhel10@sha256:8bed04198de197162eaf332890e40100c5a7061bf9f728be09f2004671f9632c
           args:
             - --v=5
             - --csi-address=/csi/csi.sock
@@ -53,7 +53,7 @@ spec:
               memory: 20Mi
           terminationMessagePolicy: FallbackToLogsOnError
         - name: hostpath
-          image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:2e2d32054e40e651e2057595a25cd54ac7525fd074374b385bf053d7eece7c3e
+          image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel10@sha256:2e2d32054e40e651e2057595a25cd54ac7525fd074374b385bf053d7eece7c3e
           # for development purposes; eventually switch to IfNotPresent
           imagePullPolicy: IfNotPresent
           workingDir: /run/csi-data-dir
