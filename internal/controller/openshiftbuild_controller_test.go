@@ -28,6 +28,7 @@ import (
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 
+	networkingv1 "k8s.io/api/networking/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 
 	"github.com/redhat-openshift-builds/operator/internal/common"
@@ -119,6 +120,39 @@ var _ = Describe("OpenShiftBuild controller", Label("integration", "openshiftbui
 			}).WithContext(ctx).Should(Succeed(), "deploy shared resources SAR Role")
 
 		}, SpecTimeout(1*time.Minute))
+
+		It("deploys NetworkPolicy resources in openshift-builds namespace", Label("networkpolicy"), func(ctx SpecContext) {
+			Eventually(func() int {
+				netpolList := &networkingv1.NetworkPolicyList{}
+				if err := k8sClient.List(ctx, netpolList, client.InNamespace(common.OpenShiftBuildNamespaceName)); err != nil {
+					return 0
+				}
+				return len(netpolList.Items)
+			}).WithContext(ctx).Should(Equal(5), "all 5 NetworkPolicies should be created by the reconciler")
+
+			netpolList := &networkingv1.NetworkPolicyList{}
+			Expect(k8sClient.List(ctx, netpolList, client.InNamespace(common.OpenShiftBuildNamespaceName))).To(Succeed())
+
+			names := make([]string, len(netpolList.Items))
+			for i, item := range netpolList.Items {
+				names[i] = item.Name
+			}
+			Expect(names).To(ContainElements(
+				"default-deny-ingress",
+				"csidriver-webhook-ingress",
+				"shipwright-webhook-ingress",
+				"monitoring-metrics-ingress-csi",
+				"monitoring-metrics-ingress-shipwright",
+			))
+
+			for _, item := range netpolList.Items {
+				ownerRefs := item.GetOwnerReferences()
+				Expect(ownerRefs).NotTo(BeEmpty(),
+					"NetworkPolicy %s should have owner reference", item.Name)
+				Expect(ownerRefs[0].Kind).To(Equal("OpenShiftBuild"))
+			}
+		}, SpecTimeout(1*time.Minute))
+
 	})
 })
 
