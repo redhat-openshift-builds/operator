@@ -36,7 +36,7 @@ metadata:
     categories: Developer Tools, Integration & Delivery
     certified: "true"
     containerImage: registry.redhat.io/openshift-builds/openshift-builds-rhel10-operator
-    createdAt: "2026-08-13T14:08:48Z"
+    createdAt: "2026-08-17T08:34:42Z"
     description: Builds for Red Hat OpenShift is a framework for building container images on Kubernetes.
     features.operators.openshift.io/cnf: "false"
     features.operators.openshift.io/cni: "false"
@@ -277,14 +277,14 @@ spec:
                 - namespaces
                 - services
               verbs:
-                - '*'
+                - "*"
             - apiGroups:
                 - admissionregistration.k8s.io
                 - admissionregistration.k8s.io/v1beta1
               resources:
                 - validatingwebhookconfigurations
               verbs:
-                - '*'
+                - "*"
             - apiGroups:
                 - ""
               resources:
@@ -857,7 +857,7 @@ spec:
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_WEBHOOK
     - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel10@sha256:2e2d32054e40e651e2057595a25cd54ac7525fd074374b385bf053d7eece7c3e
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE
-    - image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar-rhel10@sha256:8bed04198de197162eaf332890e40100c5a7061bf9f728be09f2004671f9632c
+    - image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar-rhel9@sha256:8bed04198de197162eaf332890e40100c5a7061bf9f728be09f2004671f9632c
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_NODE_REGISTRAR
     - image: registry.redhat.io/openshift4/ose-kube-rbac-proxy-rhel9@sha256:08cc0aca059d030e9ebd108adcc60aa6319d64199d4c433333d389ce6c01e637
       name: OPENSHIFT_BUILDS_KUBE_RBAC_PROXY
