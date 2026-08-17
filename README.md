@@ -18,6 +18,15 @@ OpenShift Builds operator deploys and manages the following components
 - kubectl version v1.11.3+.
 - Access to a Kubernetes v1.11.3+ cluster.
 - **OpenShift Pipelines operator must be installed before installing this operator**
+### Regenerate bundle after images or version update
+Find whatever is the latest operator image in `operator.clusterserviceversion.yaml`. And pass that as IMAGE.
+
+For example:
+
+```sh
+make bundle IMG="registry.redhat.io/openshift-builds/openshift-builds-rhel10-operator@sha256:e731e18cde9a2b7e0d1e07d35b8564e0de000b1d70e5d3f5c91a0a8509fd84f6"
+```
+This will ensure that the bundle is correctly regenerated.
 
 ### Deploy Operator (standalone)
 
