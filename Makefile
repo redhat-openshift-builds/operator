@@ -353,7 +353,9 @@ catalog-fbc-build: opm ## Build a file-based OLM catalog image.
 	rm -rf _output
 	mkdir -p _output/catalog
 	$(OPM) generate dockerfile _output/catalog
-	cp -r config/catalog _output/
+	cp config/catalog/operator.yaml _output/catalog/
+	@printf -- '---\nschema: olm.channel\npackage: openshift-builds-operator\nname: latest\nentries:\n  - name: openshift-builds-operator.v$(VERSION)\n' \
+		> _output/catalog/latest-channel.yaml
 	$(OPM) render $(BUNDLE_IMG) --output yaml > _output/catalog/openshift-builds-latest.yaml
 	$(OPM) validate _output/catalog
 	cd _output && $(CONTAINER_TOOL) build -f catalog.Dockerfile -t $(CATALOG_IMG) .
