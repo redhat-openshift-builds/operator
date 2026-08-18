@@ -1,5 +1,5 @@
 /*
-Copyright 2019 The Kubernetes Authors.
+Copyright The Kubernetes Authors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -14,5 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Package applyconfiguration generates types for constructing declarative apply configurations.
-package applyconfiguration
+package markers
+
+import (
+	"sigs.k8s.io/controller-tools/pkg/loader"
+	"sigs.k8s.io/controller-tools/pkg/markers"
+)
+
+// SchemaContext carries contextual information passed to
+// SchemaMarker.ApplyToSchema implementations that need more than the
+// schema itself (for example, to inspect package AST or type info).
+type SchemaContext struct {
+	Package  *loader.Package
+	TypeInfo *markers.TypeInfo
+}
