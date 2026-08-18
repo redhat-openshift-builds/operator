@@ -2,7 +2,7 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
   annotations:
-    alm-examples: "[]"
+    alm-examples: '[]'
     capabilities: Full Lifecycle
     categories: Developer Tools, Integration & Delivery
     certified: "true"
@@ -85,7 +85,7 @@ spec:
     name: Red Hat
     url: https://www.redhat.com
   relatedImages:
-    - image: registry.redhat.io/openshift-builds/openshift-builds-rhel10-operator@sha256:e731e18cde9a2b7e0d1e07d35b8564e0de000b1d70e5d3f5c91a0a8509fd84f6
+    - image: registry.redhat.io/openshift-builds/openshift-builds-rhel10-operator@sha256:6200dce8df3521c6f85ed5f0606853f028d191141230d475cb649911391157e2
       name: OPENSHIFT_BUILDS_OPERATOR
     - image: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel10@sha256:751d7c88e304681972b23d8443134850007cebc6db643858166d345670a5714e
       name: OPENSHIFT_BUILDS_CONTROLLER
