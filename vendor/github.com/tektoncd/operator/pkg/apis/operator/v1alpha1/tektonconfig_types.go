@@ -29,6 +29,12 @@ import (
 // +genreconciler:krshapedlogic=false
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +genclient:nonNamespaced
+// +kubebuilder:object:root=true
+// +kubebuilder:resource:scope=Cluster
+// +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="Version",type=string,JSONPath=`.status.version`
+// +kubebuilder:printcolumn:name="Ready",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].status`
+// +kubebuilder:printcolumn:name="Reason",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].message`
 type TektonConfig struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -91,7 +97,10 @@ type TektonConfigSpec struct {
 	Pruner Prune `json:"pruner,omitempty"`
 	// New EventBasedPruner which provides more granular control over TaskRun and PipelineRuns
 	TektonPruner Pruner `json:"tektonpruner,omitempty"`
-	CommonSpec   `json:",inline"`
+	// To enable Pipeline Scheduling on Single Cluster or Multiple Clusters
+	// +optional
+	Scheduler  Scheduler `json:"scheduler,omitempty"`
+	CommonSpec `json:",inline"`
 	// Addon holds the addons config
 	// +optional
 	Addon Addon `json:"addon,omitempty"`
@@ -113,6 +122,9 @@ type TektonConfigSpec struct {
 	// Dashboard holds the customizable options for dashboards component
 	// +optional
 	Dashboard Dashboard `json:"dashboard,omitempty"`
+	// MulticlusterProxyAAE holds the customizable options for the multicluster-proxy-aae component
+	// +optional
+	MulticlusterProxyAAE MulticlusterProxyAAEOptions `json:"multiclusterProxyAAE,omitempty"`
 	// Params is the list of params passed for all platforms
 	// +optional
 	Params []Param `json:"params,omitempty"`
@@ -122,6 +134,23 @@ type TektonConfigSpec struct {
 	// holds target namespace metadata
 	// +optional
 	TargetNamespaceMetadata *NamespaceMetadata `json:"targetNamespaceMetadata,omitempty"`
+	// NetworkPolicy configures NetworkPolicy resources for the operand namespace.
+	// This field is propagated to TektonPipeline, TektonTrigger, TektonChain,
+	// TektonPruner, TektonResult, Pipelines-as-Code, and MultiCluster components
+	// (TektonScheduler, TektonMulticlusterProxyAAE, SyncerService).
+	// Other components (Dashboard) do not yet act on this field.
+	// +optional
+	NetworkPolicy NetworkPolicyConfig `json:"networkPolicy,omitempty"`
+}
+
+// PipelinesAsCodeForCurrentPlatform returns the PipelinesAsCode block for the operator build
+// (OpenShift vs Kubernetes, see PLATFORM env). TektonConfig.Validate rejects using the other
+// platform's spec.platforms subtree.
+func (s *TektonConfigSpec) PipelinesAsCodeForCurrentPlatform() *PipelinesAsCode {
+	if IsOpenShiftPlatform() {
+		return s.Platforms.OpenShift.PipelinesAsCode
+	}
+	return s.Platforms.Kubernetes.PipelinesAsCode
 }
 
 // TektonConfigStatus defines the observed state of TektonConfig
@@ -142,31 +171,32 @@ type TektonConfigStatus struct {
 }
 
 func (in *TektonConfigStatus) MarkInstallerSetReady() {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (in *TektonConfigStatus) MarkInstallerSetNotReady(s string) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (in *TektonConfigStatus) MarkInstallerSetAvailable() {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (in *TektonConfigStatus) MarkPreReconcilerFailed(s string) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 func (in *TektonConfigStatus) MarkPostReconcilerFailed(s string) {
-	//TODO implement me
+	// TODO implement me
 	panic("implement me")
 }
 
 // TektonConfigList contains a list of TektonConfig
+// +kubebuilder:object:root=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type TektonConfigList struct {
 	metav1.TypeMeta `json:",inline"`
@@ -186,4 +216,16 @@ type Platforms struct {
 	// OpenShift allows configuring openshift specific components and configurations
 	// +optional
 	OpenShift OpenShift `json:"openshift,omitempty"`
+	// Kubernetes allows configuring kubernetes specific components and configurations
+	// +optional
+	Kubernetes Kubernetes `json:"kubernetes,omitempty"`
+}
+
+type Hub struct {
+	// Params is the list of params passed for Hub customization
+	// +optional
+	Params []Param `json:"params,omitempty"`
+	// options holds additions fields and these fields will be updated on the manifests
+	// +optional
+	Options AdditionalOptions `json:"options,omitempty"`
 }
