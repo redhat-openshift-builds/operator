@@ -27,4 +27,7 @@ go.work
 *.swo
 *~
 
+# Build artifacts
 _output
+_test
+_temp
