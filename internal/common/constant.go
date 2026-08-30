@@ -19,6 +19,7 @@ const (
 
 var (
 	ShipwrightBuildManifestPath         = filepath.Join("config", "shipwright", "build", "release")
+	ShipwrightBuildRBACPath             = filepath.Join("config", "shipwright", "build", "rbac")
 	ShipwrightBuildStrategyManifestPath = filepath.Join("config", "shipwright", "build", "strategy")
 	ShipwrightBuildCRDNames             = []string{
 		"builds.shipwright.io",

@@ -16,6 +16,3 @@ package controller
 //+kubebuilder:rbac:groups=policy,resources=poddisruptionbudgets,verbs=get;list;create;update;delete;watch
 //+kubebuilder:rbac:groups=admissionregistration.k8s.io,resources=validatingwebhookconfigurations,verbs=get;list;create;update;delete;watch
 //+kubebuilder:rbac:groups=monitoring.coreos.com,resources=servicemonitors,verbs=get;list;create;update;delete;watch
-//+kubebuilder:rbac:groups=sharedresource.openshift.io,resources=sharedconfigmaps;sharedsecrets,verbs=get;list;watch
-//+kubebuilder:rbac:groups=networking.k8s.io,resources=networkpolicies,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=apiextensions.k8s.io,resources=customresourcedefinitions,resourceNames=sharedconfigmaps.sharedresource.openshift.io;sharedsecrets.sharedresource.openshift.io,verbs=get;list;watch;create;update;delete;patch
