@@ -84,10 +84,10 @@ require (
 	github.com/openshift/apiserver-library-go v0.0.0-20260422143241-5ac13825313c // indirect
 	github.com/openshift/client-go v0.0.0-20260622130833-df412d4d283e // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
-	github.com/prometheus/client_golang v1.23.2 // indirect
+	github.com/prometheus/client_golang v1.24.1 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.70.1 // indirect
-	github.com/prometheus/procfs v0.21.0 // indirect
+	github.com/prometheus/procfs v0.21.1 // indirect
 	github.com/prometheus/statsd_exporter v0.30.0 // indirect
 	github.com/sergi/go-diff v1.4.0 // indirect
 	github.com/spf13/afero v1.15.0 // indirect
