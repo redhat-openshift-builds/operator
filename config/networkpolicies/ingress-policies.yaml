@@ -21,11 +21,7 @@ spec:
   policyTypes:
   - Ingress
   ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: openshift-kube-apiserver
-    ports:
+  - ports:
     - protocol: TCP
       port: 8443
 ---
@@ -41,11 +37,7 @@ spec:
   policyTypes:
   - Ingress
   ingress:
-  - from:
-    - namespaceSelector:
-        matchLabels:
-          kubernetes.io/metadata.name: openshift-kube-apiserver
-    ports:
+  - ports:
     - protocol: TCP
       port: 8443
 ---
