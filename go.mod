@@ -9,7 +9,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.32.1
 	github.com/onsi/gomega v1.42.1
 	github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3
-	github.com/shipwright-io/build v0.19.4
+	github.com/shipwright-io/build v0.20.14
 	github.com/shipwright-io/operator v0.19.0
 	github.com/tektoncd/operator v0.77.0
 	k8s.io/api v0.36.0
