@@ -83,7 +83,11 @@ var defaultQuantiles = []MetricObjective{
 func (m *MetricMapper) InitFromYAMLString(fileContents string) error {
 	var n MetricMapper
 
-	if err := yaml.Unmarshal([]byte(fileContents), &n); err != nil {
+	if m.Logger == nil {
+		m.Logger = promslog.NewNopLogger()
+	}
+
+	if err := yaml.UnmarshalStrict([]byte(fileContents), &n); err != nil {
 		return err
 	}
 
@@ -172,37 +176,12 @@ func (m *MetricMapper) InitFromYAMLString(fileContents string) error {
 			currentMapping.ObserverType = n.Defaults.ObserverType
 		}
 
-		if currentMapping.LegacyQuantiles != nil &&
-			(currentMapping.SummaryOptions == nil || currentMapping.SummaryOptions.Quantiles != nil) {
-			m.Logger.Warn("using the top level quantiles is deprecated.  Please use quantiles in the summary_options hierarchy")
-		}
-
-		if currentMapping.LegacyBuckets != nil &&
-			(currentMapping.HistogramOptions == nil || currentMapping.HistogramOptions.Buckets != nil) {
-			m.Logger.Warn("using the top level buckets is deprecated.  Please use buckets in the histogram_options hierarchy")
-		}
-
-		if currentMapping.SummaryOptions != nil &&
-			currentMapping.LegacyQuantiles != nil &&
-			currentMapping.SummaryOptions.Quantiles != nil {
-			return fmt.Errorf("cannot use quantiles in both the top level and summary options at the same time in %s", currentMapping.Match)
-		}
-
-		if currentMapping.HistogramOptions != nil &&
-			currentMapping.LegacyBuckets != nil &&
-			currentMapping.HistogramOptions.Buckets != nil {
-			return fmt.Errorf("cannot use buckets in both the top level and histogram options at the same time in %s", currentMapping.Match)
-		}
-
 		if currentMapping.ObserverType == ObserverTypeHistogram {
 			if currentMapping.SummaryOptions != nil {
 				return fmt.Errorf("cannot use histogram observer and summary options at the same time")
 			}
 			if currentMapping.HistogramOptions == nil {
 				currentMapping.HistogramOptions = &HistogramOptions{}
-			}
-			if len(currentMapping.LegacyBuckets) != 0 {
-				currentMapping.HistogramOptions.Buckets = currentMapping.LegacyBuckets
 			}
 			if len(currentMapping.HistogramOptions.Buckets) == 0 {
 				currentMapping.HistogramOptions.Buckets = n.Defaults.HistogramOptions.Buckets
@@ -215,9 +194,6 @@ func (m *MetricMapper) InitFromYAMLString(fileContents string) error {
 			}
 			if currentMapping.SummaryOptions == nil {
 				currentMapping.SummaryOptions = &SummaryOptions{}
-			}
-			if len(currentMapping.LegacyQuantiles) != 0 {
-				currentMapping.SummaryOptions.Quantiles = currentMapping.LegacyQuantiles
 			}
 			if len(currentMapping.SummaryOptions.Quantiles) == 0 {
 				currentMapping.SummaryOptions.Quantiles = n.Defaults.SummaryOptions.Quantiles
@@ -240,10 +216,6 @@ func (m *MetricMapper) InitFromYAMLString(fileContents string) error {
 
 	m.mutex.Lock()
 	defer m.mutex.Unlock()
-
-	if m.Logger == nil {
-		m.Logger = promslog.NewNopLogger()
-	}
 
 	m.Defaults = n.Defaults
 	m.Mappings = n.Mappings
@@ -310,11 +282,11 @@ func (m *MetricMapper) GetMapping(statsdMetric string, statsdMetricType MetricTy
 		if finalState != nil && finalState.Result != nil {
 			v := finalState.Result.(*MetricMapping)
 			result := copyMetricMapping(v)
-			result.Name = result.nameFormatter.Format(captures)
+			result.Name = result.nameFormatter.Format(statsdMetric, captures)
 
 			labels := prometheus.Labels{}
 			for index, formatter := range result.labelFormatters {
-				labels[result.labelKeys[index]] = formatter.Format(captures)
+				labels[result.labelKeys[index]] = formatter.Format(statsdMetric, captures)
 			}
 
 			r := MetricMapperCacheResult{
