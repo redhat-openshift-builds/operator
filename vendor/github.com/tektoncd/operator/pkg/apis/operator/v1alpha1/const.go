@@ -38,9 +38,7 @@ const (
 	ResolverTasks          = "resolverTasks"
 	ResolverStepActions    = "resolverStepActions"
 
-	// Hub Params
-	EnableDevconsoleIntegrationParam = "enable-devconsole-integration"
-
+	PlatformDataHashKey             = "operator.tekton.dev/platform-data-hash"
 	LastAppliedHashKey              = "operator.tekton.dev/last-applied-hash"
 	CreatedByKey                    = "operator.tekton.dev/created-by"
 	ReleaseVersionKey               = "operator.tekton.dev/release-version"
@@ -50,7 +48,6 @@ const (
 	InstallerSetType                = "operator.tekton.dev/type"
 	InstallerSetInstallType         = "operator.tekton.dev/installType"
 	LabelOperandName                = "operator.tekton.dev/operand-name"
-	DbSecretHash                    = "operator.tekton.dev/db-secret-hash"
 	DeploymentSpecHashValueLabelKey = "operator.tekton.dev/deployment-spec-applied-hash" // used to recreate pods, if there is a change detected in deployments spec
 	PreUpgradeVersionKey            = "operator.tekton.dev/pre-upgrade-version"          // used to monitor and execute pre upgrade functions
 	PostUpgradeVersionKey           = "operator.tekton.dev/post-upgrade-version"         // used to monitor and execute post upgrade functions
@@ -119,29 +116,27 @@ var (
 		ResolverTasks:          defaultParamValue,
 		ResolverStepActions:    defaultParamValue,
 	}
-
-	HubParams = map[string]ParamValue{
-		EnableDevconsoleIntegrationParam: defaultParamValue,
-	}
 )
 
 const (
-	ConfigResourceName           = "config"
-	PipelineResourceName         = "pipeline"
-	OperandTektoncdPipeline      = "tektoncd-pipelines"
-	TriggerResourceName          = "trigger"
-	OperandTektoncdTriggers      = "tektoncd-triggers"
-	DashboardResourceName        = "dashboard"
-	OperandTektoncdDashboard     = "tektoncd-dashboard"
-	AddonResourceName            = "addon"
-	ResultResourceName           = "result"
-	OperandTektoncdResults       = "tektoncd-results"
-	HubResourceName              = "hub"
-	OperandTektoncdHub           = "tektoncd-hub"
-	ChainResourceName            = "chain"
-	OperandTektoncdChains        = "tektoncd-chains"
-	OpenShiftPipelinesAsCodeName = "pipelines-as-code"
-	ManualApprovalGates          = "manual-approval-gate"
-	PrunerResourceName           = "tektoncd-pruner"
-	TektonPrunerResourceName     = "pruner"
+	ConfigResourceName               = "config"
+	PipelineResourceName             = "pipeline"
+	OperandTektoncdPipeline          = "tektoncd-pipelines"
+	TriggerResourceName              = "trigger"
+	OperandTektoncdTriggers          = "tektoncd-triggers"
+	DashboardResourceName            = "dashboard"
+	OperandTektoncdDashboard         = "tektoncd-dashboard"
+	AddonResourceName                = "addon"
+	ResultResourceName               = "result"
+	OperandTektoncdResults           = "tektoncd-results"
+	ChainResourceName                = "chain"
+	OperandTektoncdChains            = "tektoncd-chains"
+	OpenShiftPipelinesAsCodeName     = "pipelines-as-code"
+	ManualApprovalGates              = "manual-approval-gate"
+	PrunerResourceName               = "tektoncd-pruner"
+	TektonPrunerResourceName         = "pruner"
+	TektonSchedulerResourceName      = "scheduler"
+	MultiClusterProxyAAEResourceName = "multicluster-proxy-aae"
+	SyncerServiceResourceName        = "syncer-service"
+	OperandSyncerService             = "syncer-service"
 )

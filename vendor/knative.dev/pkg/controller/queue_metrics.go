@@ -88,12 +88,14 @@ func (m *queueMetrics) get(item any) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	m.depth.Dec()
-	m.processingStartTimes[item] = m.clock.Now()
-
 	if startTime, exists := m.addTimes[item]; exists {
+		m.depth.Dec()
 		m.latency.Observe(m.sinceInSeconds(startTime))
 		delete(m.addTimes, item)
+	}
+
+	if _, exists := m.processingStartTimes[item]; !exists {
+		m.processingStartTimes[item] = m.clock.Now()
 	}
 }
 
@@ -119,6 +121,10 @@ func (m *queueMetrics) updateUnfinishedWork() {
 	// doesn't seem to have non-hacky ways to reset the summary metrics.
 	var total float64
 	var oldest float64
+
+	m.mu.Lock()
+	defer m.mu.Unlock()
+
 	for _, t := range m.processingStartTimes {
 		age := m.sinceInSeconds(t)
 		total += age
