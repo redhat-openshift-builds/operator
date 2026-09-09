@@ -25,10 +25,9 @@ import (
 
 const (
 	// openshift specific
-	enableMetricsKey                         = "enableMetrics"
-	enableMetricsDefaultValue                = "true"
-	openshiftDefaultDisableAffinityAssistant = true
-	ospDefaultSA                             = "pipeline"
+	enableMetricsKey          = "enableMetrics"
+	enableMetricsDefaultValue = "true"
+	ospDefaultSA              = "pipeline"
 )
 
 func (tp *TektonPipeline) SetDefaults(ctx context.Context) {
@@ -58,6 +57,8 @@ func (p *Pipeline) setDefaults() {
 		// EnableCustomTask is always enable
 		p.EnableCustomTasks = ptr.Bool(true)
 	}
+	// Deprecated: send-cloudevents-for-runs is deprecated upstream (pipeline v1.12.0).
+	// Default is now true. Will be removed in a future operator release.
 	if p.SendCloudEventsForRuns == nil {
 		p.SendCloudEventsForRuns = ptr.Bool(config.DefaultSendCloudEventsForRuns)
 	}
@@ -79,6 +80,10 @@ func (p *Pipeline) setDefaults() {
 
 	// Deprecated: set to nil, remove in further release
 	p.ScopeWhenExpressionsToTask = nil
+
+	// Deprecated: disable-affinity-assistant is removed from pipeline component
+	// set to nil, remove in release-v0.80.x
+	p.DisableAffinityAssistant = nil
 
 	if p.EnforceNonfalsifiability == "" {
 		p.EnforceNonfalsifiability = config.DefaultEnforceNonfalsifiability
@@ -168,10 +173,6 @@ func (p *Pipeline) setDefaults() {
 func (p *Pipeline) openshiftDefaulting() {
 	if p.DefaultServiceAccount == "" {
 		p.DefaultServiceAccount = ospDefaultSA
-	}
-
-	if p.DisableAffinityAssistant == nil {
-		p.DisableAffinityAssistant = ptr.Bool(openshiftDefaultDisableAffinityAssistant)
 	}
 
 	// Add params with default values if not defined by user
