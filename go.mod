@@ -12,8 +12,8 @@ require (
 	github.com/shipwright-io/build v0.19.4
 	github.com/shipwright-io/operator v0.19.0
 	github.com/tektoncd/operator v0.77.0
-	k8s.io/api v0.36.2
-	k8s.io/apiextensions-apiserver v0.36.2
+	k8s.io/api v0.37.0
+	k8s.io/apiextensions-apiserver v0.37.0
 	k8s.io/apimachinery v0.37.0
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3
@@ -125,7 +125,7 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	k8s.io/code-generator v0.36.2 // indirect
+	k8s.io/code-generator v0.37.0 // indirect
 	k8s.io/gengo/v2 v2.0.0-20260408192533-25e2208e0dc3 // indirect
 	k8s.io/klog/v2 v2.140.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect
@@ -139,9 +139,9 @@ require (
 )
 
 replace (
-	k8s.io/api => k8s.io/api v0.34.4
-	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.34.4
-	k8s.io/apimachinery => k8s.io/apimachinery v0.34.4
+	k8s.io/api => k8s.io/api v0.37.0
+	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.37.0
+	k8s.io/apimachinery => k8s.io/apimachinery v0.37.0
 	k8s.io/client-go => k8s.io/client-go v0.34.4
 )
 
