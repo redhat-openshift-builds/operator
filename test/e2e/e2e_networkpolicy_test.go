@@ -118,14 +118,13 @@ var _ = Describe("NetworkPolicy enforcement test", Ordered, Label("e2e"), Label(
 			Expect(np.Spec.PolicyTypes).To(ContainElement(networkingv1.PolicyTypeIngress))
 		})
 
-		It("should restrict webhook ingress to kube-apiserver namespace on port 8443", func(ctx SpecContext) {
+		It("should allow webhook ingress from any source on port 8443", func(ctx SpecContext) {
 			for _, policyName := range []string{"csidriver-webhook-ingress", "shipwright-webhook-ingress"} {
 				np := &networkingv1.NetworkPolicy{}
 				Expect(kubeClient.Get(ctx, types.NamespacedName{Name: policyName, Namespace: openshiftBuildsNS}, np)).To(Succeed())
 				Expect(np.Spec.Ingress).To(HaveLen(1), "%s: expected one ingress rule", policyName)
-				Expect(np.Spec.Ingress[0].From[0].NamespaceSelector.MatchLabels).To(
-					HaveKeyWithValue("kubernetes.io/metadata.name", "openshift-kube-apiserver"),
-					"%s: wrong source namespace", policyName)
+				Expect(np.Spec.Ingress[0].From).To(BeEmpty(),
+					"%s: should allow from any source (no From restriction)", policyName)
 				Expect(np.Spec.Ingress[0].Ports[0].Port.IntValue()).To(Equal(8443),
 					"%s: wrong port", policyName)
 			}
@@ -265,7 +264,7 @@ var _ = Describe("NetworkPolicy enforcement test", Ordered, Label("e2e"), Label(
 	})
 
 	Context("webhook ingress policies", func() {
-		It("should BLOCK non-kube-apiserver namespace from reaching CSI webhook port 8443", func(ctx SpecContext) {
+		It("should ALLOW any namespace to reach CSI webhook port 8443", func(ctx SpecContext) {
 			pods := &corev1.PodList{}
 			Expect(kubeClient.List(ctx, pods, client.InNamespace(openshiftBuildsNS),
 				client.MatchingLabels{"name": "shared-resource-csi-driver-webhook"})).To(Succeed())
@@ -274,13 +273,13 @@ var _ = Describe("NetworkPolicy enforcement test", Ordered, Label("e2e"), Label(
 			}
 			ip := pods.Items[0].Status.PodIP
 
-			By(fmt.Sprintf("Probing CSI webhook pod %s:8443 from builds-test (expect BLOCKED)", ip))
+			By(fmt.Sprintf("Probing CSI webhook pod %s:8443 from builds-test (expect ALLOWED)", ip))
 			Expect(netpolIsAllowed(testNamespace, netpolDenyPodName, ip, 8443)).To(
-				BeFalse(),
-				"csidriver-webhook-ingress should only allow kube-apiserver; builds-test traffic must be DROPPED")
+				BeTrue(),
+				"csidriver-webhook-ingress should allow from any source — webhooks rely on TLS auth, not NetworkPolicy source restrictions")
 		})
 
-		It("should BLOCK non-kube-apiserver namespace from reaching Shipwright webhook port 8443", func(ctx SpecContext) {
+		It("should ALLOW any namespace to reach Shipwright webhook port 8443", func(ctx SpecContext) {
 			pods := &corev1.PodList{}
 			Expect(kubeClient.List(ctx, pods, client.InNamespace(openshiftBuildsNS),
 				client.MatchingLabels{"name": "shp-build-webhook"})).To(Succeed())
@@ -289,10 +288,10 @@ var _ = Describe("NetworkPolicy enforcement test", Ordered, Label("e2e"), Label(
 			}
 			ip := pods.Items[0].Status.PodIP
 
-			By(fmt.Sprintf("Probing Shipwright webhook pod %s:8443 from builds-test (expect BLOCKED)", ip))
+			By(fmt.Sprintf("Probing Shipwright webhook pod %s:8443 from builds-test (expect ALLOWED)", ip))
 			Expect(netpolIsAllowed(testNamespace, netpolDenyPodName, ip, 8443)).To(
-				BeFalse(),
-				"shipwright-webhook-ingress should only allow kube-apiserver; builds-test traffic must be DROPPED")
+				BeTrue(),
+				"shipwright-webhook-ingress should allow from any source — webhooks rely on TLS auth, not NetworkPolicy source restrictions")
 		})
 	})
 
@@ -318,6 +317,59 @@ var _ = Describe("NetworkPolicy enforcement test", Ordered, Label("e2e"), Label(
 			if err != nil {
 				Expect(err.Error()).NotTo(MatchRegexp("(context deadline exceeded|i/o timeout)"),
 					"webhook timed out — shipwright-webhook-ingress may be blocking kube-apiserver → shp-build-webhook")
+			}
+		})
+	})
+
+	Context("kube-apiserver to CSI webhook", func() {
+		It("should allow kube-apiserver to reach the CSI driver webhook", func(ctx SpecContext) {
+			allowPrivEsc := false
+			runAsNonRoot := true
+			pod := &corev1.Pod{
+				ObjectMeta: metav1.ObjectMeta{
+					GenerateName: "netpol-csi-webhook-probe-",
+					Namespace:    testNamespace,
+				},
+				Spec: corev1.PodSpec{
+					SecurityContext: &corev1.PodSecurityContext{
+						RunAsNonRoot:   &runAsNonRoot,
+						SeccompProfile: &corev1.SeccompProfile{Type: corev1.SeccompProfileTypeRuntimeDefault},
+					},
+					Containers: []corev1.Container{{
+						Name:    "test",
+						Image:   "registry.access.redhat.com/ubi9/ubi-minimal:latest",
+						Command: []string{"sh", "-c", "sleep 5"},
+						SecurityContext: &corev1.SecurityContext{
+							AllowPrivilegeEscalation: &allowPrivEsc,
+							Capabilities:             &corev1.Capabilities{Drop: []corev1.Capability{"ALL"}},
+						},
+						VolumeMounts: []corev1.VolumeMount{{
+							Name:      "shared-secret",
+							MountPath: "/tmp/shared",
+							ReadOnly:  true,
+						}},
+					}},
+					Volumes: []corev1.Volume{{
+						Name: "shared-secret",
+						VolumeSource: corev1.VolumeSource{
+							CSI: &corev1.CSIVolumeSource{
+								Driver:   "csi.sharedresource.openshift.io",
+								ReadOnly: boolPtr(true),
+								VolumeAttributes: map[string]string{
+									"sharedSecret": "nonexistent-secret",
+								},
+							},
+						},
+					}},
+					RestartPolicy: corev1.RestartPolicyNever,
+				},
+			}
+			err := kubeClient.Create(ctx, pod)
+			defer func() { _ = kubeClient.Delete(ctx, pod) }()
+
+			if err != nil {
+				Expect(err.Error()).NotTo(MatchRegexp("(context deadline exceeded|i/o timeout)"),
+					"CSI webhook timed out — csidriver-webhook-ingress may be blocking kube-apiserver → shared-resource-csi-driver-webhook.")
 			}
 		})
 	})
@@ -354,7 +406,7 @@ func netpolProbePod(name, namespace string) *corev1.Pod {
 }
 
 // netpolIsAllowed attempts a TCP connection from podName in namespace to targetIP:targetPort
-// and returns true if it completes within tcpProbeTimeout seconds 
+// and returns true if it completes within tcpProbeTimeout seconds
 func netpolIsAllowed(namespace, podName, targetIP string, targetPort int) bool {
 	cmd := exec.Command("kubectl", "exec",
 		"-n", namespace, podName,
