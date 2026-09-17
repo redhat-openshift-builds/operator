@@ -17,7 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
-	"github.com/openshift-pipelines/tektoncd-pruner/pkg/config"
+	"github.com/tektoncd/pruner/pkg/config"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	duckv1 "knative.dev/pkg/apis/duck/v1"
 )
@@ -32,8 +32,12 @@ var (
 // +genreconciler:krshapedlogic=false
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +genclient:nonNamespaced
+// +kubebuilder:object:root=true
 // +kubebuilder:resource:scope=Cluster
-
+// +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="Version",type=string,JSONPath=`.status.version`
+// +kubebuilder:printcolumn:name="Ready",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].status`
+// +kubebuilder:printcolumn:name="Reason",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].message`
 type TektonPruner struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -42,7 +46,8 @@ type TektonPruner struct {
 }
 
 type TektonPrunerConfig struct {
-	GlobalConfig config.GlobalConfig `json:"global-config"`
+	// +kubebuilder:pruning:PreserveUnknownFields
+	GlobalConfig *config.GlobalConfig `json:"global-config"`
 }
 
 type Pruner struct {
@@ -51,10 +56,12 @@ type Pruner struct {
 	TektonPrunerConfig `json:",inline"`
 
 	// options holds additions fields and these fields will be updated on the manifests
+	// +optional
 	Options AdditionalOptions `json:"options"`
 }
 
 // TektonPrunerList contains a list of TektonPruner
+// +kubebuilder:object:root=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type TektonPrunerList struct {
 	metav1.TypeMeta `json:",inline"`
@@ -68,6 +75,10 @@ type TektonPrunerSpec struct {
 	// Config holds the configuration for resources created by TektonPruner
 	// +optional
 	Config Config `json:"config,omitempty"`
+	// NetworkPolicy configures NetworkPolicy creation for the controller
+	// and webhook workloads deployed by TektonPruner.
+	// +optional
+	NetworkPolicy NetworkPolicyConfig `json:"networkPolicy,omitempty"`
 }
 
 // TektonPrunerStatus defines the observed state of TektonPruner
@@ -103,5 +114,8 @@ func (p *Pruner) IsDisabled() bool {
 
 func (in *TektonPrunerConfig) DeepCopyInto(out *TektonPrunerConfig) {
 	*out = *in
-	return
+	if in.GlobalConfig != nil {
+		out.GlobalConfig = new(config.GlobalConfig)
+		*out.GlobalConfig = *in.GlobalConfig
+	}
 }
