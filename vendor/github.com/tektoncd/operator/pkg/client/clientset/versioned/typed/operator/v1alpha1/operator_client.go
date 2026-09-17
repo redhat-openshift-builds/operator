@@ -30,15 +30,17 @@ type OperatorV1alpha1Interface interface {
 	RESTClient() rest.Interface
 	ManualApprovalGatesGetter
 	OpenShiftPipelinesAsCodesGetter
+	SyncerServicesGetter
 	TektonAddonsGetter
 	TektonChainsGetter
 	TektonConfigsGetter
 	TektonDashboardsGetter
-	TektonHubsGetter
 	TektonInstallerSetsGetter
+	TektonMulticlusterProxyAAEsGetter
 	TektonPipelinesGetter
 	TektonPrunersGetter
 	TektonResultsGetter
+	TektonSchedulersGetter
 	TektonTriggersGetter
 }
 
@@ -53,6 +55,10 @@ func (c *OperatorV1alpha1Client) ManualApprovalGates() ManualApprovalGateInterfa
 
 func (c *OperatorV1alpha1Client) OpenShiftPipelinesAsCodes() OpenShiftPipelinesAsCodeInterface {
 	return newOpenShiftPipelinesAsCodes(c)
+}
+
+func (c *OperatorV1alpha1Client) SyncerServices() SyncerServiceInterface {
+	return newSyncerServices(c)
 }
 
 func (c *OperatorV1alpha1Client) TektonAddons() TektonAddonInterface {
@@ -71,12 +77,12 @@ func (c *OperatorV1alpha1Client) TektonDashboards() TektonDashboardInterface {
 	return newTektonDashboards(c)
 }
 
-func (c *OperatorV1alpha1Client) TektonHubs() TektonHubInterface {
-	return newTektonHubs(c)
-}
-
 func (c *OperatorV1alpha1Client) TektonInstallerSets() TektonInstallerSetInterface {
 	return newTektonInstallerSets(c)
+}
+
+func (c *OperatorV1alpha1Client) TektonMulticlusterProxyAAEs() TektonMulticlusterProxyAAEInterface {
+	return newTektonMulticlusterProxyAAEs(c)
 }
 
 func (c *OperatorV1alpha1Client) TektonPipelines() TektonPipelineInterface {
@@ -91,6 +97,10 @@ func (c *OperatorV1alpha1Client) TektonResults() TektonResultInterface {
 	return newTektonResults(c)
 }
 
+func (c *OperatorV1alpha1Client) TektonSchedulers() TektonSchedulerInterface {
+	return newTektonSchedulers(c)
+}
+
 func (c *OperatorV1alpha1Client) TektonTriggers() TektonTriggerInterface {
 	return newTektonTriggers(c)
 }
@@ -100,9 +110,7 @@ func (c *OperatorV1alpha1Client) TektonTriggers() TektonTriggerInterface {
 // where httpClient was generated with rest.HTTPClientFor(c).
 func NewForConfig(c *rest.Config) (*OperatorV1alpha1Client, error) {
 	config := *c
-	if err := setConfigDefaults(&config); err != nil {
-		return nil, err
-	}
+	setConfigDefaults(&config)
 	httpClient, err := rest.HTTPClientFor(&config)
 	if err != nil {
 		return nil, err
@@ -114,9 +122,7 @@ func NewForConfig(c *rest.Config) (*OperatorV1alpha1Client, error) {
 // Note the http client provided takes precedence over the configured transport values.
 func NewForConfigAndClient(c *rest.Config, h *http.Client) (*OperatorV1alpha1Client, error) {
 	config := *c
-	if err := setConfigDefaults(&config); err != nil {
-		return nil, err
-	}
+	setConfigDefaults(&config)
 	client, err := rest.RESTClientForConfigAndClient(&config, h)
 	if err != nil {
 		return nil, err
@@ -139,7 +145,7 @@ func New(c rest.Interface) *OperatorV1alpha1Client {
 	return &OperatorV1alpha1Client{c}
 }
 
-func setConfigDefaults(config *rest.Config) error {
+func setConfigDefaults(config *rest.Config) {
 	gv := operatorv1alpha1.SchemeGroupVersion
 	config.GroupVersion = &gv
 	config.APIPath = "/apis"
@@ -148,8 +154,6 @@ func setConfigDefaults(config *rest.Config) error {
 	if config.UserAgent == "" {
 		config.UserAgent = rest.DefaultKubernetesUserAgent()
 	}
-
-	return nil
 }
 
 // RESTClient returns a RESTClient that is used to communicate

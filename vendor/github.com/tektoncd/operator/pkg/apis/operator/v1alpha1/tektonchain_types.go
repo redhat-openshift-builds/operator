@@ -36,6 +36,12 @@ var (
 // +genreconciler:krshapedlogic=false
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +genclient:nonNamespaced
+// +kubebuilder:object:root=true
+// +kubebuilder:resource:scope=Cluster
+// +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="Version",type=string,JSONPath=`.status.version`
+// +kubebuilder:printcolumn:name="Ready",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].status`
+// +kubebuilder:printcolumn:name="Reason",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].message`
 type TektonChain struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -61,6 +67,9 @@ type TektonChainSpec struct {
 	// Config holds the configuration for resources created by TektonChain
 	// +optional
 	Config Config `json:"config,omitempty"`
+	// NetworkPolicy configures NetworkPolicy creation for TektonChain workloads.
+	// +optional
+	NetworkPolicy NetworkPolicyConfig `json:"networkPolicy,omitempty"`
 }
 
 type Chain struct {
@@ -73,6 +82,7 @@ type Chain struct {
 	ChainProperties `json:",inline"`
 	ControllerEnvs  []corev1.EnvVar `json:"controllerEnvs,omitempty"`
 	// options holds additions fields and these fields will be updated on the manifests
+	// +optional
 	Options AdditionalOptions `json:"options"`
 }
 
@@ -98,6 +108,7 @@ type ChainProperties struct {
 	StorageGCSBucket              string `json:"storage.gcs.bucket,omitempty"`
 	StorageOCIRepository          string `json:"storage.oci.repository,omitempty"`
 	StorageOCIRepositoryInsecure  *bool  `json:"storage.oci.repository.insecure,omitempty"`
+	StorageOCIEncodingFormat      string `json:"storage.oci.encoding-format,omitempty"`
 	StorageDocDBURL               string `json:"storage.docdb.url,omitempty"`
 	StorageDocDBMongoServerURL    string `json:"storage.docdb.mongo-server-url,omitempty"`
 	StorageDocDBMongoServerURLDir string `json:"storage.docdb.mongo-server-url-dir,omitempty"`
@@ -134,6 +145,7 @@ type ChainProperties struct {
 	Performance PerformanceProperties `json:"performance,omitempty"`
 }
 
+// +kubebuilder:validation:Type=string
 type BoolValue string
 
 func (bv *BoolValue) UnmarshalJSON(value []byte) error {
@@ -169,6 +181,7 @@ type TektonChainStatus struct {
 }
 
 // TektonChainList contains a list of TektonChain
+// +kubebuilder:object:root=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type TektonChainList struct {
 	metav1.TypeMeta `json:",inline"`
