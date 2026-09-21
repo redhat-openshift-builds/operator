@@ -20,6 +20,22 @@ spec:
         - |
           set -euo pipefail
 
+          # Import additional trusted CA certificates supplied through the
+          # trusted-ca volume (e.g. a ConfigMap holding a PEM bundle) into the
+          # system trust store, so that image pulls and pushes trust endpoints
+          # signed by a custom/private CA. No-op when the volume is empty.
+          trustedCADir=/var/shipwright/trusted-ca
+          if [ -d "${trustedCADir}" ]; then
+            certs=$(find -L "${trustedCADir}" -maxdepth 1 -type f \( -name '*.crt' -o -name '*.pem' \) 2>/dev/null || true)
+            if [ -n "${certs}" ]; then
+              echo "[INFO] Importing trusted CA certificates from ${trustedCADir}"
+              while IFS= read -r cert; do
+                cp -L "${cert}" /etc/pki/ca-trust/source/anchors/
+              done <<< "${certs}"
+              update-ca-trust extract
+            fi
+          fi
+
           # Parse parameters
           context=
           dockerfile=
@@ -243,6 +259,9 @@ spec:
       volumeMounts:
         - mountPath: /etc/pki/entitlement
           name: etc-pki-entitlement
+        - mountPath: /var/shipwright/trusted-ca
+          name: trusted-ca
+          readOnly: true
       resources:
         limits:
           cpu: "1"
@@ -300,6 +319,9 @@ spec:
       default: "false"
   volumes:
     - name: etc-pki-entitlement
+      emptyDir: {}
+      overridable: true
+    - name: trusted-ca
       emptyDir: {}
       overridable: true
   securityContext:

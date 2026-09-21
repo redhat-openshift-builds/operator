@@ -10,6 +10,9 @@ spec:
     - name: etc-pki-entitlement
       emptyDir: {}
       overridable: true
+    - name: trusted-ca
+      emptyDir: {}
+      overridable: true
   steps:
     - name: s2i-generate
       image: registry.redhat.io/source-to-image/source-to-image-rhel9@sha256:798e0e860df8e3ca1ff5f8aa796940d6dbd4b739ccfc35c6f4c9bc046d5f0c12
@@ -75,6 +78,22 @@ spec:
         - -c
         - |
           set -euo pipefail
+
+          # Import additional trusted CA certificates supplied through the
+          # trusted-ca volume (e.g. a ConfigMap holding a PEM bundle) into the
+          # system trust store, so that image pulls and pushes trust endpoints
+          # signed by a custom/private CA. No-op when the volume is empty.
+          trustedCADir=/var/shipwright/trusted-ca
+          if [ -d "${trustedCADir}" ]; then
+            certs=$(find -L "${trustedCADir}" -maxdepth 1 -type f \( -name '*.crt' -o -name '*.pem' \) 2>/dev/null || true)
+            if [ -n "${certs}" ]; then
+              echo "[INFO] Importing trusted CA certificates from ${trustedCADir}"
+              while IFS= read -r cert; do
+                cp -L "${cert}" /etc/pki/ca-trust/source/anchors/
+              done <<< "${certs}"
+              update-ca-trust extract
+            fi
+          fi
 
           # Parse parameters
           image=
@@ -175,6 +194,9 @@ spec:
           mountPath: /s2i
         - name: etc-pki-entitlement
           mountPath: /etc/pki/entitlement
+        - name: trusted-ca
+          mountPath: /var/shipwright/trusted-ca
+          readOnly: true
   parameters:
     - name: build-env
       description: "Environment variables to set during the build and in the output image. Values must be in the format KEY=VALUE."
