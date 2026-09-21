@@ -3,7 +3,7 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 1.8.1
+VERSION ?= 1.8.2
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "candidate,fast,stable")
@@ -142,7 +142,7 @@ test: fmt vet envtest ## Run tests.
 .PHONY: test-e2e  # Run the e2e tests against an OpenShift cluster
 test-e2e:
 	go test ./test/e2e/ -v -ginkgo.v
-	
+
 GOLANGCI_LINT = $(shell pwd)/bin/golangci-lint
 GOLANGCI_LINT_VERSION ?= v1.57.2
 golangci-lint:

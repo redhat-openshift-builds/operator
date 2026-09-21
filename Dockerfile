@@ -39,8 +39,8 @@ LABEL \
     io.openshift.tags="builds,operator" \
     maintainer="openshift-builds@redhat.com" \
     name="openshift-builds/openshift-builds-rhel9-operator" \
-    release="1" \
+    release="3" \
     summary="Red Hat OpenShift Builds Operator" \
     url="https://github.com/redhat-openshift-builds/operator" \
     vendor="Red Hat, Inc." \
-    version="v1.8.1"
+    version="v1.8.2"
