@@ -99,7 +99,7 @@ spec:
       name: OPENSHIFT_BUILDS_WAITER
     - image: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel9@sha256:efe4f99283e2c2f7252ae1be47394f2deab65d6297ac2854fa9d2a548ae0914c
       name: OPENSHIFT_BUILDS_WEBHOOK
-    - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:f6e27a3787dce3a4b39d0d7ce115ce46d1b08c15588e9a3a1a4e781e76a3548d
+    - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:05babe849350e3609e3c061d88c6edf656ebc502169a35cb2526bab4d39a9e5a
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_WEBHOOK
     - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-rhel9@sha256:685211e64642211494b7bd4b2a1e3e6cd1ee25077c82b354e1f08e649d1e05d2
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE
