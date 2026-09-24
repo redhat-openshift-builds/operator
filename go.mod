@@ -80,9 +80,9 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/openshift-pipelines/pipelines-as-code v0.36.0 // indirect
 	github.com/openshift-pipelines/tektoncd-pruner v0.2.0 // indirect
-	github.com/openshift/api v0.0.0-20260715165912-72066cc9718b // indirect
+	github.com/openshift/api v0.0.0-20260923043708-9abfa327cff2 // indirect
 	github.com/openshift/apiserver-library-go v0.0.0-20260715200723-42e5e402ca43 // indirect
-	github.com/openshift/client-go v0.0.0-20260715172546-dac61734e0ec // indirect
+	github.com/openshift/client-go v0.0.0-20260923093432-89e5bba1be29 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.24.1 // indirect
 	github.com/prometheus/client_model v0.6.3 // indirect
