@@ -31,6 +31,12 @@ var (
 // +genreconciler:krshapedlogic=false
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +genclient:nonNamespaced
+// +kubebuilder:object:root=true
+// +kubebuilder:resource:scope=Cluster
+// +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="Version",type=string,JSONPath=`.status.version`
+// +kubebuilder:printcolumn:name="Ready",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].status`
+// +kubebuilder:printcolumn:name="Reason",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].message`
 type TektonResult struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -56,6 +62,9 @@ type TektonResultSpec struct {
 	// Config holds the configuration for resources created by TektonResult
 	// +optional
 	Config Config `json:"config,omitempty"`
+	// NetworkPolicy configures NetworkPolicy creation for TektonResult workloads.
+	// +optional
+	NetworkPolicy NetworkPolicyConfig `json:"networkPolicy,omitempty"`
 }
 
 type LokiStackProperties struct {
@@ -72,9 +81,13 @@ type Result struct {
 	// LokiStackProperties holds configuration for LokiStack
 	LokiStackProperties `json:",inline"`
 	// Options holds additions fields and these fields will be updated on the manifests
+	// +optional
 	Options AdditionalOptions `json:"options"`
 	// +optional
 	Performance PerformanceProperties `json:"performance,omitempty"`
+	// Watcher holds configuration for the Tekton Results Watcher controller.
+	// +optional
+	Watcher ResultsWatcherProperties `json:"watcher,omitempty"`
 }
 
 // ResultsAPIProperties defines the fields which are configurable for
@@ -121,6 +134,13 @@ type ResultsAPIProperties struct {
 	LoggingPluginQueryLimit             *uint  `json:"logging_plugin_query_limit,omitempty"`
 	LoggingPluginQueryParams            string `json:"logging_plugin_query_params,omitempty"`
 	LoggingPluginMultipartRegex         string `json:"logging_plugin_multipart_regex,omitempty"`
+
+	// Route configuration for Results API service exposure
+	RouteEnabled *bool  `json:"route_enabled,omitempty"`
+	RouteHost    string `json:"route_host,omitempty"`
+	RoutePath    string `json:"route_path,omitempty"`
+	// +optional
+	RouteTLSTermination string `json:"route_tls_termination,omitempty"`
 }
 
 // TektonResultStatus defines the observed state of TektonResult
@@ -153,6 +173,7 @@ func (trs *TektonResultStatus) MarkPostReconcilerFailed(msg string) {
 }
 
 // TektonResultsList contains a list of TektonResult
+// +kubebuilder:object:root=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type TektonResultList struct {
 	metav1.TypeMeta `json:",inline"`
