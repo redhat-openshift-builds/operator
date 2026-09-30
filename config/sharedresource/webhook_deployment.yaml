@@ -5,7 +5,7 @@ metadata:
   labels:
     name: shared-resource-csi-driver-webhook
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       name: shared-resource-csi-driver-webhook
