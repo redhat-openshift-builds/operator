@@ -1,0 +1,37 @@
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: shared-resource-csi-driver
+allowPrivilegedContainer: true
+allowHostDirVolumePlugin: true
+allowHostNetwork: false
+allowHostPorts: false
+allowHostPID: false
+allowHostIPC: false
+allowedCapabilities: []
+defaultAddCapabilities: []
+requiredDropCapabilities:
+  - ALL
+volumes:
+  - configMap
+  - emptyDir
+  - hostPath
+  - secret
+allowedHostPaths:
+  - pathPrefix: /var/lib/kubelet/plugins
+    readOnly: false
+  - pathPrefix: /var/lib/kubelet/pods
+    readOnly: false
+  - pathPrefix: /var/lib/csi-volumes-map
+    readOnly: false
+  - pathPrefix: /run/csi-data-dir
+    readOnly: false
+readOnlyRootFilesystem: true
+runAsUser:
+  type: RunAsAny
+seLinuxContext:
+  type: RunAsAny
+fsGroup:
+  type: RunAsAny
+supplementalGroups:
+  type: RunAsAny
