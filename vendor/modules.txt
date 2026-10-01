@@ -241,7 +241,7 @@ github.com/openshift-pipelines/pipelines-as-code/pkg/params/settings
 ## explicit; go 1.24.0
 github.com/openshift-pipelines/tektoncd-pruner/pkg/config
 github.com/openshift-pipelines/tektoncd-pruner/pkg/metrics
-# github.com/openshift/api v0.0.0-20260929155352-9d1c049cbd04
+# github.com/openshift/api v0.0.0-20260930220732-5588d747a72b
 ## explicit; go 1.26.0
 github.com/openshift/api/security/v1
 # github.com/openshift/apiserver-library-go v0.0.0-20260715200723-42e5e402ca43
@@ -618,7 +618,7 @@ gopkg.in/evanphx/json-patch.v4
 # gopkg.in/inf.v0 v0.9.1
 ## explicit
 gopkg.in/inf.v0
-# k8s.io/api v0.37.0 => k8s.io/api v0.34.4
+# k8s.io/api v0.37.1 => k8s.io/api v0.34.4
 ## explicit; go 1.24.0
 k8s.io/api/admission/v1
 k8s.io/api/admission/v1beta1
@@ -691,7 +691,7 @@ k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset
 k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/scheme
 k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1
 k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset/typed/apiextensions/v1beta1
-# k8s.io/apimachinery v0.37.0 => k8s.io/apimachinery v0.34.4
+# k8s.io/apimachinery v0.37.1 => k8s.io/apimachinery v0.34.4
 ## explicit; go 1.24.0
 k8s.io/apimachinery/pkg/api/equality
 k8s.io/apimachinery/pkg/api/errors
