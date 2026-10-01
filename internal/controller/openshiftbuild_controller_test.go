@@ -156,6 +156,28 @@ var _ = Describe("OpenShiftBuild controller", Label("integration", "openshiftbui
 	})
 })
 
+type failingStatusClient struct {
+	client.Client
+}
+
+type failingStatusWriter struct{}
+
+func (f *failingStatusClient) Status() client.SubResourceWriter {
+	return &failingStatusWriter{}
+}
+
+func (f *failingStatusWriter) Create(ctx context.Context, obj client.Object, subResource client.Object, opts ...client.SubResourceCreateOption) error {
+	return fmt.Errorf("injected status create failure")
+}
+
+func (f *failingStatusWriter) Update(ctx context.Context, obj client.Object, opts ...client.SubResourceUpdateOption) error {
+	return fmt.Errorf("injected status update failure")
+}
+
+func (f *failingStatusWriter) Patch(ctx context.Context, obj client.Object, patch client.Patch, opts ...client.SubResourcePatchOption) error {
+	return fmt.Errorf("injected status patch failure")
+}
+
 var _ = Describe("Main Operator Controller with Sub-Reconciler Failure", func() {
 	const (
 		CRName      = "test-shipwright-build"
@@ -229,6 +251,77 @@ var _ = Describe("Main Operator Controller with Sub-Reconciler Failure", func() 
 
 			// Cleanup
 			By("Deleting the CR for SharedResource failure test")
+			Expect(k8sClient.Delete(ctx, cr)).Should(Succeed())
+		})
+	})
+
+	Context("When reconciliation fails and status update also fails", func() {
+		It("Should not panic on logger.Error with key-value pairs", func() {
+			By("Creating an OpenShiftBuild instance with initialized conditions")
+
+			cr := &operatorv1alpha1.OpenShiftBuild{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "test-status-update-failure",
+				},
+				Spec: operatorv1alpha1.OpenShiftBuildSpec{
+					Shipwright: &operatorv1alpha1.Shipwright{
+						Build: &operatorv1alpha1.ShipwrightBuild{
+							State: operatorv1alpha1.Enabled,
+						},
+					},
+					SharedResource: &operatorv1alpha1.SharedResource{
+						State: operatorv1alpha1.Disabled,
+					},
+				},
+			}
+
+			Expect(k8sClient.Create(ctx, cr)).Should(Succeed())
+
+			crKey := types.NamespacedName{Name: "test-status-update-failure"}
+			Eventually(func() error {
+				return k8sClient.Get(ctx, crKey, &operatorv1alpha1.OpenShiftBuild{})
+			}, timeout, interval).Should(Succeed())
+
+			By("Initializing status conditions via the real client")
+			Expect(k8sClient.Get(ctx, crKey, cr)).To(Succeed())
+			cr.Status.Conditions = []metav1.Condition{
+				{
+					Type:               operatorv1alpha1.ConditionReady,
+					Status:             metav1.ConditionFalse,
+					Reason:             "Testing",
+					LastTransitionTime: metav1.Now(),
+				},
+			}
+			Expect(k8sClient.Status().Update(ctx, cr)).To(Succeed())
+
+			By("Creating reconciler with a client whose Status().Update() always fails")
+			fsClient := &failingStatusClient{Client: k8sClient}
+			reconciler := &OpenShiftBuildReconciler{
+				Client:         fsClient,
+				Scheme:         testEnv.Scheme,
+				Logger:         ctrl.Log.WithName("test-status-failure-reconciler"),
+				APIReader:      k8sClient,
+				SharedResource: &sharedresource.SharedResource{},
+				Shipwright:     shipwrightbuild.New(k8sClient, CRNamespace),
+			}
+
+			By("Invoking Reconcile which will fail at Shipwright then fail at Status().Update()")
+			req := ctrl.Request{NamespacedName: crKey}
+			Expect(func() {
+				_, _ = reconciler.Reconcile(ctx, req)
+			}).ShouldNot(Panic())
+
+			result, err := reconciler.Reconcile(ctx, req)
+
+			By("Asserting that an error was returned")
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(ContainSubstring("ShipwrightBuild reconciliation failed"))
+
+			By("Asserting default requeue behavior")
+			Expect(result.Requeue).To(BeFalse())
+			Expect(result.RequeueAfter).To(BeZero())
+
+			By("Cleaning up")
 			Expect(k8sClient.Delete(ctx, cr)).Should(Succeed())
 		})
 	})
