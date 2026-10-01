@@ -12,9 +12,9 @@ require (
 	github.com/shipwright-io/build v0.19.4
 	github.com/shipwright-io/operator v0.19.0
 	github.com/tektoncd/operator v0.77.0
-	k8s.io/api v0.37.0
+	k8s.io/api v0.37.1
 	k8s.io/apiextensions-apiserver v0.37.0
-	k8s.io/apimachinery v0.37.0
+	k8s.io/apimachinery v0.37.1
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3
 	sigs.k8s.io/controller-runtime v0.22.5
@@ -80,7 +80,7 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/openshift-pipelines/pipelines-as-code v0.36.0 // indirect
 	github.com/openshift-pipelines/tektoncd-pruner v0.2.0 // indirect
-	github.com/openshift/api v0.0.0-20260929155352-9d1c049cbd04 // indirect
+	github.com/openshift/api v0.0.0-20260930220732-5588d747a72b // indirect
 	github.com/openshift/apiserver-library-go v0.0.0-20260715200723-42e5e402ca43 // indirect
 	github.com/openshift/client-go v0.0.0-20260923093432-89e5bba1be29 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
