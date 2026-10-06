@@ -17,22 +17,31 @@ limitations under the License.
 package main
 
 import (
+	"context"
 	"crypto/tls"
 	"flag"
 	"os"
 
+	"github.com/go-logr/logr"
+	configv1 "github.com/openshift/api/config/v1"
+	configclient "github.com/openshift/client-go/config/clientset/versioned"
 	shipwrightv1alpha1 "github.com/shipwright-io/operator/api/v1alpha1"
+	shipwrightoperator "github.com/shipwright-io/operator/controllers"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
+	"k8s.io/client-go/rest"
 
 	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
 	"github.com/redhat-openshift-builds/operator/internal/common"
 	"github.com/redhat-openshift-builds/operator/internal/controller"
 	shipwrightbuild "github.com/redhat-openshift-builds/operator/internal/shipwright/build"
+	"k8s.io/apimachinery/pkg/api/equality"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+	"k8s.io/apimachinery/pkg/watch"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -113,11 +122,27 @@ func main() {
 	// Fetch the namespace and store for later use
 	namespace := common.FetchCurrentNamespaceName()
 
+	// Setup signal handler for graceful shutdown
+	ctxSignal := ctrl.SetupSignalHandler()
+
+	// Create cancellable context for TLS profile watcher
+	ctxMain, cancel := context.WithCancel(ctxSignal)
+	defer cancel()
+
+	// Read cluster TLS profile for use by both Shipwright and SharedResource operands
+	tlsProfile, err := common.GetClusterTLSProfile(ctxMain, mgr.GetConfig())
+	if err != nil {
+		setupLog.Error(err, "failed to read cluster TLS profile, operands will use Go defaults for webhook TLS")
+	}
+	minVersion, cipherSuites := common.TLSProfileToFlags(tlsProfile)
+
 	// Run OpenshiftBuild controller
 	buildReconciler := &controller.OpenShiftBuildReconciler{
-		Client:     mgr.GetClient(),
-		Scheme:     mgr.GetScheme(),
-		Shipwright: shipwrightbuild.New(mgr.GetClient(), namespace),
+		Client:          mgr.GetClient(),
+		Scheme:          mgr.GetScheme(),
+		Shipwright:      shipwrightbuild.New(mgr.GetClient(), namespace),
+		TLSMinVersion:   minVersion,
+		TLSCipherSuites: cipherSuites,
 	}
 
 	if err := buildReconciler.SetupWithManager(mgr); err != nil {
@@ -127,8 +152,12 @@ func main() {
 
 	// Run ShipwrightBuild Controller
 	shipwrightReconciler := &controller.ShipwrightBuildReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
+		ShipwrightBuildReconciler: shipwrightoperator.ShipwrightBuildReconciler{
+			Client: mgr.GetClient(),
+			Scheme: mgr.GetScheme(),
+		},
+		TLSMinVersion:   minVersion,
+		TLSCipherSuites: cipherSuites,
 	}
 
 	if err := shipwrightReconciler.SetupWithManager(mgr); err != nil {
@@ -148,7 +177,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	ctxMain := ctrl.SetupSignalHandler()
+	// Start TLS profile watcher in background to restart pod when cluster TLS profile changes
+	// Uses exit-on-change pattern from OpenShift TLS Profile Compliance documentation
+	go watchAndExitOnTLSChange(ctxMain, mgr.GetConfig(), tlsProfile, cancel, setupLog)
 
 	// Create a non-cached client to bootstrap the OpenShiftBuild resource.
 	// If we use the same client as the manager, the bootstrap command will hang waiting for caches
@@ -175,5 +206,60 @@ func main() {
 	if err := mgr.Start(ctxMain); err != nil {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
+	}
+}
+
+// watchAndExitOnTLSChange watches the cluster APIServer resource for TLS profile changes.
+// When the TLS profile changes, it cancels the context, causing the manager to stop and
+// the pod to exit. Kubernetes will restart the pod, which will then read the updated TLS profile.
+//
+// This implements the exit-on-change pattern from the OpenShift TLS Profile Compliance documentation:
+// https://docs.engineering.redhat.com/display/CFC/TLS+Profile+Compliance
+func watchAndExitOnTLSChange(ctx context.Context, cfg *rest.Config, currentProfile *configv1.TLSSecurityProfile, cancel context.CancelFunc, logger logr.Logger) {
+	configClient, err := configclient.NewForConfig(cfg)
+	if err != nil {
+		logger.Error(err, "failed to create config client for TLS profile watcher")
+		return
+	}
+
+	watcher, err := configClient.ConfigV1().APIServers().Watch(ctx, metav1.ListOptions{
+		FieldSelector: "metadata.name=" + common.OpenShiftBuildResourceName,
+	})
+	if err != nil {
+		logger.Error(err, "failed to watch APIServer resource for TLS profile changes")
+		return
+	}
+	defer watcher.Stop()
+
+	logger.Info("watching for cluster TLS profile changes")
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case event, ok := <-watcher.ResultChan():
+			if !ok {
+				logger.Info("TLS profile watch channel closed, exiting")
+				cancel()
+				return
+			}
+
+			if event.Type != watch.Modified {
+				continue
+			}
+
+			updated, ok := event.Object.(*configv1.APIServer)
+			if !ok {
+				continue
+			}
+
+			if !equality.Semantic.DeepEqual(currentProfile, updated.Spec.TLSSecurityProfile) {
+				logger.Info("cluster TLS profile changed, exiting to restart with new configuration",
+					"oldProfile", currentProfile,
+					"newProfile", updated.Spec.TLSSecurityProfile)
+				cancel()
+				return
+			}
+		}
 	}
 }
