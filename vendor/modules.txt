@@ -241,14 +241,26 @@ github.com/openshift-pipelines/pipelines-as-code/pkg/params/settings
 ## explicit; go 1.24.0
 github.com/openshift-pipelines/tektoncd-pruner/pkg/config
 github.com/openshift-pipelines/tektoncd-pruner/pkg/metrics
-# github.com/openshift/api v0.0.0-20261005181437-18d5eb0e5ecb
+# github.com/openshift/api v0.0.0-20261002115817-f8795cdde518
 ## explicit; go 1.26.0
+github.com/openshift/api/config/v1
+github.com/openshift/api/config/v1alpha1
+github.com/openshift/api/config/v1alpha2
 github.com/openshift/api/security/v1
 # github.com/openshift/apiserver-library-go v0.0.0-20260715200723-42e5e402ca43
 ## explicit; go 1.26.0
 github.com/openshift/apiserver-library-go/pkg/securitycontextconstraints/util/sort
 # github.com/openshift/client-go v0.0.0-20260923093432-89e5bba1be29
 ## explicit; go 1.26.0
+github.com/openshift/client-go/config/applyconfigurations/config/v1
+github.com/openshift/client-go/config/applyconfigurations/config/v1alpha1
+github.com/openshift/client-go/config/applyconfigurations/config/v1alpha2
+github.com/openshift/client-go/config/applyconfigurations/internal
+github.com/openshift/client-go/config/clientset/versioned
+github.com/openshift/client-go/config/clientset/versioned/scheme
+github.com/openshift/client-go/config/clientset/versioned/typed/config/v1
+github.com/openshift/client-go/config/clientset/versioned/typed/config/v1alpha1
+github.com/openshift/client-go/config/clientset/versioned/typed/config/v1alpha2
 github.com/openshift/client-go/security/applyconfigurations/internal
 github.com/openshift/client-go/security/applyconfigurations/security/v1
 github.com/openshift/client-go/security/clientset/versioned
@@ -303,6 +315,8 @@ github.com/shipwright-io/operator/pkg/buildstrategy
 github.com/shipwright-io/operator/pkg/certmanager
 github.com/shipwright-io/operator/pkg/common
 github.com/shipwright-io/operator/pkg/tekton
+# github.com/sirupsen/logrus v1.9.4
+## explicit; go 1.17
 # github.com/spf13/afero v1.15.0
 ## explicit; go 1.23.0
 github.com/spf13/afero

@@ -19,7 +19,13 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
 
-type ShipwrightBuildReconciler shipwrightoperator.ShipwrightBuildReconciler
+//+kubebuilder:rbac:groups=config.openshift.io,resources=apiservers,verbs=get;list;watch
+
+type ShipwrightBuildReconciler struct {
+	shipwrightoperator.ShipwrightBuildReconciler
+	TLSMinVersion   string
+	TLSCipherSuites string
+}
 
 func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	// Create Owner Reference for filtering
@@ -62,6 +68,7 @@ func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 	// Remove runAsUser and runAsGroup from a Deployment container's security context
 	// Insert Openshift Service CA annotations in service and CRD
+	// Inject TLS args into shipwright-build-webhook
 	if r.Manifest, err = r.Manifest.Transform(
 		common.RemoveRunAsUserRunAsGroup,
 		common.InjectAnnotations(
@@ -78,6 +85,7 @@ func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 				openshiftserviceca.InjectCABundleAnnotationName: "true",
 			},
 		),
+		common.InjectTLSArgsIntoContainer("shipwright-build-webhook", r.TLSMinVersion, r.TLSCipherSuites),
 	); err != nil {
 		return err
 	}
@@ -91,7 +99,7 @@ func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		return err
 	}
 
-	reconciler := shipwrightoperator.ShipwrightBuildReconciler(*r)
+	reconciler := &r.ShipwrightBuildReconciler
 
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&shipwrightv1alpha1.ShipwrightBuild{}).
@@ -109,5 +117,5 @@ func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 				return false
 			},
 		}).
-		Complete(&reconciler)
+		Complete(reconciler)
 }
