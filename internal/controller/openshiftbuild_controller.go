@@ -104,7 +104,7 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		})
 
 		if statusUpdateErr := r.Client.Status().Update(ctx, openShiftBuild); statusUpdateErr != nil {
-			logger.Error(statusUpdateErr, "Failed to update status after ShipwrightReconcileFailed", shipwrightErr)
+			logger.Error(statusUpdateErr, "Failed to update status after ShipwrightReconcileFailed", "reconcileError", shipwrightErr)
 		}
 
 		return ctrl.Result{}, fmt.Errorf("ShipwrightBuild reconciliation failed : %v", shipwrightErr)
@@ -121,7 +121,7 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		})
 
 		if statusUpdateErr := r.Client.Status().Update(ctx, openShiftBuild); statusUpdateErr != nil {
-			logger.Error(statusUpdateErr, "Failed to update status after SharedResourceReconcileFailed", sharedResourcesErr)
+			logger.Error(statusUpdateErr, "Failed to update status after SharedResourceReconcileFailed", "reconcileError", sharedResourcesErr)
 		}
 
 		return ctrl.Result{}, fmt.Errorf("SharedResources reconciliation failed : %v", sharedResourcesErr)
@@ -138,7 +138,7 @@ func (r *OpenShiftBuildReconciler) Reconcile(ctx context.Context, req ctrl.Reque
 		})
 
 		if statusUpdateErr := r.Client.Status().Update(ctx, openShiftBuild); statusUpdateErr != nil {
-			logger.Error(statusUpdateErr, "Failed to update status after NetworkPolicyReconcileFailed", networkPolicyErr)
+			logger.Error(statusUpdateErr, "Failed to update status after NetworkPolicyReconcileFailed", "reconcileError", networkPolicyErr)
 		}
 
 		return ctrl.Result{}, fmt.Errorf("NetworkPolicy reconciliation failed : %v", networkPolicyErr)
