@@ -20,7 +20,7 @@ var format string
 func NewCmdFetch(w io.Writer) *cobra.Command {
 	fetchCmd := cobra.Command{
 		Use: "fetch",
-		Short: `Fetches the OpenAPI specification from the current kubernetes cluster specified 
+		Short: `Fetches the OpenAPI specification from the current kubernetes cluster specified
 in the user's kubeconfig`,
 		Example: `kustomize openapi fetch`,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -52,15 +52,17 @@ Installation and setup instructions: https://kubernetes.io/docs/tasks/tools/inst
 	command.Stderr = &stderr
 	err := command.Run()
 	if err != nil {
-		return fmt.Errorf("%w\n%s", err, stderr.String()+errMsg)
+		return fmt.Errorf("%w\n%s%s", err, stderr.String(), errMsg)
 	} else if stdout.String() == "" {
-		return fmt.Errorf(stderr.String() + errMsg)
+		return fmt.Errorf("%s%s", stderr.String(), errMsg)
 	}
 
 	// format and output
 	var jsonSchema map[string]interface{}
 	output := stdout.Bytes()
-	json.Unmarshal(output, &jsonSchema)
+	if err := json.Unmarshal(output, &jsonSchema); err != nil {
+		return fmt.Errorf("unable to parse the schema returned by kubectl: %w%s", err, errMsg)
+	}
 	output, _ = json.MarshalIndent(jsonSchema, "", "  ")
 
 	if format == "yaml" {

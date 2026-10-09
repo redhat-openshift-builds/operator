@@ -3585,8 +3585,8 @@ sigs.k8s.io/kustomize/api v0.21.2 h1:MRyw+zLnFBP+G40gZJoKZErAuRiOPEPao+ddS9L6xt4
 sigs.k8s.io/kustomize/api v0.21.2/go.mod h1:inubcVvQjJR/BjUti22YVBWr4EX+XlurEWhB81v2JV4=
 sigs.k8s.io/kustomize/cmd/config v0.21.2 h1:yHEXGPE0HNVyrLpVo8BJgm5RJU1ALDsR0ZbLQdJec4M=
 sigs.k8s.io/kustomize/cmd/config v0.21.2/go.mod h1:iM45S61fPQlQ6OveEX/IDY8EY+UluHiO9WaW6kFm5fE=
-sigs.k8s.io/kustomize/kustomize/v5 v5.7.1 h1:sYJsarwy/SDJfjjLMUqwFDGPwzUtMOQ1i1Ed49+XSbw=
-sigs.k8s.io/kustomize/kustomize/v5 v5.7.1/go.mod h1:+5/SrBcJ4agx1SJknGuR/c9thwRSKLxnKoI5BzXFaLU=
+sigs.k8s.io/kustomize/kustomize/v5 v5.8.2 h1:sSNeWwgkdSMGCIavtY63JQMgBJkGv3IwOltWVZy+LFQ=
+sigs.k8s.io/kustomize/kustomize/v5 v5.8.2/go.mod h1:zzp/kd2bAYFCO6igFQdIn41S/l+gySmsTyMfiQCkVZg=
 sigs.k8s.io/kustomize/kyaml v0.21.2 h1:1javwStFk7cgOeLU7yJtPmXcgMEhQgC2X0WjFT6U0p0=
 sigs.k8s.io/kustomize/kyaml v0.21.2/go.mod h1:zX3qwtuouXd2K1fMiCV0VSFReX06a+CY1rhyf5Dy7hQ=
 sigs.k8s.io/randfill v0.0.0-20250304075658-069ef1bbf016/go.mod h1:XeLlZ/jmk4i1HRopwe7/aU3H5n1zNUcX6TM94b3QxOY=
