@@ -13,18 +13,16 @@ func getHubCatalogs(logger *zap.SugaredLogger, catalogs *sync.Map, config map[st
 		catalogs = &sync.Map{}
 	}
 	if hubURL, ok := config[HubURLKey]; !ok || hubURL == "" {
-		config[HubURLKey] = HubURLDefaultValue
-		logger.Infof("CONFIG: using default hub url %s", HubURLDefaultValue)
+		config[HubURLKey] = ArtifactHubURLDefaultValue
+		logger.Infof("CONFIG: using default hub url %s", ArtifactHubURLDefaultValue)
 	}
 
-	if hubCatalogName, ok := config[HubCatalogNameKey]; !ok || hubCatalogName == "" {
-		config[HubCatalogNameKey] = HubCatalogNameDefaultValue
-	}
-	catalogs.Store("default", HubCatalog{
+	hc := HubCatalog{
 		Index: "default",
 		Name:  config[HubCatalogNameKey],
 		URL:   config[HubURLKey],
-	})
+	}
+	catalogs.Store("default", hc)
 
 	for k := range config {
 		m := hubCatalogNameRegex.FindStringSubmatch(k)
@@ -34,7 +32,6 @@ func getHubCatalogs(logger *zap.SugaredLogger, catalogs *sync.Map, config map[st
 			skip := false
 			for _, kk := range []string{"id", "name", "url"} {
 				cKey := fmt.Sprintf("%s-%s", cPrefix, kk)
-				// check if key exist in config
 				if _, ok := config[cKey]; !ok {
 					logger.Warnf("CONFIG: hub %v should have the key %s, skipping catalog configuration", index, cKey)
 					skip = true
@@ -49,15 +46,16 @@ func getHubCatalogs(logger *zap.SugaredLogger, catalogs *sync.Map, config map[st
 				catalogID := config[fmt.Sprintf("%s-id", cPrefix)]
 				if catalogID == "http" || catalogID == "https" {
 					logger.Warnf("CONFIG: custom hub catalog name cannot be %s, skipping catalog configuration", catalogID)
-					break
+					continue
 				}
 				catalogURL := config[fmt.Sprintf("%s-url", cPrefix)]
 				u, err := url.Parse(catalogURL)
 				if err != nil || u.Scheme == "" || u.Host == "" {
 					logger.Warnf("CONFIG: custom hub %s, catalog url %s is not valid, skipping catalog configuration", catalogID, catalogURL)
-					break
+					continue
 				}
 				catalogName := config[fmt.Sprintf("%s-name", cPrefix)]
+
 				value, ok := catalogs.Load(catalogID)
 				if ok {
 					catalogValues, ok := value.(HubCatalog)
