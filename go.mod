@@ -13,7 +13,7 @@ require (
 	github.com/shipwright-io/operator v0.19.0
 	github.com/tektoncd/operator v0.77.0
 	k8s.io/api v0.37.1
-	k8s.io/apiextensions-apiserver v0.37.0
+	k8s.io/apiextensions-apiserver v0.37.1
 	k8s.io/apimachinery v0.37.1
 	k8s.io/client-go v1.5.2
 	k8s.io/utils v0.0.0-20260707023825-cf1189d6abe3
@@ -81,8 +81,8 @@ require (
 	github.com/openshift-pipelines/pipelines-as-code v0.36.0 // indirect
 	github.com/openshift-pipelines/tektoncd-pruner v0.2.0 // indirect
 	github.com/openshift/api v0.0.0-20261007152721-ef6066a4b80e // indirect
-	github.com/openshift/apiserver-library-go v0.0.0-20260715200723-42e5e402ca43 // indirect
-	github.com/openshift/client-go v0.0.0-20260923093432-89e5bba1be29 // indirect
+	github.com/openshift/apiserver-library-go v0.0.0-20261001145254-218f2c488d90 // indirect
+	github.com/openshift/client-go v0.0.0-20261001003915-dcaad1dc7fe8 // indirect
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.24.1 // indirect
 	github.com/prometheus/client_model v0.6.3 // indirect
@@ -123,7 +123,7 @@ require (
 	google.golang.org/protobuf v1.36.12 // indirect
 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
-	k8s.io/code-generator v0.37.0 // indirect
+	k8s.io/code-generator v0.37.1 // indirect
 	k8s.io/gengo/v2 v2.0.0-20260408192533-25e2208e0dc3 // indirect
 	k8s.io/klog/v2 v2.140.0 // indirect
 	k8s.io/kube-openapi v0.0.0-20260721132016-d427ff9ee9ad // indirect

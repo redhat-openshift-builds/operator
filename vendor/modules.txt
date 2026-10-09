@@ -244,10 +244,10 @@ github.com/openshift-pipelines/tektoncd-pruner/pkg/metrics
 # github.com/openshift/api v0.0.0-20261007152721-ef6066a4b80e
 ## explicit; go 1.26.0
 github.com/openshift/api/security/v1
-# github.com/openshift/apiserver-library-go v0.0.0-20260715200723-42e5e402ca43
+# github.com/openshift/apiserver-library-go v0.0.0-20261001145254-218f2c488d90
 ## explicit; go 1.26.0
 github.com/openshift/apiserver-library-go/pkg/securitycontextconstraints/util/sort
-# github.com/openshift/client-go v0.0.0-20260923093432-89e5bba1be29
+# github.com/openshift/client-go v0.0.0-20261001003915-dcaad1dc7fe8
 ## explicit; go 1.26.0
 github.com/openshift/client-go/security/applyconfigurations/internal
 github.com/openshift/client-go/security/applyconfigurations/security/v1
@@ -679,7 +679,7 @@ k8s.io/api/storage/v1
 k8s.io/api/storage/v1alpha1
 k8s.io/api/storage/v1beta1
 k8s.io/api/storagemigration/v1alpha1
-# k8s.io/apiextensions-apiserver v0.37.0 => k8s.io/apiextensions-apiserver v0.34.4
+# k8s.io/apiextensions-apiserver v0.37.1 => k8s.io/apiextensions-apiserver v0.34.4
 ## explicit; go 1.24.0
 k8s.io/apiextensions-apiserver/pkg/apis/apiextensions
 k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1
@@ -1034,7 +1034,7 @@ k8s.io/client-go/util/homedir
 k8s.io/client-go/util/keyutil
 k8s.io/client-go/util/retry
 k8s.io/client-go/util/workqueue
-# k8s.io/code-generator v0.37.0
+# k8s.io/code-generator v0.37.1
 ## explicit; go 1.26.0
 k8s.io/code-generator/cmd/applyconfiguration-gen/args
 k8s.io/code-generator/cmd/applyconfiguration-gen/generators
