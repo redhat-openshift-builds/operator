@@ -247,7 +247,7 @@ github.com/openshift/api/security/v1
 # github.com/openshift/apiserver-library-go v0.0.0-20260715200723-42e5e402ca43
 ## explicit; go 1.26.0
 github.com/openshift/apiserver-library-go/pkg/securitycontextconstraints/util/sort
-# github.com/openshift/client-go v0.0.0-20260923093432-89e5bba1be29
+# github.com/openshift/client-go v0.0.0-20261006222332-348fc1ca8bb1
 ## explicit; go 1.26.0
 github.com/openshift/client-go/security/applyconfigurations/internal
 github.com/openshift/client-go/security/applyconfigurations/security/v1
@@ -1034,7 +1034,7 @@ k8s.io/client-go/util/homedir
 k8s.io/client-go/util/keyutil
 k8s.io/client-go/util/retry
 k8s.io/client-go/util/workqueue
-# k8s.io/code-generator v0.37.0
+# k8s.io/code-generator v0.37.1
 ## explicit; go 1.26.0
 k8s.io/code-generator/cmd/applyconfiguration-gen/args
 k8s.io/code-generator/cmd/applyconfiguration-gen/generators
