@@ -58,7 +58,7 @@ func (np *NetworkPolicy) deleteManifests(manifest *manifestival.Manifest) error 
 		obj, err := mfc.Get(&res)
 		if err != nil {
 			if errors.IsNotFound(err) {
-				continue 
+				continue
 			}
 			return err
 		}

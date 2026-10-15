@@ -20,7 +20,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	rbacv1 "k8s.io/api/rbac/v1"
 	"os"
 
 	"github.com/go-logr/logr"
@@ -28,6 +27,7 @@ import (
 	"github.com/manifestival/manifestival"
 	"github.com/redhat-openshift-builds/operator/internal/networkpolicy"
 	"github.com/redhat-openshift-builds/operator/internal/sharedresource"
+	rbacv1 "k8s.io/api/rbac/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -47,13 +47,15 @@ import (
 
 // OpenShiftBuildReconciler reconciles a OpenShiftBuild object
 type OpenShiftBuildReconciler struct {
-	APIReader      client.Reader
-	Client         client.Client
-	Scheme         *apiruntime.Scheme
-	Logger         logr.Logger
-	SharedResource *sharedresource.SharedResource
-	Shipwright     *shipwrightbuild.ShipwrightBuild
-	NetworkPolicy  *networkpolicy.NetworkPolicy
+	APIReader       client.Reader
+	Client          client.Client
+	Scheme          *apiruntime.Scheme
+	Logger          logr.Logger
+	SharedResource  *sharedresource.SharedResource
+	Shipwright      *shipwrightbuild.ShipwrightBuild
+	NetworkPolicy   *networkpolicy.NetworkPolicy
+	TLSMinVersion   string
+	TLSCipherSuites string
 }
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
@@ -245,8 +247,8 @@ func (r *OpenShiftBuildReconciler) setupSharedResource(mgr ctrl.Manager) error {
 		return err
 	}
 
-	// Initialize Shared Resource
-	r.SharedResource = sharedresource.New(mgr.GetClient(), sharedManifest)
+	// Initialize Shared Resource with TLS configuration
+	r.SharedResource = sharedresource.New(mgr.GetClient(), sharedManifest, r.TLSMinVersion, r.TLSCipherSuites)
 	return nil
 }
 
