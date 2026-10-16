@@ -16,7 +16,7 @@ webhooks:
       path: /resource-validation
       port: 443
   name: pod.csi.sharedresource.openshift.io
-  failurePolicy: Ignore
+  failurePolicy: Fail
   matchPolicy: Equivalent
   namespaceSelector:
       matchExpressions:
@@ -26,9 +26,6 @@ webhooks:
         - key: openshift.io/run-level
           operator: NotIn
           values: ["0", "1"]
-        - key: csi.sharedresource.openshift.io/skip-validation
-          operator: NotIn
-          values: ["true"]
   rules:
     - operations: ["CREATE"]
       apiGroups: [""]
