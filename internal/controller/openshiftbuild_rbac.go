@@ -21,6 +21,8 @@ package controller
 //+kubebuilder:rbac:groups=core,resources=serviceaccounts,namespace=openshift-builds,resourceNames=shared-resource-csi-driver-webhook,verbs=update;patch;delete
 //+kubebuilder:rbac:groups=admissionregistration.k8s.io,resources=validatingwebhookconfigurations,verbs=get;list;watch;create
 //+kubebuilder:rbac:groups=admissionregistration.k8s.io,resources=validatingwebhookconfigurations,resourceNames=validation.webhook.csidriversharedresource;pod.csi.sharedresource.openshift.io,verbs=update;patch;delete
+//+kubebuilder:rbac:groups=security.openshift.io,resources=securitycontextconstraints,verbs=get;list;watch;create
+//+kubebuilder:rbac:groups=security.openshift.io,resources=securitycontextconstraints,resourceNames=shared-resource-csi-driver,verbs=update;patch;delete
 //+kubebuilder:rbac:groups=sharedresource.openshift.io,resources=sharedconfigmaps;sharedsecrets,verbs=get;list;watch
 //+kubebuilder:rbac:groups=networking.k8s.io,resources=networkpolicies,namespace=openshift-builds,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=apiextensions.k8s.io,resources=customresourcedefinitions,resourceNames=sharedconfigmaps.sharedresource.openshift.io;sharedsecrets.sharedresource.openshift.io,verbs=get;list;watch;create;update;delete;patch

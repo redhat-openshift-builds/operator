@@ -194,6 +194,25 @@ rules:
   - patch
   - update
 - apiGroups:
+  - security.openshift.io
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+- apiGroups:
+  - security.openshift.io
+  resourceNames:
+  - shared-resource-csi-driver
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - delete
+  - patch
+  - update
+- apiGroups:
   - sharedresource.openshift.io
   resources:
   - sharedconfigmaps

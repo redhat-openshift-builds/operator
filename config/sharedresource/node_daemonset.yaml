@@ -100,8 +100,6 @@ spec:
               mountPropagation: Bidirectional
             - mountPath: /csi-volumes-map
               name: csi-volumes-map
-            - mountPath: /dev
-              name: dev-dir
             - mountPath: /etc/secrets
               name: shared-resource-csi-driver-node-metrics-serving-cert
           resources:
@@ -139,10 +137,6 @@ spec:
             path: /run/csi-data-dir
             type: DirectoryOrCreate
           name: csi-data-dir
-        - hostPath:
-            path: /dev
-            type: Directory
-          name: dev-dir
         - name: shared-resource-csi-driver-node-metrics-serving-cert
           secret:
             defaultMode: 420
