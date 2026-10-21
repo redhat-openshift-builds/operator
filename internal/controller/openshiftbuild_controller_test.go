@@ -32,6 +32,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 
 	"github.com/redhat-openshift-builds/operator/internal/common"
+	"github.com/redhat-openshift-builds/operator/internal/networkpolicy"
 	"github.com/redhat-openshift-builds/operator/internal/sharedresource"
 	shipwrightbuild "github.com/redhat-openshift-builds/operator/internal/shipwright/build"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -41,6 +42,7 @@ import (
 	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
 
 var _ = Describe("OpenShiftBuild controller", Label("integration", "openshiftbuild"), Serial, func() {
@@ -156,6 +158,40 @@ var _ = Describe("OpenShiftBuild controller", Label("integration", "openshiftbui
 	})
 })
 
+type failingStatusClient struct {
+	client.Client
+}
+
+type failingStatusWriter struct{}
+
+func (f *failingStatusClient) Status() client.SubResourceWriter {
+	return &failingStatusWriter{}
+}
+
+func (f *failingStatusWriter) Create(ctx context.Context, obj client.Object, subResource client.Object, opts ...client.SubResourceCreateOption) error {
+	return fmt.Errorf("injected status create failure")
+}
+
+func (f *failingStatusWriter) Update(ctx context.Context, obj client.Object, opts ...client.SubResourceUpdateOption) error {
+	return fmt.Errorf("injected status update failure")
+}
+
+func (f *failingStatusWriter) Patch(ctx context.Context, obj client.Object, patch client.Patch, opts ...client.SubResourcePatchOption) error {
+	return fmt.Errorf("injected status patch failure")
+}
+
+type failingWriteClient struct {
+	client.Client
+}
+
+func (f *failingWriteClient) Create(ctx context.Context, obj client.Object, opts ...client.CreateOption) error {
+	return fmt.Errorf("injected create failure")
+}
+
+func (f *failingWriteClient) Update(ctx context.Context, obj client.Object, opts ...client.UpdateOption) error {
+	return fmt.Errorf("injected update failure")
+}
+
 var _ = Describe("Main Operator Controller with Sub-Reconciler Failure", func() {
 	const (
 		CRName      = "test-shipwright-build"
@@ -230,6 +266,74 @@ var _ = Describe("Main Operator Controller with Sub-Reconciler Failure", func() 
 			// Cleanup
 			By("Deleting the CR for SharedResource failure test")
 			Expect(k8sClient.Delete(ctx, cr)).Should(Succeed())
+		})
+	})
+
+	Context("When reconciliation fails and status update also fails", func() {
+		It("Should not panic on logger.Error with key-value pairs", func() {
+			By("Setting up a fake client with a pre-populated OpenShiftBuild")
+
+			cr := &operatorv1alpha1.OpenShiftBuild{
+				ObjectMeta: metav1.ObjectMeta{
+					Name: "test-status-update-failure",
+				},
+				Spec: operatorv1alpha1.OpenShiftBuildSpec{
+					Shipwright: &operatorv1alpha1.Shipwright{
+						Build: &operatorv1alpha1.ShipwrightBuild{
+							State: operatorv1alpha1.Enabled,
+						},
+					},
+					SharedResource: &operatorv1alpha1.SharedResource{
+						State: operatorv1alpha1.Disabled,
+					},
+				},
+				Status: operatorv1alpha1.OpenShiftBuildStatus{
+					Conditions: []metav1.Condition{
+						{
+							Type:               operatorv1alpha1.ConditionReady,
+							Status:             metav1.ConditionFalse,
+							Reason:             "Testing",
+							LastTransitionTime: metav1.Now(),
+						},
+					},
+				},
+			}
+
+			fakeClient := fake.NewClientBuilder().
+				WithScheme(testEnv.Scheme).
+				WithObjects(cr).
+				WithStatusSubresource(cr).
+				Build()
+
+			By("Creating reconciler with failing Status().Update() and failing Shipwright writes")
+			fsClient := &failingStatusClient{Client: fakeClient}
+			fwClient := &failingWriteClient{Client: fakeClient}
+			reconciler := &OpenShiftBuildReconciler{
+				Client:         fsClient,
+				Scheme:         testEnv.Scheme,
+				Logger:         ctrl.Log.WithName("test-status-failure-reconciler"),
+				APIReader:      fakeClient,
+				SharedResource: &sharedresource.SharedResource{},
+				Shipwright:     shipwrightbuild.New(fwClient, CRNamespace),
+				NetworkPolicy:  &networkpolicy.NetworkPolicy{Client: fakeClient, Logger: ctrl.Log.WithName("test-networkpolicy")},
+			}
+
+			By("Invoking Reconcile — Shipwright fails (write rejected), then Status().Update() fails")
+			crKey := types.NamespacedName{Name: "test-status-update-failure"}
+			req := ctrl.Request{NamespacedName: crKey}
+			Expect(func() {
+				_, _ = reconciler.Reconcile(ctx, req)
+			}).ShouldNot(Panic())
+
+			result, err := reconciler.Reconcile(ctx, req)
+
+			By("Asserting that the Shipwright failure error was returned")
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(ContainSubstring("ShipwrightBuild reconciliation failed"))
+
+			By("Asserting default requeue behavior")
+			Expect(result.Requeue).To(BeFalse())
+			Expect(result.RequeueAfter).To(BeZero())
 		})
 	})
 
