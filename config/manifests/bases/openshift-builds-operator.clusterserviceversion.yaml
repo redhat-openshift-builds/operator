@@ -2,7 +2,7 @@ apiVersion: operators.coreos.com/v1alpha1
 kind: ClusterServiceVersion
 metadata:
   annotations:
-    alm-examples: "[]"
+    alm-examples: '[]'
     capabilities: Full Lifecycle
     categories: Developer Tools, Integration & Delivery
     certified: "true"
@@ -40,9 +40,7 @@ spec:
         kind: ShipwrightBuild
         name: shipwrightbuilds.operator.shipwright.io
         version: v1alpha1
-      - description: |-
-          OpenShiftBuild describes the desired state of Builds for OpenShift, and the status of
-          all deployed components.
+      - description: OpenShiftBuild describes the desired state of Builds for OpenShift, and the status of all deployed components.
         displayName: Open Shift Build
         kind: OpenShiftBuild
         name: openshiftbuilds.operator.openshift.io
@@ -105,8 +103,6 @@ spec:
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE
     - image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar-rhel9@sha256:8bed04198de197162eaf332890e40100c5a7061bf9f728be09f2004671f9632c
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_NODE_REGISTRAR
-    - image: registry.redhat.io/openshift4/ose-kube-rbac-proxy-rhel9@sha256:08cc0aca059d030e9ebd108adcc60aa6319d64199d4c433333d389ce6c01e637
-      name: OPENSHIFT_BUILDS_KUBE_RBAC_PROXY
     - image: registry.redhat.io/ubi10/buildah@sha256:48c76ef9635739ad0c33645c2885ab6aa3036dca5883f475b820ac456d6817b6
       name: OPENSHIFT_BUILDS_BUILDAH
     - image: registry.redhat.io/source-to-image/source-to-image-rhel9@sha256:798e0e860df8e3ca1ff5f8aa796940d6dbd4b739ccfc35c6f4c9bc046d5f0c12

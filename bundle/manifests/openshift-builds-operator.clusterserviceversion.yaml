@@ -36,7 +36,7 @@ metadata:
     categories: Developer Tools, Integration & Delivery
     certified: "true"
     containerImage: registry.redhat.io/openshift-builds/openshift-builds-rhel10-operator
-    createdAt: "2026-08-17T08:34:42Z"
+    createdAt: "2026-10-13T12:24:52Z"
     description: Builds for Red Hat OpenShift is a framework for building container images on Kubernetes.
     features.operators.openshift.io/cnf: "false"
     features.operators.openshift.io/cni: "false"
@@ -51,7 +51,7 @@ metadata:
     operatorframework.io/cluster-monitoring: "true"
     operatorframework.io/suggested-namespace: openshift-builds
     operators.openshift.io/valid-subscription: '["OpenShift Container Platform", "OpenShift Platform Plus"]'
-    operators.operatorframework.io/builder: operator-sdk-v1.39.2
+    operators.operatorframework.io/builder: operator-sdk-v1.35.0
     operators.operatorframework.io/internal-objects: '["openshiftbuilds.operator.openshift.io","shipwrightbuilds.operator.shipwright.io"]'
     operators.operatorframework.io/project_layout: go.kubebuilder.io/v4
     repository: https://github.com/shipwright-io/operator
@@ -67,9 +67,7 @@ spec:
   apiservicedefinitions: {}
   customresourcedefinitions:
     owned:
-      - description: |-
-          OpenShiftBuild describes the desired state of Builds for OpenShift, and the status of
-          all deployed components.
+      - description: OpenShiftBuild describes the desired state of Builds for OpenShift, and the status of all deployed components.
         displayName: Open Shift Build
         kind: OpenShiftBuild
         name: openshiftbuilds.operator.openshift.io
@@ -285,17 +283,24 @@ spec:
                 - watch
             - apiGroups:
                 - admissionregistration.k8s.io
-                - admissionregistration.k8s.io/v1beta1
               resources:
                 - validatingwebhookconfigurations
               verbs:
                 - create
-                - delete
                 - get
                 - list
+                - watch
+            - apiGroups:
+                - admissionregistration.k8s.io
+              resourceNames:
+                - pod.csi.sharedresource.openshift.io
+                - validation.webhook.csidriversharedresource
+              resources:
+                - validatingwebhookconfigurations
+              verbs:
+                - delete
                 - patch
                 - update
-                - watch
             - apiGroups:
                 - apiextensions.k8s.io
               resources:
@@ -334,16 +339,12 @@ spec:
                 - update
                 - watch
             - apiGroups:
-                - networking.k8s.io
+                - config.openshift.io
               resources:
-                - networkpolicies
+                - apiservers
               verbs:
-                - create
-                - delete
                 - get
                 - list
-                - patch
-                - update
                 - watch
             - apiGroups:
                 - operator.openshift.io
@@ -500,18 +501,6 @@ spec:
                 - delete
                 - patch
                 - update
-            - apiGroups:
-                - authentication.k8s.io
-              resources:
-                - tokenreviews
-              verbs:
-                - create
-            - apiGroups:
-                - authorization.k8s.io
-              resources:
-                - subjectaccessreviews
-              verbs:
-                - create
           serviceAccountName: openshift-builds-operator
       deployments:
         - label:
@@ -537,32 +526,8 @@ spec:
               spec:
                 containers:
                   - args:
-                      - --secure-listen-address=0.0.0.0:8443
-                      - --upstream=http://127.0.0.1:8080/
-                      - --logtostderr=true
-                      - --v=0
-                    image: registry.redhat.io/openshift4/ose-kube-rbac-proxy-rhel9@sha256:08cc0aca059d030e9ebd108adcc60aa6319d64199d4c433333d389ce6c01e637
-                    name: kube-rbac-proxy
-                    ports:
-                      - containerPort: 8443
-                        name: https
-                        protocol: TCP
-                    resources:
-                      limits:
-                        cpu: 500m
-                        memory: 128Mi
-                      requests:
-                        cpu: 5m
-                        memory: 64Mi
-                    securityContext:
-                      allowPrivilegeEscalation: false
-                      capabilities:
-                        drop:
-                          - ALL
-                      readOnlyRootFilesystem: true
-                  - args:
                       - --health-probe-bind-address=:8081
-                      - --metrics-bind-address=127.0.0.1:8080
+                      - --metrics-bind-address=:8443
                       - --leader-elect
                     command:
                       - /operator
@@ -581,7 +546,7 @@ spec:
                         value: registry.redhat.io/openshift-builds/openshift-builds-waiters-rhel10@sha256:6d75c6aeb1d800e838914370f51d870895e9695d7d142217fde98a56b6641d45
                       - name: IMAGE_SHIPWRIGHT_SHIPWRIGHT_BUILD_WEBHOOK
                         value: registry.redhat.io/openshift-builds/openshift-builds-webhook-rhel10@sha256:17925fb748c3cb5f4b63ab1325af5737d536957ff7213ceeacd7e019e6c75fe8
-                    image: registry.redhat.io/openshift-builds/openshift-builds-rhel10-operator@sha256:e731e18cde9a2b7e0d1e07d35b8564e0de000b1d70e5d3f5c91a0a8509fd84f6
+                    image: registry.redhat.io/openshift-builds/openshift-builds-rhel10-operator@sha256:0f44829f4b4bea2a331471fc1144931613435b17d06b01a7053f8f343d475635
                     imagePullPolicy: Always
                     livenessProbe:
                       httpGet:
@@ -590,6 +555,10 @@ spec:
                       initialDelaySeconds: 15
                       periodSeconds: 20
                     name: operator
+                    ports:
+                      - containerPort: 8443
+                        name: https
+                        protocol: TCP
                     readinessProbe:
                       httpGet:
                         path: /readyz
@@ -679,6 +648,26 @@ spec:
             - apiGroups:
                 - ""
               resourceNames:
+                - csi-driver-shared-resource
+              resources:
+                - serviceaccounts
+              verbs:
+                - delete
+                - patch
+                - update
+            - apiGroups:
+                - ""
+              resourceNames:
+                - shared-resource-csi-driver-webhook
+              resources:
+                - serviceaccounts
+              verbs:
+                - delete
+                - patch
+                - update
+            - apiGroups:
+                - ""
+              resourceNames:
                 - shipwright-build-controller
               resources:
                 - serviceaccounts
@@ -700,7 +689,6 @@ spec:
                 - apps
               resources:
                 - daemonsets
-                - deployments
               verbs:
                 - create
                 - delete
@@ -709,6 +697,25 @@ spec:
                 - patch
                 - update
                 - watch
+            - apiGroups:
+                - apps
+              resources:
+                - deployments
+              verbs:
+                - create
+                - get
+                - list
+                - watch
+            - apiGroups:
+                - apps
+              resourceNames:
+                - shared-resource-csi-driver-webhook
+              resources:
+                - deployments
+              verbs:
+                - delete
+                - patch
+                - update
             - apiGroups:
                 - apps
               resourceNames:
@@ -779,6 +786,18 @@ spec:
                 - monitoring.coreos.com
               resources:
                 - servicemonitors
+              verbs:
+                - create
+                - delete
+                - get
+                - list
+                - patch
+                - update
+                - watch
+            - apiGroups:
+                - networking.k8s.io
+              resources:
+                - networkpolicies
               verbs:
                 - create
                 - delete
@@ -870,8 +889,6 @@ spec:
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE
     - image: registry.redhat.io/openshift4/ose-csi-node-driver-registrar-rhel9@sha256:8bed04198de197162eaf332890e40100c5a7061bf9f728be09f2004671f9632c
       name: OPENSHIFT_BUILDS_SHARED_RESOURCE_NODE_REGISTRAR
-    - image: registry.redhat.io/openshift4/ose-kube-rbac-proxy-rhel9@sha256:08cc0aca059d030e9ebd108adcc60aa6319d64199d4c433333d389ce6c01e637
-      name: OPENSHIFT_BUILDS_KUBE_RBAC_PROXY
     - image: registry.redhat.io/ubi10/buildah@sha256:48c76ef9635739ad0c33645c2885ab6aa3036dca5883f475b820ac456d6817b6
       name: OPENSHIFT_BUILDS_BUILDAH
     - image: registry.redhat.io/source-to-image/source-to-image-rhel9@sha256:798e0e860df8e3ca1ff5f8aa796940d6dbd4b739ccfc35c6f4c9bc046d5f0c12
