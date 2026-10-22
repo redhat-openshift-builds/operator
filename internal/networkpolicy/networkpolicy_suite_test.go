@@ -7,8 +7,8 @@ import (
 	. "github.com/onsi/gomega"
 
 	operatorv1alpha1 "github.com/redhat-openshift-builds/operator/api/v1alpha1"
-	networkingv1 "k8s.io/api/networking/v1"
 	"github.com/redhat-openshift-builds/operator/internal/common"
+	networkingv1 "k8s.io/api/networking/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/util/uuid"

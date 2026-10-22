@@ -1,5 +1,5 @@
-# This patch inject a sidecar container which is a HTTP proxy for the
-# controller manager, it performs RBAC authorization against the Kubernetes API using SubjectAccessReviews.
+# This patch exposes the operator's metrics endpoint directly
+# without kube-rbac-proxy sidecar.
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -9,32 +9,12 @@ spec:
   template:
     spec:
       containers:
-        - name: kube-rbac-proxy
-          securityContext:
-            readOnlyRootFilesystem: true
-            allowPrivilegeEscalation: false
-            capabilities:
-              drop:
-                - "ALL"
-          image: registry.redhat.io/openshift4/ose-kube-rbac-proxy-rhel9@sha256:08cc0aca059d030e9ebd108adcc60aa6319d64199d4c433333d389ce6c01e637
+        - name: operator
           args:
-            - "--secure-listen-address=0.0.0.0:8443"
-            - "--upstream=http://127.0.0.1:8080/"
-            - "--logtostderr=true"
-            - "--v=0"
+            - "--health-probe-bind-address=:8081"
+            - "--metrics-bind-address=:8443"
+            - "--leader-elect"
           ports:
             - containerPort: 8443
               protocol: TCP
               name: https
-          resources:
-            limits:
-              cpu: 500m
-              memory: 128Mi
-            requests:
-              cpu: 5m
-              memory: 64Mi
-        - name: operator
-          args:
-            - "--health-probe-bind-address=:8081"
-            - "--metrics-bind-address=127.0.0.1:8080"
-            - "--leader-elect"
