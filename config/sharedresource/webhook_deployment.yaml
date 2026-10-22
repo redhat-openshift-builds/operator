@@ -21,7 +21,7 @@ spec:
         name: shared-resource-csi-driver-webhook
     spec:
       containers:
-      - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:05babe849350e3609e3c061d88c6edf656ebc502169a35cb2526bab4d39a9e5a
+      - image: registry.redhat.io/openshift-builds/openshift-builds-shared-resource-webhook-rhel9@sha256:25f87885ff85aadf74dd194bf287f27a5b59e248dae07f8fa71b09204b52e690
         imagePullPolicy: IfNotPresent
         name: shared-resource-csi-driver-webhook
         args:
