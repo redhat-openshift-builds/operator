@@ -248,7 +248,7 @@ SHIPWRIGHT_BUILD_SOURCE ?= https://github.com/shipwright-io/build/releases/downl
 
 # ClusterBuildStrategy Sources
 STRATEGIES = buildah buildpacks buildpacks-extender source-to-image
-STRATEGY_SOURCE ?= https://raw.githubusercontent.com/redhat-openshift-builds/strategy-catalog/refs/heads/main/clusterBuildStrategy
+STRATEGY_SOURCE ?= https://raw.githubusercontent.com/redhat-openshift-builds/strategy-catalog/refs/heads/main/clusterbuildstrategy
 
 .PHONY: yq
 yq: $(YQ) ## Download yq locally if necessary.
