@@ -3,9 +3,9 @@ kind: PipelineRun
 metadata:
   annotations:
     build.appstudio.openshift.io/repo: https://github.com/redhat-openshift-builds/operator?rev={{revision}}
-    build.appstudio.redhat.com/commit_sha: '{{revision}}'
-    build.appstudio.redhat.com/pull_request_number: '{{pull_request_number}}'
-    build.appstudio.redhat.com/target_branch: '{{target_branch}}'
+    build.appstudio.redhat.com/commit_sha: "{{revision}}"
+    build.appstudio.redhat.com/pull_request_number: "{{pull_request_number}}"
+    build.appstudio.redhat.com/target_branch: "{{target_branch}}"
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/on-cel-expression: |
       event == "pull_request" &&
@@ -23,57 +23,59 @@ metadata:
   namespace: rh-openshift-builds-tenant
 spec:
   params:
-  - name: git-url
-    value: '{{source_url}}'
-  - name: revision
-    value: '{{revision}}'
-  - name: output-image
-    value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds-operator-1-8:on-pr-{{revision}}
-  - name: component
-    value: 'openshift-builds-{{ repo_name }}'
-  - name: branch
-    value: '{{ target_branch }}'
-  - name: repository-url
-    value: '{{ repo_url }}'
-  - name: test-event
-    value: '{{ event_type }}'
-  - name: pull-request-number
-    value: '{{ pull_request_number }}'
-  - name: image-expires-after
-    value: 5d
-  - name: dockerfile
-    value: Dockerfile
-  - name: build-source-image
-    value: "true"
-  - name: hermetic
-    value: "true"
-  - name: build-platforms
-    value:
-    - linux/x86_64
-    - linux/arm64
-  - name: prefetch-input
-    value: '{"packages": [{"type": "gomod"}]}'
-  - name: run-unit-test
-    value: "true"
-  - name: unit-test-command
-    value: make test
-  - name: unit-test-revision
-    value: "62314daa6fddc49f2b92bbdc06864eaba4b36c69"
-  - name: enable-sealights
-    value: "false"
+    - name: git-url
+      value: "{{source_url}}"
+    - name: revision
+      value: "{{revision}}"
+    - name: output-image
+      value: quay.io/redhat-user-workloads/rh-openshift-builds-tenant/openshift-builds-operator-1-8:on-pr-{{revision}}
+    - name: component
+      value: "openshift-builds-{{ repo_name }}"
+    - name: branch
+      value: "{{ target_branch }}"
+    - name: repository-url
+      value: "{{ repo_url }}"
+    - name: test-event
+      value: "{{ event_type }}"
+    - name: pull-request-number
+      value: "{{ pull_request_number }}"
+    - name: image-expires-after
+      value: 5d
+    - name: dockerfile
+      value: Dockerfile
+    - name: build-source-image
+      value: "true"
+    - name: hermetic
+      value: "true"
+    - name: build-platforms
+      value:
+        - linux/x86_64
+        - linux/arm64
+    - name: prefetch-input
+      value: '{"packages": [{"type": "gomod"}]}'
+    - name: run-unit-test
+      value: "true"
+    - name: unit-test-command
+      value: make test
+    - name: unit-test-revision
+      value: "62314daa6fddc49f2b92bbdc06864eaba4b36c69"
+    - name: enable-sealights
+      value: "false"
+    - name: unit-test-base-image
+      value: registry.redhat.io/ubi9/go-toolset@sha256:edb9452603fa48e9882063f001ecd7d322add20f1564a4f05f38f6683be5ea94
   pipelineRef:
     params:
-    - name: url
-      value: https://github.com/redhat-openshift-builds/release.git
-    - name: revision
-      value: main
-    - name: pathInRepo
-      value: /pipelines/konflux-build-multi-platform.yaml
+      - name: url
+        value: https://github.com/redhat-openshift-builds/release.git
+      - name: revision
+        value: main
+      - name: pathInRepo
+        value: /pipelines/konflux-build-multi-platform.yaml
     resolver: git
   taskRunTemplate:
     serviceAccountName: build-pipeline-openshift-builds-operator-1-8
   workspaces:
-  - name: git-auth
-    secret:
-      secretName: '{{ git_auth_secret }}'
+    - name: git-auth
+      secret:
+        secretName: "{{ git_auth_secret }}"
 status: {}

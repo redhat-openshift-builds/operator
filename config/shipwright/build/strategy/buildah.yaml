@@ -44,6 +44,7 @@ spec:
           pull="missing"
           budArgs=()
           inBuildArgs=false
+          inBuildEnv=false
           noCache="false"
           squash="false"
           registriesBlock=""
@@ -59,6 +60,7 @@ spec:
 
             if [ "${arg}" == "--context" ]; then
               inBuildArgs=false
+              inBuildEnv=false
               inRegistriesBlock=false
               inRegistriesInsecure=false
               inRegistriesSearch=false
@@ -66,6 +68,7 @@ spec:
               shift
             elif [ "${arg}" == "--dockerfile" ]; then
               inBuildArgs=false
+              inBuildEnv=false
               inRegistriesBlock=false
               inRegistriesInsecure=false
               inRegistriesSearch=false
@@ -73,6 +76,7 @@ spec:
               shift
             elif [ "${arg}" == "--image" ]; then
               inBuildArgs=false
+              inBuildEnv=false
               inRegistriesBlock=false
               inRegistriesInsecure=false
               inRegistriesSearch=false
@@ -80,6 +84,7 @@ spec:
               shift
             elif [ "${arg}" == "--no-cache" ]; then
               inBuildArgs=false
+              inBuildEnv=false
               inRegistriesBlock=false
               inRegistriesInsecure=false
               inRegistriesSearch=false
@@ -87,6 +92,7 @@ spec:
               shift
             elif [ "${arg}" == "--pull" ]; then
               inBuildArgs=false
+              inBuildEnv=false
               inRegistriesBlock=false
               inRegistriesInsecure=false
               inRegistriesSearch=false
@@ -94,6 +100,7 @@ spec:
               shift
             elif [ "${arg}" == "--squash" ]; then
               inBuildArgs=false
+              inBuildEnv=false
               inRegistriesBlock=false
               inRegistriesInsecure=false
               inRegistriesSearch=false
@@ -101,6 +108,7 @@ spec:
               shift
             elif [ "${arg}" == "--runtime-stage-from" ]; then
               inBuildArgs=false
+              inBuildEnv=false
               inRegistriesBlock=false
               inRegistriesInsecure=false
               inRegistriesSearch=false
@@ -108,6 +116,7 @@ spec:
               shift
             elif [ "${arg}" == "--target" ]; then
               inBuildArgs=false
+              inBuildEnv=false
               inRegistriesBlock=false
               inRegistriesInsecure=false
               inRegistriesSearch=false
@@ -117,26 +126,55 @@ spec:
               shift
             elif [ "${arg}" == "--build-args" ]; then
               inBuildArgs=true
+              inBuildEnv=false
+              inRegistriesBlock=false
+              inRegistriesInsecure=false
+              inRegistriesSearch=false
+            elif [ "${arg}" == "--build-env" ]; then
+              inBuildEnv=true
+              inBuildArgs=false
               inRegistriesBlock=false
               inRegistriesInsecure=false
               inRegistriesSearch=false
             elif [ "${arg}" == "--registries-block" ]; then
               inRegistriesBlock=true
               inBuildArgs=false
+              inBuildEnv=false
               inRegistriesInsecure=false
               inRegistriesSearch=false
             elif [ "${arg}" == "--registries-insecure" ]; then
               inRegistriesInsecure=true
               inBuildArgs=false
+              inBuildEnv=false
               inRegistriesBlock=false
               inRegistriesSearch=false
             elif [ "${arg}" == "--registries-search" ]; then
               inRegistriesSearch=true
               inBuildArgs=false
+              inBuildEnv=false
               inRegistriesBlock=false
               inRegistriesInsecure=false
             elif [ "${inBuildArgs}" == "true" ]; then
               budArgs+=("--build-arg" "${arg}")
+            elif [ "${inBuildEnv}" == "true" ]; then
+              # buildah copies every matching variable of this step's environment for
+              # an entry that has no '=' and ends in '*', so refuse those rather than
+              # push the whole environment into the image.
+              if [[ "${arg}" != *=* && "${arg}" == *'*' ]]; then
+                echo "build-env entry '${arg}' is a wildcard; list each variable by name or as KEY=VALUE."
+                echo -n "InvalidBuildEnv" > '$(results.shp-error-reason.path)'
+                echo -n "build-env entry '${arg}' is a wildcard; list each variable by name or as KEY=VALUE." > '$(results.shp-error-message.path)'
+                exit 1
+              fi
+              # buildah drops a bare name it cannot find, and the build would go on
+              # without the variable, so a name missing from spec.env is an error.
+              if [[ "${arg}" != *=* ]] && ! printenv "${arg}" >/dev/null; then
+                echo "build-env entry '${arg}' is not set in the Build's spec.env; set it there or pass it as KEY=VALUE."
+                echo -n "InvalidBuildEnv" > '$(results.shp-error-reason.path)'
+                echo -n "build-env entry '${arg}' is not set in the Build's spec.env; set it there or pass it as KEY=VALUE." > '$(results.shp-error-message.path)'
+                exit 1
+              fi
+              budArgs+=("--env" "${arg}")
             elif [ "${inRegistriesBlock}" == "true" ]; then
               registriesBlock="${registriesBlock}'${arg}', "
             elif [ "${inRegistriesInsecure}" == "true" ]; then
@@ -240,6 +278,8 @@ spec:
         - $(params.shp-output-image)
         - --build-args
         - $(params.build-args[*])
+        - --build-env
+        - $(params.build-env[*])
         - --registries-block
         - $(params.registries-block[*])
         - --registries-insecure
@@ -272,6 +312,10 @@ spec:
   parameters:
     - name: build-args
       description: "The values for the args in the Dockerfile. Values must be in the format KEY=VALUE."
+      type: array
+      defaults: []
+    - name: build-env
+      description: "Environment variables to set in every stage of the build, visible to RUN instructions and kept in the output image. Values must be in the format KEY=VALUE, or a bare NAME whose value is taken from the Build's spec.env."
       type: array
       defaults: []
     - name: registries-block
