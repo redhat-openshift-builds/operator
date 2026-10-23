@@ -24,7 +24,7 @@ require (
 	sigs.k8s.io/yaml v1.6.0
 )
 
-require github.com/sirupsen/logrus v1.9.4 // indirect
+require github.com/sirupsen/logrus v1.10.2 // indirect
 
 require (
 	contrib.go.opencensus.io/exporter/ocagent v0.7.1-0.20230502190836-7399e0f8ee5e // indirect
