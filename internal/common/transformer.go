@@ -64,7 +64,7 @@ func InjectFinalizer(finalizer string) manifestival.Transformer {
 // InjectTLSArgsIntoContainer injects --tls-min-version and --tls-cipher-suites flags into a named container.
 // Removes any existing TLS args before injecting new ones.
 // Works on any Deployment that has a container with the specified name.
-func InjectTLSArgsIntoContainer(containerName, minVersion, cipherSuites string) manifestival.Transformer {
+func InjectTLSArgsIntoContainer(containerName, minVersion, cipherSuites, curves string) manifestival.Transformer {
 	return func(u *unstructured.Unstructured) error {
 		if u.GetKind() != "Deployment" {
 			return nil
@@ -87,6 +87,9 @@ func InjectTLSArgsIntoContainer(containerName, minVersion, cipherSuites string) 
 				if cipherSuites != "" {
 					args = append(args, "--tls-cipher-suites="+cipherSuites)
 				}
+				if curves != "" {
+					args = append(args, "--tls-curve-preferences="+curves)
+				}
 
 				deploy.Spec.Template.Spec.Containers[i].Args = args
 				break
@@ -97,12 +100,13 @@ func InjectTLSArgsIntoContainer(containerName, minVersion, cipherSuites string) 
 	}
 }
 
-// filterOutTLSArgs removes --tls-min-version and --tls-cipher-suites from args list
+// filterOutTLSArgs removes --tls-min-version, --tls-cipher-suites, and --tls-curve-preferences from args list
 func filterOutTLSArgs(args []string) []string {
 	filtered := make([]string, 0, len(args))
 	for _, arg := range args {
 		if !strings.HasPrefix(arg, "--tls-min-version=") &&
-			!strings.HasPrefix(arg, "--tls-cipher-suites=") {
+			!strings.HasPrefix(arg, "--tls-cipher-suites=") &&
+			!strings.HasPrefix(arg, "--tls-curve-preferences=") {
 			filtered = append(filtered, arg)
 		}
 	}
