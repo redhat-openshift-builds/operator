@@ -139,7 +139,7 @@ var _ = Describe("Transformer", Label("transformer"), func() {
 		When("TLS args are provided for shipwright-build-webhook container", func() {
 			It("should inject TLS flags into the container", func() {
 				manifest, err := manifest.Transform(
-					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "VersionTLS12", "TLS_AES_128_GCM_SHA256"),
+					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "VersionTLS12", "TLS_AES_128_GCM_SHA256", ""),
 				)
 				Expect(err).ShouldNot(HaveOccurred())
 
@@ -165,7 +165,7 @@ var _ = Describe("Transformer", Label("transformer"), func() {
 
 			It("should inject TLS flags into the CSI driver webhook container", func() {
 				manifest, err := manifest.Transform(
-					common.InjectTLSArgsIntoContainer("shared-resource-csi-driver-webhook", "VersionTLS13", "TLS_CHACHA20_POLY1305_SHA256"),
+					common.InjectTLSArgsIntoContainer("shared-resource-csi-driver-webhook", "VersionTLS13", "TLS_CHACHA20_POLY1305_SHA256", ""),
 				)
 				Expect(err).ShouldNot(HaveOccurred())
 
@@ -195,7 +195,7 @@ var _ = Describe("Transformer", Label("transformer"), func() {
 
 			It("should replace existing TLS args without duplicating", func() {
 				manifest, err := manifest.Transform(
-					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "VersionTLS12", "NEW_CIPHER"),
+					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "VersionTLS12", "NEW_CIPHER", ""),
 				)
 				Expect(err).ShouldNot(HaveOccurred())
 
@@ -216,7 +216,7 @@ var _ = Describe("Transformer", Label("transformer"), func() {
 		When("empty TLS values are provided", func() {
 			It("should not inject empty TLS flags", func() {
 				manifest, err := manifest.Transform(
-					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "", ""),
+					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "", "", ""),
 				)
 				Expect(err).ShouldNot(HaveOccurred())
 
@@ -232,7 +232,7 @@ var _ = Describe("Transformer", Label("transformer"), func() {
 		When("only minVersion is provided", func() {
 			It("should inject only tls-min-version flag", func() {
 				manifest, err := manifest.Transform(
-					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "VersionTLS12", ""),
+					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "VersionTLS12", "", ""),
 				)
 				Expect(err).ShouldNot(HaveOccurred())
 
@@ -249,7 +249,7 @@ var _ = Describe("Transformer", Label("transformer"), func() {
 		When("only cipherSuites is provided", func() {
 			It("should inject only tls-cipher-suites flag", func() {
 				manifest, err := manifest.Transform(
-					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "", "TLS_AES_256_GCM_SHA384"),
+					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "", "TLS_AES_256_GCM_SHA384", ""),
 				)
 				Expect(err).ShouldNot(HaveOccurred())
 
@@ -260,6 +260,24 @@ var _ = Describe("Transformer", Label("transformer"), func() {
 				container := resultDeployment.Spec.Template.Spec.Containers[0]
 				Expect(container.Args).To(ContainElement("--tls-cipher-suites=TLS_AES_256_GCM_SHA384"))
 				Expect(container.Args).NotTo(ContainElement(HavePrefix("--tls-min-version=")))
+			})
+		})
+
+		When("curves are provided", func() {
+			It("should inject tls-curve-preferences flag", func() {
+				manifest, err := manifest.Transform(
+					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "VersionTLS12", "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256", "x25519,secp256r1"),
+				)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				resultDeployment := &appsv1.Deployment{}
+				err = scheme.Scheme.Convert(&manifest.Resources()[0], resultDeployment, nil)
+				Expect(err).ShouldNot(HaveOccurred())
+
+				container := resultDeployment.Spec.Template.Spec.Containers[0]
+				Expect(container.Args).To(ContainElement("--tls-min-version=VersionTLS12"))
+				Expect(container.Args).To(ContainElement("--tls-cipher-suites=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"))
+				Expect(container.Args).To(ContainElement("--tls-curve-preferences=x25519,secp256r1"))
 			})
 		})
 
@@ -290,7 +308,7 @@ var _ = Describe("Transformer", Label("transformer"), func() {
 
 			It("should inject TLS flags only into the named container", func() {
 				manifest, err := manifest.Transform(
-					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "VersionTLS12", "TLS_AES_128_GCM_SHA256"),
+					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "VersionTLS12", "TLS_AES_128_GCM_SHA256", ""),
 				)
 				Expect(err).ShouldNot(HaveOccurred())
 
@@ -315,7 +333,7 @@ var _ = Describe("Transformer", Label("transformer"), func() {
 		When("container name does not match", func() {
 			It("should not modify any container", func() {
 				manifest, err := manifest.Transform(
-					common.InjectTLSArgsIntoContainer("non-existent-container", "VersionTLS12", "TLS_AES_128_GCM_SHA256"),
+					common.InjectTLSArgsIntoContainer("non-existent-container", "VersionTLS12", "TLS_AES_128_GCM_SHA256", ""),
 				)
 				Expect(err).ShouldNot(HaveOccurred())
 
@@ -345,7 +363,7 @@ var _ = Describe("Transformer", Label("transformer"), func() {
 
 			It("should skip non-Deployment resources", func() {
 				manifest, err := manifest.Transform(
-					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "VersionTLS12", "TLS_AES_128_GCM_SHA256"),
+					common.InjectTLSArgsIntoContainer("shipwright-build-webhook", "VersionTLS12", "TLS_AES_128_GCM_SHA256", ""),
 				)
 				Expect(err).ShouldNot(HaveOccurred())
 				Expect(manifest.Resources()[0].GetKind()).To(Equal("Service"))
