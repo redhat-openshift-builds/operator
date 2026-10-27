@@ -20,15 +20,17 @@ type SharedResource struct {
 	State           openshiftv1alpha1.State
 	TLSMinVersion   string
 	TLSCipherSuites string
+	TLSCurves       string
 }
 
 // New creates new instance of SharedResource type
-func New(client client.Client, manifest manifestival.Manifest, tlsMinVersion, tlsCipherSuites string) *SharedResource {
+func New(client client.Client, manifest manifestival.Manifest, tlsMinVersion, tlsCipherSuites, tlsCurves string) *SharedResource {
 	return &SharedResource{
 		Client:          client,
 		Manifest:        manifest,
 		TLSMinVersion:   tlsMinVersion,
 		TLSCipherSuites: tlsCipherSuites,
+		TLSCurves:       tlsCurves,
 	}
 }
 
@@ -55,7 +57,7 @@ func (sr *SharedResource) Reconcile(ctx context.Context, owner *openshiftv1alpha
 	}
 	// Inject TLS flags into CSI driver webhook container
 	transformerfuncs = append(transformerfuncs,
-		common.InjectTLSArgsIntoContainer("shared-resource-csi-driver-webhook", sr.TLSMinVersion, sr.TLSCipherSuites))
+		common.InjectTLSArgsIntoContainer("shared-resource-csi-driver-webhook", sr.TLSMinVersion, sr.TLSCipherSuites, sr.TLSCurves))
 
 	manifest, err := sr.Manifest.Transform(transformerfuncs...)
 	if err != nil {

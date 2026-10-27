@@ -158,7 +158,7 @@ The OpenShift Builds Operator honors the cluster-wide TLS security profile confi
 The operator injects these flags into operand webhooks:
 - `--tls-min-version`: Minimum TLS protocol version (e.g., VersionTLS12)
 - `--tls-cipher-suites`: Comma-separated IANA cipher suite names
-- `--tls-ecdh-curves`: Comma-separated curve names (requires upstream support - see SRVKP-14768)
+- `--tls-curve-preferences`: Comma-separated curve names (requires upstream support)
 
 ### Custom TLS Profiles
 
@@ -200,4 +200,4 @@ The openshift-builds-operator is a "legacy adhering component" and honors the cl
 **Custom curves not working:**
 - Curves require upstream webhook support (tracked in SRVKP-14768)
 - Operands currently use secure Go defaults (X25519, P-256, P-384, ML-KEM-768)
-- Monitor operator logs for "requires upstream --tls-ecdh-curves flag support" message
+- Monitor operator logs for "requires upstream --tls-curve-preferences flag support" message
