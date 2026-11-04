@@ -315,8 +315,8 @@ github.com/shipwright-io/operator/pkg/buildstrategy
 github.com/shipwright-io/operator/pkg/certmanager
 github.com/shipwright-io/operator/pkg/common
 github.com/shipwright-io/operator/pkg/tekton
-# github.com/sirupsen/logrus v1.9.4
-## explicit; go 1.17
+# github.com/sirupsen/logrus v1.10.2
+## explicit; go 1.23
 # github.com/spf13/afero v1.15.0
 ## explicit; go 1.23.0
 github.com/spf13/afero
