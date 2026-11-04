@@ -24,7 +24,10 @@ require (
 	sigs.k8s.io/yaml v1.6.0
 )
 
-require github.com/sirupsen/logrus v1.9.4 // indirect
+require (
+	github.com/pandatix/go-abnf v0.5.3 // indirect
+	github.com/sirupsen/logrus v1.9.4 // indirect
+)
 
 require (
 	contrib.go.opencensus.io/exporter/ocagent v0.7.1-0.20230502190836-7399e0f8ee5e // indirect
@@ -88,7 +91,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.24.1 // indirect
 	github.com/prometheus/client_model v0.6.3 // indirect
-	github.com/prometheus/common v0.72.1 // indirect
+	github.com/prometheus/common v0.73.1 // indirect
 	github.com/prometheus/procfs v0.22.0 // indirect
 	github.com/prometheus/statsd_exporter v0.31.0 // indirect
 	github.com/sergi/go-diff v1.4.0 // indirect
