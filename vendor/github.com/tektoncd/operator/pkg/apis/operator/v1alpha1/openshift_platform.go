@@ -23,15 +23,31 @@ type OpenShift struct {
 	// SCC allows configuring security context constraints used by workloads
 	// +optional
 	SCC *SCC `json:"scc,omitempty"`
-}
+	// EnableCentralTLSConfig controls TLS configuration inheritance from the
+	// cluster's APIServer TLS security profile. When enabled (the default),
+	// TLS settings (minimum version, cipher suites, curve preferences) are
+	// automatically derived from the cluster-wide security policy and injected
+	// into Tekton component containers that support TLS configuration.
+	// Set to false to opt out and manage TLS settings manually.
+	// Default: true (opt-out)
+	// +optional
+	EnableCentralTLSConfig *bool `json:"enableCentralTLSConfig,omitempty"`
 
-type PipelinesAsCode struct {
-	// Enable or disable pipelines as code by changing this bool
+	// EnableMetricsMTLS controls whether Prometheus metrics endpoints use mTLS.
+	// When enabled the operator:
+	//   - annotates metric Services for automatic TLS certificate provisioning
+	//     via the OpenShift service-serving-cert controller
+	//   - renames the metrics port from "http-metrics" to "https-metrics"
+	//   - mounts the serving-cert Secret and client-CA ConfigMap into Tekton pods
+	//   - enforces client certificate verification (RequireAndVerifyClientCert)
+	//
+	// Requires the OpenShift Cluster Monitoring Operator (CMO) to be present,
+	// because the client CA bundle is read from
+	// kube-system/extension-apiserver-authentication.
+	//
+	// Default: false (opt-in). Set to true to activate metrics mTLS.
 	// +optional
-	Enable *bool `json:"enable,omitempty"`
-	// PACSettings allows user to configure PAC configurations
-	// +optional
-	PACSettings `json:",inline"`
+	EnableMetricsMTLS *bool `json:"enableMetricsMTLS,omitempty"`
 }
 
 type SCC struct {
