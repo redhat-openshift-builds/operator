@@ -56,9 +56,29 @@ func (tc *TektonConfig) Validate(ctx context.Context) (errs *apis.FieldError) {
 		}
 	}
 
+	// One platform subtree per operator build (PLATFORM=openshift vs unset/other). Reject before PAC
+	// validation so clients get a single admission error (e.g. oc patch / oc edit), not stacked messages.
+	if !IsOpenShiftPlatform() && isOpenShiftPlatformsSectionSet(tc.Spec.Platforms.OpenShift) {
+		return errs.Also(apis.ErrGeneric(
+			"this cluster runs the Kubernetes Tekton Operator; configure Pipelines as Code and SCC-related settings only under spec.platforms.kubernetes. "+
+				"Remove spec.platforms.openshift (including pipelinesAsCode and scc). "+
+				"Do not set both spec.platforms.openshift.pipelinesAsCode and spec.platforms.kubernetes.pipelinesAsCode.",
+			"spec.platforms",
+		))
+	}
+	if IsOpenShiftPlatform() && isKubernetesPlatformsSectionSet(tc.Spec.Platforms.Kubernetes) {
+		return errs.Also(apis.ErrGeneric(
+			"this cluster runs the OpenShift Tekton Operator; configure Pipelines as Code only under spec.platforms.openshift. "+
+				"Remove spec.platforms.kubernetes.pipelinesAsCode.",
+			"spec.platforms",
+		))
+	}
+
+	logger := logging.FromContext(ctx)
 	if IsOpenShiftPlatform() && tc.Spec.Platforms.OpenShift.PipelinesAsCode != nil {
-		logger := logging.FromContext(ctx)
 		errs = errs.Also(tc.Spec.Platforms.OpenShift.PipelinesAsCode.PACSettings.validate(logger, "spec.platforms.openshift.pipelinesAsCode"))
+	} else if !IsOpenShiftPlatform() && tc.Spec.Platforms.Kubernetes.PipelinesAsCode != nil {
+		errs = errs.Also(tc.Spec.Platforms.Kubernetes.PipelinesAsCode.PACSettings.validate(logger, "spec.platforms.kubernetes.pipelinesAsCode"))
 	}
 
 	// validate SCC config
@@ -81,46 +101,58 @@ func (tc *TektonConfig) Validate(ctx context.Context) (errs *apis.FieldError) {
 		maxAllowedSCC := tc.Spec.Platforms.OpenShift.SCC.MaxAllowed
 		if maxAllowedSCC != "" {
 			// verify maxAllowed SCC exists on the cluster
-			if err := verifySCCExists(ctx, maxAllowedSCC); err != nil {
-				errs = errs.Also(apis.ErrGeneric(fmt.Sprintf("error verifying SCC exists: %s - %v", maxAllowedSCC, err), "spec.platforms.openshift.scc.maxAllowed"))
+			// we don't want to verify pipelines-scc here as it will be created
+			// later when the RBAC reconciler will be run
+			if maxAllowedSCC != PipelinesSCC {
+				if err := verifySCCExists(ctx, maxAllowedSCC); err != nil {
+					errs = errs.Also(apis.ErrGeneric(fmt.Sprintf("error verifying SCC exists: %s - %v", maxAllowedSCC, err), "spec.platforms.openshift.scc.maxAllowed"))
+				}
 			}
 
 			// Check that maxAllowed SCC and default SCC are compatible wrt priority
-			hasPriority, err := compareSCCAMoreRestrictiveThanB(ctx, defaultSCC, maxAllowedSCC)
-			if err != nil {
-				errs = errs.Also(apis.ErrGeneric(fmt.Sprintf("error comparing priority between maxAllowed and default SCC in TektonConfig: %v", err), "spec.platforms.openshift.scc.maxAllowed"))
-			} else if !hasPriority {
-				errs = errs.Also(apis.ErrGeneric(fmt.Sprintf("maxAllowed SCC (%s) must be less restrictive than the default SCC (%s)", maxAllowedSCC, defaultSCC), "spec.platforms.openshift.scc.maxAllowed"))
+			// Skip this check if either is pipelines-scc (will be created later)
+			if defaultSCC != PipelinesSCC && maxAllowedSCC != PipelinesSCC {
+				hasPriority, err := compareSCCAMoreRestrictiveThanB(ctx, defaultSCC, maxAllowedSCC)
+				if err != nil {
+					errs = errs.Also(apis.ErrGeneric(fmt.Sprintf("error comparing priority between maxAllowed and default SCC in TektonConfig: %v", err), "spec.platforms.openshift.scc.maxAllowed"))
+				} else if !hasPriority {
+					errs = errs.Also(apis.ErrGeneric(fmt.Sprintf("maxAllowed SCC (%s) must be less restrictive than the default SCC (%s)", maxAllowedSCC, defaultSCC), "spec.platforms.openshift.scc.maxAllowed"))
+				}
 			}
 
 			// Now validate maxAllowed SCC config with namespaces
-			sccErrors, err := compareSCCsWithAllNamespaces(ctx, maxAllowedSCC)
-			if err != nil {
-				errs = errs.Also(apis.ErrGeneric(fmt.Sprintf("error comparing priority between maxAllowed and SCCs requested in all namespaces: %v", err), "spec.platforms.openshift.scc.maxAllowed"))
+			// Skip this check if maxAllowed is pipelines-scc (will be created later)
+			if maxAllowedSCC != PipelinesSCC {
+				sccErrors, err := compareSCCsWithAllNamespaces(ctx, maxAllowedSCC)
+				if err != nil {
+					errs = errs.Also(apis.ErrGeneric(fmt.Sprintf("error comparing priority between maxAllowed and SCCs requested in all namespaces: %v", err), "spec.platforms.openshift.scc.maxAllowed"))
+				}
+				errs = errs.Also(sccErrors)
 			}
-			errs = errs.Also(sccErrors)
 		}
 	}
 
-	// validate pruner specifications
+	// validate pruner specifications (legacy job-based pruner)
 	errs = errs.Also(tc.Spec.Pruner.validate())
+
+	// validate TektonPruner (event-based) configuration using tektoncd/pruner webhook validation
+	// This ensures that the pruner config in TektonConfig is validated using the same
+	// comprehensive validation logic as the standalone TektonPruner resource
+	errs = errs.Also(tc.Spec.TektonPruner.validate("spec.tektonpruner"))
 
 	if !tc.Spec.Addon.IsEmpty() {
 		errs = errs.Also(validateAddonParams(tc.Spec.Addon.Params, "spec.addon.params"))
 	}
 
-	if !tc.Spec.Hub.IsEmpty() {
-		errs = errs.Also(validateHubParams(tc.Spec.Hub.Params, "spec.hub.params"))
-	}
-
 	errs = errs.Also(tc.Spec.Pipeline.PipelineProperties.validate("spec.pipeline"))
 
 	errs = errs.Also(tc.Spec.Pipeline.Options.validate("spec.pipeline.options"))
-	errs = errs.Also(tc.Spec.Hub.Options.validate("spec.hub.options"))
 	errs = errs.Also(tc.Spec.Dashboard.Options.validate("spec.dashboard.options"))
 	errs = errs.Also(tc.Spec.Chain.Options.validate("spec.chain.options"))
 	errs = errs.Also(tc.Spec.Trigger.Options.validate("spec.trigger.options"))
 	errs = errs.Also(tc.Spec.Result.Options.validate("spec.result.options"))
+	errs = errs.Also(tc.Spec.Result.Watcher.Validate("spec.result.watcher"))
+	errs = errs.Also(tc.Spec.MulticlusterProxyAAE.Options.validate("spec.multiclusterProxyAAE.options"))
 
 	return errs.Also(tc.Spec.Trigger.TriggersProperties.validate("spec.trigger"))
 }
@@ -171,6 +203,14 @@ func isValueInArray(arr []string, key string) bool {
 		}
 	}
 	return false
+}
+
+func isOpenShiftPlatformsSectionSet(o OpenShift) bool {
+	return o.PipelinesAsCode != nil || o.SCC != nil
+}
+
+func isKubernetesPlatformsSectionSet(k Kubernetes) bool {
+	return k.PipelinesAsCode != nil
 }
 
 func verifySCCExists(ctx context.Context, sccName string) error {
