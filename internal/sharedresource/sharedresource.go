@@ -14,17 +14,21 @@ import (
 
 // SharedResource type defines methods to Get, Create v1alpha1.SharedResource resource
 type SharedResource struct {
-	Client   client.Client
-	Logger   logr.Logger
-	Manifest manifestival.Manifest
-	State    openshiftv1alpha1.State
+	Client          client.Client
+	Logger          logr.Logger
+	Manifest        manifestival.Manifest
+	State           openshiftv1alpha1.State
+	TLSMinVersion   string
+	TLSCipherSuites string
 }
 
 // New creates new instance of SharedResource type
-func New(client client.Client, manifest manifestival.Manifest) *SharedResource {
+func New(client client.Client, manifest manifestival.Manifest, tlsMinVersion, tlsCipherSuites string) *SharedResource {
 	return &SharedResource{
-		Client:   client,
-		Manifest: manifest,
+		Client:          client,
+		Manifest:        manifest,
+		TLSMinVersion:   tlsMinVersion,
+		TLSCipherSuites: tlsCipherSuites,
 	}
 }
 
@@ -49,6 +53,9 @@ func (sr *SharedResource) Reconcile(ctx context.Context, owner *openshiftv1alpha
 	if sr.State == openshiftv1alpha1.Enabled && owner.DeletionTimestamp.IsZero() {
 		transformerfuncs = append(transformerfuncs, common.InjectFinalizer(common.OpenShiftBuildFinalizerName))
 	}
+	// Inject TLS flags into CSI driver webhook container
+	transformerfuncs = append(transformerfuncs,
+		common.InjectTLSArgsIntoContainer("shared-resource-csi-driver-webhook", sr.TLSMinVersion, sr.TLSCipherSuites))
 
 	manifest, err := sr.Manifest.Transform(transformerfuncs...)
 	if err != nil {
