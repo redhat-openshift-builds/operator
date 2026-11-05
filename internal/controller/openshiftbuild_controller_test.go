@@ -253,7 +253,7 @@ var _ = Describe("Main Operator Controller with Sub-Reconciler Failure", func() 
 				Scheme:         testEnv.Scheme,
 				Logger:         ctrl.Log.WithName("test-openshiftbuild-reconciler"),
 				APIReader:      k8sClient,
-				SharedResource: sharedresource.New(k8sClient, sharedManifest),
+				SharedResource: sharedresource.New(k8sClient, sharedManifest, "", ""),
 				Shipwright:     shipwrightbuild.New(k8sClient, CRNamespace),
 			}
 

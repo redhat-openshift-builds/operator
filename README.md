@@ -141,3 +141,63 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 
+
+## TLS Security Profile Support
+
+The OpenShift Builds Operator honors the cluster-wide TLS security profile configured via the APIServer CR. This ensures consistent TLS configuration across all operator-managed components.
+
+### How It Works
+
+1. **Profile Source**: Reads from `apiserver.config.openshift.io/cluster`
+2. **Adherence Policy**: Respects `spec.tlsAdherence` (Legacy/Strict modes)
+3. **Injection**: Applies to Shipwright Build webhook and CSI driver webhook  
+4. **Supported Profiles**: Modern, Intermediate, Old, Custom
+
+### TLS Configuration
+
+The operator injects these flags into operand webhooks:
+- `--tls-min-version`: Minimum TLS protocol version (e.g., VersionTLS12)
+- `--tls-cipher-suites`: Comma-separated IANA cipher suite names
+- `--tls-ecdh-curves`: Comma-separated curve names (requires upstream support - see SRVKP-14768)
+
+### Custom TLS Profiles
+
+Example custom profile:
+```yaml
+apiVersion: config.openshift.io/v1
+kind: APIServer
+metadata:
+  name: cluster
+spec:
+  tlsAdherence: StrictAllComponents
+  tlsSecurityProfile:
+    type: Custom
+    custom:
+      minTLSVersion: VersionTLS13
+      ciphers:
+        - TLS_AES_128_GCM_SHA256
+        - TLS_AES_256_GCM_SHA384
+      groups:  # TechPreview in OCP 4.22+
+        - X25519
+        - secp256r1
+```
+
+### TLSAdherence Modes
+
+- **LegacyAdheringComponentsOnly** (default): Components that already honor the cluster TLS profile continue to do so
+- **StrictAllComponents**: All components must honor the cluster TLS profile
+
+The openshift-builds-operator is a "legacy adhering component" and honors the cluster TLS profile in both modes.
+
+### Troubleshooting
+
+**Operands not using cluster TLS profile:**
+- Check operator logs: `oc logs -n openshift-builds deployment/openshift-builds-operator -c manager`
+- Look for "applying cluster TLS profile" messages
+- Verify APIServer CR exists: `oc get apiserver cluster -o yaml`
+- Check `spec.tlsAdherence` and `spec.tlsSecurityProfile` fields
+
+**Custom curves not working:**
+- Curves require upstream webhook support (tracked in SRVKP-14768)
+- Operands currently use secure Go defaults (X25519, P-256, P-384, ML-KEM-768)
+- Monitor operator logs for "requires upstream --tls-ecdh-curves flag support" message

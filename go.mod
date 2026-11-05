@@ -24,6 +24,8 @@ require (
 	sigs.k8s.io/yaml v1.6.0
 )
 
+require github.com/sirupsen/logrus v1.9.4 // indirect
+
 require (
 	contrib.go.opencensus.io/exporter/ocagent v0.7.1-0.20230502190836-7399e0f8ee5e // indirect
 	contrib.go.opencensus.io/exporter/prometheus v0.4.2 // indirect
@@ -80,9 +82,9 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/openshift-pipelines/pipelines-as-code v0.36.0 // indirect
 	github.com/openshift-pipelines/tektoncd-pruner v0.2.0 // indirect
-	github.com/openshift/api v0.0.0-20260619095050-5346161d1bf2 // indirect
+	github.com/openshift/api v0.0.0-20260619095050-5346161d1bf2
 	github.com/openshift/apiserver-library-go v0.0.0-20260422143241-5ac13825313c // indirect
-	github.com/openshift/client-go v0.0.0-20260622130833-df412d4d283e // indirect
+	github.com/openshift/client-go v0.0.0-20260622130833-df412d4d283e
 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
