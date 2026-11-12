@@ -25,6 +25,7 @@ type ShipwrightBuildReconciler struct {
 	shipwrightoperator.ShipwrightBuildReconciler
 	TLSMinVersion   string
 	TLSCipherSuites string
+	TLSCurves       string
 }
 
 func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
@@ -85,7 +86,7 @@ func (r *ShipwrightBuildReconciler) SetupWithManager(mgr ctrl.Manager) error {
 				openshiftserviceca.InjectCABundleAnnotationName: "true",
 			},
 		),
-		common.InjectTLSArgsIntoContainer("shipwright-build-webhook", r.TLSMinVersion, r.TLSCipherSuites),
+		common.InjectTLSArgsIntoContainer("shipwright-build-webhook", r.TLSMinVersion, r.TLSCipherSuites, r.TLSCurves),
 	); err != nil {
 		return err
 	}

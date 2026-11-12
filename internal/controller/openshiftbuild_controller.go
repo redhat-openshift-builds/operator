@@ -56,6 +56,7 @@ type OpenShiftBuildReconciler struct {
 	NetworkPolicy   *networkpolicy.NetworkPolicy
 	TLSMinVersion   string
 	TLSCipherSuites string
+	TLSCurves       string
 }
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
@@ -248,7 +249,7 @@ func (r *OpenShiftBuildReconciler) setupSharedResource(mgr ctrl.Manager) error {
 	}
 
 	// Initialize Shared Resource with TLS configuration
-	r.SharedResource = sharedresource.New(mgr.GetClient(), sharedManifest, r.TLSMinVersion, r.TLSCipherSuites)
+	r.SharedResource = sharedresource.New(mgr.GetClient(), sharedManifest, r.TLSMinVersion, r.TLSCipherSuites, r.TLSCurves)
 	return nil
 }
 

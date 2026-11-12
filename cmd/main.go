@@ -62,6 +62,7 @@ func init() {
 
 	utilruntime.Must(operatorv1alpha1.AddToScheme(scheme))
 	utilruntime.Must(shipwrightv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(configv1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -88,6 +89,18 @@ func main() {
 
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
+	// Read cluster TLS profile early to configure operator metrics server
+	// Must be read before manager creation to apply TLS settings to metrics server
+	tlsProfile, err := common.GetClusterTLSProfile(context.Background(), ctrl.GetConfigOrDie())
+	if err != nil {
+		setupLog.Error(err, "failed to read cluster TLS profile from APIServer CR",
+			"resource", "apiservers.config.openshift.io/cluster",
+			"impact", "operator and operands will use Intermediate profile defaults")
+		// Continue with nil profile - will use Intermediate defaults
+	}
+
+	minVersion, cipherSuites, curves := common.TLSProfileToFlags(tlsProfile)
+
 	// if the enable-http2 flag is false (the default), http/2 should be disabled
 	// due to its vulnerabilities. More specifically, disabling http/2 will
 	// prevent from being vulnerable to the HTTP/2 Stream Cancelation and
@@ -102,6 +115,29 @@ func main() {
 	tlsOpts := []func(*tls.Config){}
 	if !enableHTTP2 {
 		tlsOpts = append(tlsOpts, disableHTTP2)
+	}
+
+	// Apply cluster TLS profile to operator metrics server
+	if tlsProfile != nil {
+		tlsOpts = append(tlsOpts, func(c *tls.Config) {
+			if minVersion != "" {
+				c.MinVersion = common.ParseTLSVersion(minVersion)
+			}
+			if cipherSuites != "" {
+				c.CipherSuites = common.ParseCipherSuites(cipherSuites)
+			}
+			if curves != "" {
+				curveIDs := common.ParseCurvePreferences(curves)
+				// Convert []uint16 to []tls.CurveID
+				c.CurvePreferences = make([]tls.CurveID, len(curveIDs))
+				for i, id := range curveIDs {
+					c.CurvePreferences[i] = tls.CurveID(id)
+				}
+			}
+		})
+		setupLog.Info("applying cluster TLS profile to operator metrics server",
+			"type", tlsProfile.Type,
+			"minVersion", minVersion)
 	}
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
@@ -123,34 +159,21 @@ func main() {
 	// Fetch the namespace and store for later use
 	namespace := common.FetchCurrentNamespaceName()
 
-	// Setup signal handler for graceful shutdown
-	ctxSignal := ctrl.SetupSignalHandler()
-
-	// Create cancellable context for TLS profile watcher
-	ctxMain, cancel := context.WithCancel(ctxSignal)
-	defer cancel()
-
-	// Read cluster TLS profile for use by both Shipwright and SharedResource operands
-	tlsProfile, err := common.GetClusterTLSProfile(ctxMain, mgr.GetConfig())
-	if err != nil {
-		setupLog.Error(err, "failed to read cluster TLS profile from APIServer CR",
-			"resource", "apiservers.config.openshift.io/cluster",
-			"impact", "operands will use Intermediate profile defaults")
-		// Continue with nil profile - will use Intermediate defaults
-	}
-
-	minVersion, cipherSuites := common.TLSProfileToFlags(tlsProfile)
-
 	// Log the TLS configuration being applied to operands
 	if tlsProfile != nil {
 		cipherCount := 0
 		if cipherSuites != "" {
 			cipherCount = len(strings.Split(cipherSuites, ","))
 		}
+		curveCount := 0
+		if curves != "" {
+			curveCount = len(strings.Split(curves, ","))
+		}
 		setupLog.Info("applying cluster TLS profile to operand webhooks",
 			"type", tlsProfile.Type,
 			"minVersion", minVersion,
-			"cipherCount", cipherCount)
+			"cipherCount", cipherCount,
+			"curveCount", curveCount)
 	} else {
 		setupLog.Info("using default TLS configuration for operand webhooks",
 			"profile", "Intermediate",
@@ -164,6 +187,7 @@ func main() {
 		Shipwright:      shipwrightbuild.New(mgr.GetClient(), namespace),
 		TLSMinVersion:   minVersion,
 		TLSCipherSuites: cipherSuites,
+		TLSCurves:       curves,
 	}
 
 	if err := buildReconciler.SetupWithManager(mgr); err != nil {
@@ -179,6 +203,7 @@ func main() {
 		},
 		TLSMinVersion:   minVersion,
 		TLSCipherSuites: cipherSuites,
+		TLSCurves:       curves,
 	}
 
 	if err := shipwrightReconciler.SetupWithManager(mgr); err != nil {
@@ -198,8 +223,10 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Start TLS profile watcher in background to restart pod when cluster TLS profile changes
-	// Uses exit-on-change pattern from OpenShift TLS Profile Compliance documentation
+	ctxMain, cancel := context.WithCancel(ctrl.SetupSignalHandler())
+	defer cancel()
+
+	// Watch for TLS profile changes and exit to trigger pod restart
 	go watchAndExitOnTLSChange(ctxMain, mgr.GetConfig(), tlsProfile, cancel, setupLog)
 
 	// Create a non-cached client to bootstrap the OpenShiftBuild resource.
