@@ -80,7 +80,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-	github.com/openshift-pipelines/pipelines-as-code v0.36.0 // indirect
+	github.com/openshift-pipelines/pipelines-as-code v0.37.8 // indirect
 	github.com/openshift-pipelines/tektoncd-pruner v0.2.0 // indirect
 	github.com/openshift/api v0.0.0-20261017003925-24b2699a9b32
 	github.com/openshift/apiserver-library-go v0.0.0-20260715200723-42e5e402ca43 // indirect
