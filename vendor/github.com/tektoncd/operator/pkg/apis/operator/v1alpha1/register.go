@@ -50,9 +50,6 @@ const (
 	// KindTektonInstallerSet is the Kind of TektonInstallerSet in a GVK context.
 	KindTektonInstallerSet = "TektonInstallerSet"
 
-	// KindTektonHub is the Kind of TektonHub in a GVK context.
-	KindTektonHub = "TektonHub"
-
 	// KindTektonChain is the Kind of Tekton Chain in a GVK context.
 	KindTektonChain = "TektonChain"
 
@@ -64,6 +61,15 @@ const (
 
 	// KindTektonPruner is the Kind of TektonPruner in a GVK context.
 	KindTektonPruner = "TektonPruner"
+
+	// KindTektonScheduler is the Kind of TektonScheduler in a GVK context.
+	KindTektonScheduler = "TektonScheduler"
+
+	// KindTektonMulticlusterProxyAAE is the Kind of TektonMulticlusterProxyAAE in a GVK context.
+	KindTektonMulticlusterProxyAAE = "TektonMulticlusterProxyAAE"
+
+	// KindSyncerService is the Kind of SyncerService in a GVK context.
+	KindSyncerService = "SyncerService"
 )
 
 // Resource takes an unqualified resource and returns a Group qualified GroupResource
@@ -89,8 +95,6 @@ func addKnownTypes(s *runtime.Scheme) error {
 		&TektonResultList{},
 		&TektonInstallerSet{},
 		&TektonInstallerSetList{},
-		&TektonHub{},
-		&TektonHubList{},
 		&TektonChain{},
 		&TektonChainList{},
 		&OpenShiftPipelinesAsCode{},
@@ -99,6 +103,12 @@ func addKnownTypes(s *runtime.Scheme) error {
 		&ManualApprovalGateList{},
 		&TektonPruner{},
 		&TektonPrunerList{},
+		&TektonScheduler{},
+		&TektonSchedulerList{},
+		&TektonMulticlusterProxyAAE{},
+		&TektonMulticlusterProxyAAEList{},
+		&SyncerService{},
+		&SyncerServiceList{},
 	)
 	metav1.AddToGroupVersion(s, SchemeGroupVersion)
 	return nil

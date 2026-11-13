@@ -26,6 +26,12 @@ import (
 // +genreconciler:krshapedlogic=false
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +genclient:nonNamespaced
+// +kubebuilder:object:root=true
+// +kubebuilder:resource:scope=Cluster,shortName=opac;pac
+// +kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="Version",type=string,JSONPath=`.status.version`
+// +kubebuilder:printcolumn:name="Ready",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].status`
+// +kubebuilder:printcolumn:name="Reason",type=string,JSONPath=`.status.conditions[?(@.type=="Ready")].message`
 type OpenShiftPipelinesAsCode struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -49,6 +55,10 @@ type OpenShiftPipelinesAsCodeSpec struct {
 	CommonSpec  `json:",inline"`
 	Config      Config `json:"config,omitempty"`
 	PACSettings `json:",inline"`
+	// NetworkPolicy configures NetworkPolicy creation for the controller,
+	// watcher and webhook workloads deployed by OpenShiftPipelinesAsCode.
+	// +optional
+	NetworkPolicy NetworkPolicyConfig `json:"networkPolicy,omitempty"`
 }
 
 // OpenShiftPipelinesAsCodeStatus defines the observed state of OpenShiftPipelinesAsCode
@@ -61,6 +71,7 @@ type OpenShiftPipelinesAsCodeStatus struct {
 }
 
 // OpenShiftPipelinesAsCodeList contains a list of OpenShiftPipelinesAsCode
+// +kubebuilder:object:root=true
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 type OpenShiftPipelinesAsCodeList struct {
 	metav1.TypeMeta `json:",inline"`
@@ -74,6 +85,7 @@ type PACSettings struct {
 	// +optional
 	AdditionalPACControllers map[string]AdditionalPACControllerConfig `json:"additionalPACControllers,omitempty"`
 	// options holds additions fields and these fields will be updated on the manifests
+	// +optional
 	Options AdditionalOptions `json:"options"`
 }
 
