@@ -26,14 +26,15 @@ import (
 )
 
 var (
-	allowedArtifactsTaskRunFormat                   = sets.NewString("", "in-toto", "slsa/v1", "slsa/v2alpha2", "slsa/v2alpha3")
-	allowedArtifactsPipelineRunFormat               = sets.NewString("", "in-toto", "slsa/v1", "slsa/v2alpha2", "slsa/v2alpha3")
+	allowedArtifactsTaskRunFormat                   = sets.NewString("", "in-toto", "slsa/v1", "slsa/v2alpha2", "slsa/v2alpha3", "slsa/v2alpha4")
+	allowedArtifactsPipelineRunFormat               = sets.NewString("", "in-toto", "slsa/v1", "slsa/v2alpha2", "slsa/v2alpha3", "slsa/v2alpha4")
 	allowedX509SignerFulcioProvider                 = sets.NewString("", "google", "spiffe", "github", "filesystem")
 	allowedTransparencyConfigEnabled                = sets.NewString("", "true", "false", "manual")
 	allowedArtifactsPipelineRunEnableDeepInspection = sets.NewString("", "true", "false")
 	allowedArtifactsStorage                         = sets.NewString("", "tekton", "oci", "gcs", "docdb", "grafeas", "kafka")
 	allowedControllerEnvs                           = sets.NewString("MONGO_SERVER_URL")
 	allowedBuildDefinitionType                      = sets.NewString("", "https://tekton.dev/chains/v2/slsa", "https://tekton.dev/chains/v2/slsa-tekton")
+	allowedStorageOCIEncodingFormat                 = sets.NewString("", "dsse", "sigstore-bundle")
 )
 
 func (tc *TektonChain) Validate(ctx context.Context) (errs *apis.FieldError) {
@@ -50,7 +51,11 @@ func (tc *TektonChain) Validate(ctx context.Context) (errs *apis.FieldError) {
 	// execute common spec validations
 	errs = errs.Also(tc.Spec.CommonSpec.validate("spec"))
 
-	return errs.Also(tc.Spec.ValidateControllerEnv(), tc.Spec.ValidateChainConfig("spec"))
+	return errs.Also(
+		tc.Spec.ValidateControllerEnv(),
+		tc.Spec.ValidateChainConfig("spec"),
+		tc.Spec.NetworkPolicy.validate("spec.networkPolicy"),
+	)
 }
 
 func (tcs *TektonChainSpec) ValidateControllerEnv() (errs *apis.FieldError) {
@@ -126,6 +131,10 @@ func (tcs *TektonChainSpec) ValidateChainConfig(path string) (errs *apis.FieldEr
 		if tcs.ArtifactsOCISigner != "x509" && tcs.ArtifactsOCISigner != "kms" {
 			errs = errs.Also(apis.ErrInvalidValue(tcs.ArtifactsOCISigner, path+".artifacts.oci.signer"))
 		}
+	}
+
+	if !allowedStorageOCIEncodingFormat.Has(tcs.StorageOCIEncodingFormat) {
+		errs = errs.Also(apis.ErrInvalidValue(tcs.StorageOCIEncodingFormat, path+".storage.oci.encoding-format"))
 	}
 
 	if !allowedX509SignerFulcioProvider.Has(tcs.X509SignerFulcioProvider) {
