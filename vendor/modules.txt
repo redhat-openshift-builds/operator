@@ -233,9 +233,10 @@ github.com/onsi/gomega/matchers/support/goraph/edge
 github.com/onsi/gomega/matchers/support/goraph/node
 github.com/onsi/gomega/matchers/support/goraph/util
 github.com/onsi/gomega/types
-# github.com/openshift-pipelines/pipelines-as-code v0.36.0
-## explicit; go 1.23.8
+# github.com/openshift-pipelines/pipelines-as-code v0.37.8
+## explicit; go 1.24.0
 github.com/openshift-pipelines/pipelines-as-code/pkg/configutil
+github.com/openshift-pipelines/pipelines-as-code/pkg/hub/vars
 github.com/openshift-pipelines/pipelines-as-code/pkg/params/settings
 # github.com/openshift-pipelines/tektoncd-pruner v0.2.0
 ## explicit; go 1.24.0
