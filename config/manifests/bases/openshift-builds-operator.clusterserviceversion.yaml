@@ -40,7 +40,9 @@ spec:
         kind: ShipwrightBuild
         name: shipwrightbuilds.operator.shipwright.io
         version: v1alpha1
-      - description: OpenShiftBuild describes the desired state of Builds for OpenShift, and the status of all deployed components.
+      - description: |-
+          OpenShiftBuild describes the desired state of Builds for OpenShift, and the status of
+          all deployed components.
         displayName: Open Shift Build
         kind: OpenShiftBuild
         name: openshiftbuilds.operator.openshift.io
@@ -83,7 +85,7 @@ spec:
     name: Red Hat
     url: https://www.redhat.com
   relatedImages:
-    - image: registry.redhat.io/openshift-builds/openshift-builds-rhel10-operator@sha256:43c89d3ade8843505d9782ec983a0695a07ac4ea629822fbc13312ba647b1e20
+    - image: registry.redhat.io/openshift-builds/openshift-builds-rhel10-operator@sha256:1b76d7238e0741dcddb3d34783ee4c859ff01d7a94465729bc6d9e04bad881a8
       name: OPENSHIFT_BUILDS_OPERATOR
     - image: registry.redhat.io/openshift-builds/openshift-builds-controller-rhel10@sha256:9dc58bff72ffe2ed6cf346b095f712714b69f9e101556cc368685ba66443b9c9
       name: OPENSHIFT_BUILDS_CONTROLLER
