@@ -1,4 +1,4 @@
-FROM registry.redhat.io/ubi9/go-toolset@sha256:edb9452603fa48e9882063f001ecd7d322add20f1564a4f05f38f6683be5ea94 AS builder
+FROM registry.redhat.io/ubi9/go-toolset@sha256:23c7cb17e9c53a65f9ab01f2edf1a4e07c9a9dc2258ed63d69e06925e7cea381 AS builder
 
 USER 1001
 
@@ -15,7 +15,7 @@ ENV GOEXPERIMENT=strictfipsruntime
 
 RUN CGO_ENABLED=1 GO111MODULE=on go build -a -mod vendor -tags strictfipsruntime -o operator cmd/main.go
 
-FROM registry.redhat.io/ubi9-minimal@sha256:2d4c4551af6831dcd26bbf86108c4385de5183ec8fe6b5868f6f9640fe47f4ed
+FROM registry.redhat.io/ubi9-minimal@sha256:08d4c70f1baf6537a0728656cf7942d561e74a35916509d205b6519861266352
 
 WORKDIR /
 
@@ -39,8 +39,8 @@ LABEL \
     io.openshift.tags="builds,operator" \
     maintainer="openshift-builds@redhat.com" \
     name="openshift-builds/openshift-builds-rhel9-operator" \
-    release="4" \
+    release="5" \
     summary="Red Hat OpenShift Builds Operator" \
     url="https://github.com/redhat-openshift-builds/operator" \
     vendor="Red Hat, Inc." \
-    version="v1.8.3"
+    version="v1.8.4"
