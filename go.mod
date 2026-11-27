@@ -11,7 +11,7 @@ require (
 	github.com/openshift/service-ca-operator v0.0.0-20240621184327-1f7d6472fea3
 	github.com/shipwright-io/build v0.19.4
 	github.com/shipwright-io/operator v0.19.0
-	github.com/tektoncd/operator v0.77.0
+	github.com/tektoncd/operator v0.82.0
 	k8s.io/api v0.37.1
 	k8s.io/apiextensions-apiserver v0.37.0
 	k8s.io/apimachinery v0.37.1
